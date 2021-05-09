@@ -1,11 +1,8 @@
-package com.nik.capko.memo.ui.wordlist
+package com.nik.capko.memo.ui.words.detail
 
-import com.nik.capko.memo.db.Word
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface WordListView : MvpView {
-    fun showWords(wordsList: List<Word>)
-}
+interface WordDetailMvpView : MvpView

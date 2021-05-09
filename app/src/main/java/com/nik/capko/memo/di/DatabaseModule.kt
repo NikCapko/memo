@@ -14,10 +14,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 object DatabaseModule {
     @Provides
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
-        return Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            "memo.db"
-        ).fallbackToDestructiveMigration().build()
+        return Room.databaseBuilder(context, AppDatabase::class.java, "memo.db")
+            .fallbackToDestructiveMigration()
+            .build()
     }
 }

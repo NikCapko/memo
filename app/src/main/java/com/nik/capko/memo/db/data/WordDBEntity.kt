@@ -1,14 +1,14 @@
-package com.nik.capko.memo.db
+package com.nik.capko.memo.db.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "word")
-data class Word(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int? = null,
+@Entity(tableName = "words")
+data class WordDBEntity(
+    @PrimaryKey
+    var id: Long,
     var word: String? = null,
-    var type: Byte? = null,
+    var type: String? = null,
     var translation: String? = null,
     var frequency: Float? = null,
 )

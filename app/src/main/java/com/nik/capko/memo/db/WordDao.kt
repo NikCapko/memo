@@ -4,12 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import com.nik.capko.memo.db.data.WordDBEntity
+import com.nik.capko.memo.db.data.WordFormDBEntity
 
 @Dao
 interface WordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(word: Word)
+    suspend fun insert(word: WordDBEntity)
 
-    @Query("SELECT * FROM word")
-    fun getAllWords(): List<Word>
+    @Transaction
+    @Query("SELECT * FROM words")
+    suspend fun getAllWords(): List<WordFormDBEntity>
 }
