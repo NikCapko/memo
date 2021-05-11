@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'kotlin-android-extensions'
+    id 'kotlin-parcelize'
     id 'dagger.hilt.android.plugin'
 }
 
@@ -67,7 +67,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
 
     // moxy
-    def moxyVersion = "2.2.1"
+    def moxyVersion = "2.2.2"
     implementation "com.github.moxy-community:moxy:$moxyVersion"
     implementation "com.github.moxy-community:moxy-androidx:$moxyVersion"
     implementation("com.github.moxy-community:moxy-ktx:$moxyVersion")
@@ -90,6 +90,8 @@ dependencies {
     implementation "com.airbnb.android:lottie:3.4.0"
 
     implementation 'com.intuit.sdp:sdp-android:1.0.0'
+
+    //implementation "ru.terrakok.cicerone:cicerone:5.1.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

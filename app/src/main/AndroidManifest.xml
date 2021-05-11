@@ -13,17 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Memo"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.nik.capko.memo.ui.words.list.WordListActivity">
+        <activity android:name="com.nik.capko.memo.ui.base.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.sign_in.SignInActivity" />
-        <activity android:name=".ui.sign_up.SignUpActivity" />
-        <activity android:name=".ui.words.detail.WordDetailActivity" />
-        <activity android:name=".ui.words.add.WordAddActivity" />
     </application>
 
 </manifest>
