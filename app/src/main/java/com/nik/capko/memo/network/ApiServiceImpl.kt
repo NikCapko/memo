@@ -8,5 +8,10 @@ import javax.inject.Singleton
 class ApiServiceImpl @Inject constructor(
     private val apiService: ApiService
 ) : BaseDataSource() {
+
     suspend fun getWordList() = getResult { apiService.getWordList() }
+
+    suspend fun getDictionaryList() = getResult { apiService.getDictionaryList() }
+
+    suspend fun getDictionary(id: String) = getResult { apiService.getDictionary(id) }
 }

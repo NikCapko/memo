@@ -15,12 +15,12 @@ data class WordFormDBEntity(
     companion object {
         fun WordFormDBEntity.toWordModel(): Word {
             return Word(
-                word?.id ?: 0,
-                word?.word,
-                word?.type,
-                word?.translation,
-                word?.frequency,
-                forms.map { it.toFormModel() }
+                id = word?.id ?: 0,
+                word = word?.word,
+                type = word?.type,
+                translation = word?.translation,
+                frequency = word?.frequency,
+                forms = forms.map { it.toFormModel() }
             )
         }
     }

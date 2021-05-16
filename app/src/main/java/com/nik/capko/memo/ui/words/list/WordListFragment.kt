@@ -1,7 +1,11 @@
 package com.nik.capko.memo.ui.words.list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -12,6 +16,9 @@ import com.nik.capko.memo.R
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordListBinding
 import com.nik.capko.memo.ui.base.MainActivity
+import com.nik.capko.memo.ui.dictionary.DictionaryFragment
+import com.nik.capko.memo.ui.games.list.GamesFragment
+import com.nik.capko.memo.ui.sign_in.SignInFragment
 import com.nik.capko.memo.ui.words.detail.WordDetailFragment
 import com.nik.capko.memo.ui.words.list.adapter.WordListAdapter
 import com.nik.capko.memo.utils.extensions.makeGone
@@ -33,6 +40,35 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
 
     private lateinit var adapter: WordListAdapter
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
+        inflater.inflate(R.menu.menu_action, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_games -> {
+                presenter.openGamesScreen()
+                true
+            }
+            R.id.action_dictionary -> {
+                presenter.openDictionaryScreen()
+                true
+            }
+            R.id.action_logout -> {
+                presenter.logout()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -49,12 +85,12 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
 
     private fun setListeners() {
         viewBinding.btnAddWord.setOnClickListener { presenter.onAddWordClick() }
-    }
-
-    private fun initAdapters() {
         adapter = WordListAdapter { position ->
             presenter.onItemClick(position)
         }
+    }
+
+    private fun initAdapters() {
         viewBinding.rvWords.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@WordListFragment.adapter
@@ -73,8 +109,40 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
         (activity as? MainActivity)?.openFragment(WordDetailFragment::class.java, bundle)
     }
 
-    override fun openAddWordScreen() {
+    override fun showAddWordScreen() {
         (activity as? MainActivity)?.openFragment(WordDetailFragment::class.java)
+    }
+
+    override fun showClearDatabaseDialog() {
+        AlertDialog.Builder(activity).apply {
+            setTitle(R.string.attention)
+            setMessage(R.string.clear_database)
+            setCancelable(true)
+            setPositiveButton(
+                R.string.yes
+            ) { dialog, _ ->
+                dialog.dismiss()
+                presenter.logout(true)
+            }
+            setNegativeButton(
+                R.string.no
+            ) { dialog, _ ->
+                dialog.dismiss()
+                presenter.logout(false)
+            }
+        }.create().show()
+    }
+
+    override fun showGamesScreen() {
+        (activity as? MainActivity)?.openFragment(GamesFragment::class.java)
+    }
+
+    override fun showDictionaryScreen() {
+        (activity as? MainActivity)?.openFragment(DictionaryFragment::class.java)
+    }
+
+    override fun openSignInScreen() {
+        (activity as? MainActivity)?.openFragment(SignInFragment::class.java)
     }
 
     override fun startLoading() {

@@ -1,7 +1,9 @@
 package com.nik.capko.memo.ui.words.list
 
+import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.repository.WordRepository
+import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +72,30 @@ class WordListPresenter @Inject constructor(
     }
 
     fun onAddWordClick() {
-        viewState.openAddWordScreen()
+        viewState.showAddWordScreen()
+    }
+
+    fun openGamesScreen() {
+        viewState.showGamesScreen()
+    }
+
+    fun openDictionaryScreen() {
+        viewState.showDictionaryScreen()
+    }
+
+    fun logout() {
+        viewState.showClearDatabaseDialog()
+    }
+
+    fun logout(clearDataBase: Boolean) {
+        appStorage.put(Constants.IS_REGISTER, false)
+        CoroutineScope(Dispatchers.Default).launch {
+            if (clearDataBase) {
+                wordRepository.clearDatabase()
+            }
+            launch(Dispatchers.Main) {
+                viewState.openSignInScreen()
+            }
+        }
     }
 }

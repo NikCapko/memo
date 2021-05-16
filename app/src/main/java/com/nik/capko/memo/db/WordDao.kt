@@ -16,4 +16,7 @@ interface WordDao {
     @Transaction
     @Query("SELECT * FROM words")
     suspend fun getAllWords(): List<WordFormDBEntity>
+
+    @Query("DELETE FROM words")
+    suspend fun removeAll()
 }

@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Memo</string>
+
+    <string name="action_games">Игры</string>
+    <string name="action_dictionary">Словари</string>
+    <string name="action_logout">Выйти</string>
+
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="sign_in">Войти</string>
+    <string name="skip">Пропустить</string>
+    <string name="word">Слово</string>
+    <string name="translate">Перевод</string>
+
+    <string name="attention">Внимание</string>
+    <string name="clear_database">Очистить базу данных при выходе из аккаунта ?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>

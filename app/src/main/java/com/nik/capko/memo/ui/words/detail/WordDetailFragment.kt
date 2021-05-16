@@ -2,11 +2,15 @@ package com.nik.capko.memo.ui.words.detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
+import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordDetailBinding
+import com.nik.capko.memo.utils.extensions.argument
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -17,7 +21,7 @@ import javax.inject.Provider
 class WordDetailFragment : MvpAppCompatFragment(), WordDetailMvpView {
 
     companion object {
-        const val WORD = "WordDetailActivity.WORD"
+        const val WORD = "WordDetailFragment.WORD"
     }
 
     @Inject
@@ -26,15 +30,21 @@ class WordDetailFragment : MvpAppCompatFragment(), WordDetailMvpView {
 
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
 
+    private var word: Word? by argument()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         getArgs()
     }
 
     private fun getArgs() {
-        presenter.setArguments(
-            arguments?.getParcelable(WORD)
-        )
+        presenter.setArguments(word)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
     }
 
     override fun onCreateView(

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginVertical="@dimen/_16sdp"
+        app:cardCornerRadius="@dimen/_10sdp">
+
+        <eu.davidea.flipview.FlipView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:clickable="true"
+            android:clipToPadding="false"
+            android:focusable="true"
+            app:checked="false"
+            app:enableInitialAnimation="true"
+            app:frontLayout="@layout/view_card_front"
+            app:rearImageAnimationDelay="0"
+            app:rearLayout="@layout/view_card_rear">
+
+        </eu.davidea.flipview.FlipView>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

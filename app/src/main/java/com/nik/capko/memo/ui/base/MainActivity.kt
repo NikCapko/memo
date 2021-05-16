@@ -3,7 +3,10 @@ package com.nik.capko.memo.ui.base
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.nik.capko.memo.R
+import com.nik.capko.memo.app.appStorage
+import com.nik.capko.memo.ui.sign_in.SignInFragment
 import com.nik.capko.memo.ui.words.list.WordListFragment
+import com.nik.capko.memo.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatActivity
 
@@ -17,9 +20,11 @@ class MainActivity : MvpAppCompatActivity() {
     }
 
     private fun openDefaultFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fcView, WordListFragment())
-            .commitAllowingStateLoss()
+        if (appStorage.get(Constants.IS_REGISTER, false)) {
+            openFragment(WordListFragment::class.java)
+        } else {
+            openFragment(SignInFragment::class.java)
+        }
     }
 
     fun <T : Fragment> openFragment(clazz: Class<T>, bundle: Bundle? = null) {

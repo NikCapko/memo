@@ -34,4 +34,9 @@ class WordRepository @Inject constructor(
     suspend fun getWordsFromServer(): Resource<List<Word>> {
         return apiService.getWordList()
     }
+
+    suspend fun clearDatabase() {
+        formsDao.removeAll()
+        wordsDao.removeAll()
+    }
 }
