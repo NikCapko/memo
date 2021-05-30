@@ -1,3 +1,5 @@
+@file:Suppress("PackageName", "PackageNaming")
+
 package com.nik.capko.memo.ui.games.find_pairs
 
 import android.os.Bundle

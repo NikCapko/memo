@@ -1,3 +1,5 @@
+@file:Suppress("PackageName", "PackageNaming")
+
 package com.nik.capko.memo.ui.sign_in
 
 import com.nik.capko.memo.app.appStorage

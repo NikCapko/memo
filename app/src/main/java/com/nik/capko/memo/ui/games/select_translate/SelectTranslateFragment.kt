@@ -1,3 +1,5 @@
+@file:Suppress("PackageName", "PackageNaming")
+
 package com.nik.capko.memo.ui.games.select_translate
 
 import android.os.Bundle
