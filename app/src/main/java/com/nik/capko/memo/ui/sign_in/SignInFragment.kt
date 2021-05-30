@@ -1,3 +1,5 @@
+@file:Suppress("PackageName", "PackageNaming")
+
 package com.nik.capko.memo.ui.sign_in
 
 import android.os.Bundle
@@ -64,6 +66,6 @@ class SignInFragment : MvpAppCompatFragment(), SignInMvpView {
     }
 
     override fun openWordsList() {
-        (activity as? MainActivity)?.openFragment(WordListFragment::class.java)
+        (activity as? MainActivity)?.replaceFragment(WordListFragment::class.java)
     }
 }

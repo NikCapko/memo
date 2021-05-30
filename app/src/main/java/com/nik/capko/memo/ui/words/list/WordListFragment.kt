@@ -1,6 +1,10 @@
 package com.nik.capko.memo.ui.words.list
 
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -10,9 +14,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
+import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordListBinding
 import com.nik.capko.memo.ui.base.MainActivity
@@ -21,6 +27,7 @@ import com.nik.capko.memo.ui.games.list.GamesFragment
 import com.nik.capko.memo.ui.sign_in.SignInFragment
 import com.nik.capko.memo.ui.words.detail.WordDetailFragment
 import com.nik.capko.memo.ui.words.list.adapter.WordListAdapter
+import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +36,7 @@ import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
+@Suppress("TooManyFunctions")
 @AndroidEntryPoint
 class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListMvpView {
 
@@ -40,6 +48,16 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
 
     private lateinit var adapter: WordListAdapter
 
+    private val localBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Constants.LOAD_WORDS_EVENT -> {
+                    presenter.loadWords()
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -49,6 +67,22 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
         inflater.inflate(R.menu.menu_action, menu)
+        if (appStorage.get(Constants.IS_REGISTER, false)) {
+            menu.getItem(2).isVisible = false
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val intentFilter = IntentFilter(Constants.LOAD_WORDS_EVENT)
+        LocalBroadcastManager.getInstance(requireContext())
+            .registerReceiver(localBroadcastReceiver, intentFilter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(requireContext())
+            .unregisterReceiver(localBroadcastReceiver)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -99,7 +133,6 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
 
     override fun showWords(wordsList: List<Word>) {
         adapter.words = wordsList
-        Toast.makeText(context, "${wordsList.size}", Toast.LENGTH_SHORT).show()
     }
 
     override fun showWordDetail(word: Word?) {

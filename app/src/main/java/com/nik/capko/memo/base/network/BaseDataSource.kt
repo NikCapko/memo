@@ -1,16 +1,19 @@
-package com.nik.capko.memo.network.base
+package com.nik.capko.memo.base.network
 
-import com.nik.capko.memo.utils.Resource
 import retrofit2.Response
 
+@Suppress("UnnecessaryAbstractClass")
 abstract class BaseDataSource {
 
+    @Suppress("ReturnCount", "TooGenericExceptionCaught")
     protected suspend fun <T> getResult(call: suspend () -> Response<T>): Resource<T> {
         try {
             val response = call()
             if (response.isSuccessful) {
                 val body = response.body()
-                if (body != null) return Resource.success(body)
+                if (body != null) {
+                    return Resource.success(body)
+                }
             }
             return error(" ${response.code()} ${response.message()}")
         } catch (e: Exception) {

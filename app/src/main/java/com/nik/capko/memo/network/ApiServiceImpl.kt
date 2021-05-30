@@ -1,6 +1,6 @@
 package com.nik.capko.memo.network
 
-import com.nik.capko.memo.network.base.BaseDataSource
+import com.nik.capko.memo.base.network.BaseDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
 

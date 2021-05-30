@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -76,7 +75,6 @@ class GamesFragment @Inject constructor() : MvpAppCompatFragment(), GamesMvpView
 
     override fun showGames(games: List<Game>) {
         adapter.games = games
-        Toast.makeText(context, "${games.size}", Toast.LENGTH_SHORT).show()
     }
 
     override fun showGame(gameId: GameType, words: List<Word>) {

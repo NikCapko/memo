@@ -4,10 +4,8 @@ import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.repository.WordRepository
 import com.nik.capko.memo.utils.Constants
-import com.nik.capko.memo.utils.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -25,43 +23,16 @@ class WordListPresenter @Inject constructor(
         loadWords()
     }
 
-    private fun loadWords() {
+    fun loadWords() {
         CoroutineScope(Dispatchers.Default).launch {
             launch(Dispatchers.Main) {
                 viewState.startLoading()
             }
-            delay(2000)
-            // val resource =
-            /* val word = WordDBEntity(
-                 Date().time,
-                 "a",
-                 "t",
-                 "f",
-                 0f
-             )
-             wordRepository.saveWord(word)
-             wordRepository.saveForm(FormDBEntity("key", "h", "k", word.id))*/
             wordsList = wordRepository.getWordsFromDB()
+                .filter { it.primaryLanguage }
             launch(Dispatchers.Main) {
                 viewState.showWords(wordsList)
                 viewState.completeLoading()
-            }
-            // checkWordsResponse(resource)
-        }
-    }
-
-    private fun CoroutineScope.checkWordsResponse(resource: Resource<List<Word>>) = launch {
-        when (resource.status) {
-            Resource.Status.SUCCESS -> {
-                wordsList = resource.data as List<Word>
-                launch(Dispatchers.Main) {
-                    viewState.showWords(wordsList)
-                }
-            }
-            Resource.Status.ERROR -> {
-                launch(Dispatchers.Main) {
-                    viewState.errorLoading(resource.message)
-                }
             }
         }
     }

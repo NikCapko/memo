@@ -34,6 +34,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = false
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
@@ -94,10 +95,10 @@ dependencies {
     implementation 'com.intuit.sdp:sdp-android:1.0.0'
 
     // card animation
-    implementation project(':flipview')
+    // implementation project(':flipview')
 
     // navigation cicerone
-     implementation "com.github.terrakok:cicerone:5.1.0"
+    // implementation "com.github.terrakok:cicerone:5.1.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

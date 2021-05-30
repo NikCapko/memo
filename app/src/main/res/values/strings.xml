@@ -16,4 +16,10 @@
     <string name="clear_database">Очистить базу данных при выходе из аккаунта ?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="ok">Ок</string>
+
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+
+    <string name="load_dictionary">Загрузить слова из данного словаря ?</string>
 </resources>

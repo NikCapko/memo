@@ -9,6 +9,8 @@ data class WordDBEntity(
     var id: Long,
     var word: String? = null,
     var type: String? = null,
+    var gender: String? = null,
     var translation: String? = null,
     var frequency: Float? = null,
+    var primaryLanguage: Boolean = false,
 )

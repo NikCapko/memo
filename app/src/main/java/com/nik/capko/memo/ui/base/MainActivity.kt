@@ -27,6 +27,13 @@ class MainActivity : MvpAppCompatActivity() {
         }
     }
 
+    fun <T : Fragment> replaceFragment(clazz: Class<T>, bundle: Bundle? = null) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fcView, newInstance(clazz, bundle))
+            .addToBackStack(clazz.name)
+            .commitAllowingStateLoss()
+    }
+
     fun <T : Fragment> openFragment(clazz: Class<T>, bundle: Bundle? = null) {
         supportFragmentManager.beginTransaction()
             .add(R.id.fcView, newInstance(clazz, bundle))
@@ -40,5 +47,9 @@ class MainActivity : MvpAppCompatActivity() {
                 arguments = bundle
             }
         }
+    }
+
+    fun closeFragment() {
+        supportFragmentManager.popBackStack()
     }
 }

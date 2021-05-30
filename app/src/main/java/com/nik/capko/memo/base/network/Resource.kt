@@ -1,4 +1,4 @@
-package com.nik.capko.memo.utils
+package com.nik.capko.memo.base.network
 
 data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
 

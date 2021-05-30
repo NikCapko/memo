@@ -27,4 +27,10 @@
         android:textStyle="italic"
         tools:text="Привет" />
 
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/gray40"
+        android:layout_marginHorizontal="@dimen/_8sdp"
+        android:layout_height="1dp" />
+
 </LinearLayout>

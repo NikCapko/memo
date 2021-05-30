@@ -1,12 +1,12 @@
 package com.nik.capko.memo.repository
 
+import com.nik.capko.memo.base.network.Resource
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.AppDatabase
 import com.nik.capko.memo.db.data.FormDBEntity
 import com.nik.capko.memo.db.data.WordDBEntity
 import com.nik.capko.memo.db.data.WordFormDBEntity.Companion.toWordModel
 import com.nik.capko.memo.network.ApiServiceImpl
-import com.nik.capko.memo.utils.Resource
 import javax.inject.Inject
 
 class WordRepository @Inject constructor(
@@ -25,6 +25,10 @@ class WordRepository @Inject constructor(
 
     suspend fun saveForm(form: FormDBEntity) {
         formsDao.insert(form)
+    }
+
+    suspend fun deleteWordById(id: Long) {
+        wordsDao.deleteWordById(id)
     }
 
     suspend fun getWordsFromDB(): List<Word> {

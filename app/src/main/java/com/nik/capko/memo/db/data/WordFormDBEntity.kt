@@ -18,9 +18,11 @@ data class WordFormDBEntity(
                 id = word?.id ?: 0,
                 word = word?.word,
                 type = word?.type,
+                gender = word?.gender,
                 translation = word?.translation,
                 frequency = word?.frequency,
-                forms = forms.map { it.toFormModel() }
+                forms = forms.map { it.toFormModel() },
+                primaryLanguage = word?.primaryLanguage ?: false
             )
         }
     }

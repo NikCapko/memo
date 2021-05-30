@@ -6,6 +6,5 @@ object Constants {
     const val LOGIN = "Constants.LOGIN"
     const val PASSWORD = "Constants.PASSWORD"
 
-    const val START_WORD_ADD_SCREEN = 1000
-    const val START_WORD_DETAIL_SCREEN = 1001
+    const val LOAD_WORDS_EVENT = "Constants.LOAD_WORDS_EVENT"
 }

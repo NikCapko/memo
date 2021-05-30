@@ -1,3 +1,5 @@
+@file:Suppress("ClassOrdering")
+
 package com.nik.capko.memo.app
 
 import android.app.Application

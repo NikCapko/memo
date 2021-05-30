@@ -1,12 +1,12 @@
 package com.nik.capko.memo.repository
 
+import com.nik.capko.memo.base.network.Resource
 import com.nik.capko.memo.data.Dictionary
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.AppDatabase
 import com.nik.capko.memo.db.data.FormDBEntity
 import com.nik.capko.memo.db.data.WordDBEntity
 import com.nik.capko.memo.network.ApiServiceImpl
-import com.nik.capko.memo.utils.Resource
 import javax.inject.Inject
 
 class DictionaryRepository @Inject constructor(
