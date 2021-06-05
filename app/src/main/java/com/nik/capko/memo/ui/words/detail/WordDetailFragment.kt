@@ -18,6 +18,9 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordDetailBinding
 import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.extensions.argument
+import com.nik.capko.memo.utils.extensions.hideKeyboard
+import com.nik.capko.memo.utils.extensions.makeGone
+import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -26,7 +29,7 @@ import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordDetailFragment : MvpAppCompatFragment(), WordDetailMvpView {
+class WordDetailFragment : MvpAppCompatFragment(), WordDetailView {
 
     companion object {
         const val WORD = "word"
@@ -78,19 +81,41 @@ class WordDetailFragment : MvpAppCompatFragment(), WordDetailMvpView {
 
     private fun setListeners() {
         with(viewBinding) {
-            btnSave.setOnClickListener {
+            btnAdd.setOnClickListener {
+                hideKeyboard()
                 presenter.onSaveWord(
                     etWord.text.toString(),
                     etTranslate.text.toString()
                 )
             }
-            btnDelete.setOnClickListener { presenter.onDeleteWord() }
+            btnSave.setOnClickListener {
+                hideKeyboard()
+                presenter.onSaveWord(
+                    etWord.text.toString(),
+                    etTranslate.text.toString()
+                )
+            }
+            btnDelete.setOnClickListener {
+                hideKeyboard()
+                presenter.onDeleteWord()
+            }
         }
     }
 
-    override fun initView(word: Word) {
-        viewBinding.etWord.setText(word.word)
-        viewBinding.etTranslate.setText(word.translation)
+    override fun initView(word: Word?) {
+        with(viewBinding) {
+            word?.let {
+                flAddWordContainer.makeGone()
+                llEditWordContainer.makeVisible()
+                etWord.setText(word.word)
+                etTranslate.setText(word.translation)
+                etFrequency.setText(word.frequency.toString())
+            } ?: run {
+                flAddWordContainer.makeVisible()
+                llEditWordContainer.makeGone()
+                tilFrequency.makeGone()
+            }
+        }
     }
 
     override fun sendSuccessResult() {

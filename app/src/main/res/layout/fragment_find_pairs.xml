@@ -1,207 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:baselineAligned="true"
     android:background="@color/white"
-    android:orientation="horizontal"
-    android:weightSum="2">
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <FrameLayout
+        android:id="@+id/flContentContainer"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/_8sdp"
-        android:weightSum="8">
+        android:visibility="gone">
 
-        <Button
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="яблоко" />
+            android:layout_height="match_parent"
+            android:baselineAligned="true"
+            android:weightSum="2">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="груша" />
+            <RadioGroup
+                android:id="@+id/rgWord"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/_8sdp">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="тыква" />
+                <RadioButton
+                    android:id="@+id/btnWord1"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="яблоко" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="слива" />
+                <RadioButton
+                    android:id="@+id/btnWord2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="груша" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="яблоко" />
+                <RadioButton
+                    android:id="@+id/btnWord3"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="тыква" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="груша" />
+                <RadioButton
+                    android:id="@+id/btnWord4"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="слива" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="тыква" />
+                <RadioButton
+                    android:id="@+id/btnWord5"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="слива" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="слива" />
+            </RadioGroup>
 
-    </LinearLayout>
+            <RadioGroup
+                android:id="@+id/rgTranslate"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/_8sdp">
 
-    <LinearLayout
-        android:layout_width="0dp"
+                <RadioButton
+                    android:id="@+id/btnTranslate1"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:clickable="true"
+                    android:ellipsize="end"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="тыква" />
+
+                <RadioButton
+                    android:id="@+id/btnTranslate2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="слива" />
+
+                <RadioButton
+                    android:id="@+id/btnTranslate3"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="яблоко" />
+
+                <RadioButton
+                    android:id="@+id/btnTranslate4"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="груша" />
+
+                <RadioButton
+                    android:id="@+id/btnTranslate5"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/selector_button_background"
+                    android:button="@android:color/transparent"
+                    android:gravity="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
+                    tools:text="тыква" />
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <com.nik.capko.memo.utils.view.ProgressView
+        android:id="@+id/pvLoad"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/rlEnGameContainer"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/_8sdp"
-        android:weightSum="8">
+        android:visibility="gone"
+        tools:visibility="visible">
 
-        <Button
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lavSuccess"
+                android:layout_width="@dimen/_200sdp"
+                android:layout_height="@dimen/_200sdp"
+                android:layout_marginTop="@dimen/_50sdp"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
+                app:lottie_rawRes="@raw/success" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:gravity="center_horizontal"
+                android:text="@string/game_over"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_20sdp" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnExit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:text="@string/finish"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="тыква" />
+            android:textSize="@dimen/_14sdp" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="слива" />
+    </RelativeLayout>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="яблоко" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="груша" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="тыква" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="слива" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="тыква" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="normal"
-            tools:text="слива" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

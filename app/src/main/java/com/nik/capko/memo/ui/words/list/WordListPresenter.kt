@@ -14,7 +14,7 @@ import javax.inject.Inject
 @InjectViewState
 class WordListPresenter @Inject constructor(
     private val wordRepository: WordRepository
-) : MvpPresenter<WordListMvpView>() {
+) : MvpPresenter<WordListView>() {
 
     private var wordsList = emptyList<Word>()
 

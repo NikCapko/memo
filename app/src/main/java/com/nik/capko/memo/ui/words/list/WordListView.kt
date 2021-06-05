@@ -7,7 +7,7 @@ import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface WordListMvpView : MvpView, ProgressMvpView {
+interface WordListView : MvpView, ProgressMvpView {
     fun showWords(wordsList: List<Word>)
     fun showWordDetail(word: Word?)
     fun showAddWordScreen()

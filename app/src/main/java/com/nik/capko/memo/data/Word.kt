@@ -15,4 +15,8 @@ data class Word(
     @SerializedName("primaryLanguage") var primaryLanguage: Boolean = false,
 
     @SerializedName("forms") var forms: List<Form>? = null
-) : Parcelable
+) : Parcelable {
+    companion object {
+        const val WORD_GAME_PRICE = 0.02f
+    }
+}

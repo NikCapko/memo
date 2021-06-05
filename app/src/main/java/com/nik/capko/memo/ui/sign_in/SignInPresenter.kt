@@ -9,7 +9,7 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class SignInPresenter @Inject constructor() : MvpPresenter<SignInMvpView>() {
+class SignInPresenter @Inject constructor() : MvpPresenter<SignInView>() {
 
     fun signIn(login: String, password: String) {
         appStorage.put(Constants.LOGIN, login)

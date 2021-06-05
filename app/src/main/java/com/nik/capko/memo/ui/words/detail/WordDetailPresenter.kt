@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class WordDetailPresenter @Inject constructor(
     private val wordRepository: WordRepository
-) : MvpPresenter<WordDetailMvpView>() {
+) : MvpPresenter<WordDetailView>() {
 
     private var word: Word? = null
 
@@ -26,7 +26,7 @@ class WordDetailPresenter @Inject constructor(
     }
 
     private fun initView() {
-        word?.let { viewState.initView(it) }
+        viewState.initView(word)
     }
 
     fun onSaveWord(word: String, translate: String) {

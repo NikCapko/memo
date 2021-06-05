@@ -35,6 +35,10 @@ class WordRepository @Inject constructor(
         return wordsDao.getAllWords().map { it.toWordModel() }
     }
 
+    suspend fun getWordsForGameFromDB(): List<Word> {
+        return wordsDao.getWordsForGame().map { it.toWordModel() }
+    }
+
     suspend fun getWordsFromServer(): Resource<List<Word>> {
         return apiService.getWordList()
     }

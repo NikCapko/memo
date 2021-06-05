@@ -6,6 +6,7 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.data.FormDBEntity
 import com.nik.capko.memo.db.data.WordDBEntity
 import com.nik.capko.memo.repository.DictionaryRepository
+import com.nik.capko.memo.repository.WordRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,7 +14,8 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 class DictionaryPresenter @Inject constructor(
-    private val dictionaryRepository: DictionaryRepository
+    private val dictionaryRepository: DictionaryRepository,
+    private val wordRepository: WordRepository
 ) : MvpPresenter<DictionaryView>() {
 
     private var dictionaryList = emptyList<Dictionary>()
@@ -81,9 +83,9 @@ class DictionaryPresenter @Inject constructor(
                         word.frequency,
                         word.primaryLanguage
                     )
-                    dictionaryRepository.saveWord(wordDBEntity)
+                    wordRepository.saveWord(wordDBEntity)
                     word.forms?.forEach { form ->
-                        dictionaryRepository.saveForm(
+                        wordRepository.saveForm(
                             FormDBEntity(form.key!!, form.name, form.value, word.id)
                         )
                     }

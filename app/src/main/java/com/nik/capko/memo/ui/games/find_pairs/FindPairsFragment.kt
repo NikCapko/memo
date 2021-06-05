@@ -6,9 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.Toast
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.databinding.FragmentFindPairsBinding
+import com.nik.capko.memo.utils.extensions.makeGone
+import com.nik.capko.memo.utils.extensions.makeInvisible
+import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -18,6 +23,7 @@ import javax.inject.Provider
 @AndroidEntryPoint
 class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
 
+    @Suppress("ClassOrdering")
     companion object {
         const val WORDS = "SelectTranslateFragment.WORDS"
     }
@@ -27,6 +33,9 @@ class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
     private val presenter: FindPairsPresenter by moxyPresenter { presenterProvider.get() }
 
     private val viewBinding by viewBinding(FragmentFindPairsBinding::bind)
+
+    private var selectedTranslate: RadioButton? = null
+    private var selectedWord: RadioButton? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,5 +51,92 @@ class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
     }
 
     private fun setListeners() {
+        with(viewBinding) {
+            rgWord.setOnCheckedChangeListener { group, checkedId ->
+                if (rgTranslate.checkedRadioButtonId != -1) {
+                    selectedTranslate =
+                        rgTranslate.findViewById(rgTranslate.checkedRadioButtonId)
+                    selectedWord = group.findViewById(checkedId)
+                    presenter.onFindPair(
+                        selectedWord?.text.toString(),
+                        selectedTranslate?.text.toString()
+                    )
+                    rgTranslate.clearCheck()
+                    rgWord.clearCheck()
+                }
+            }
+            rgTranslate.setOnCheckedChangeListener { group, checkedId ->
+                if (rgWord.checkedRadioButtonId != -1) {
+                    selectedWord =
+                        rgWord.findViewById(rgWord.checkedRadioButtonId)
+                    selectedTranslate = group.findViewById(checkedId)
+                    presenter.onFindPair(
+                        selectedWord?.text.toString(),
+                        selectedTranslate?.text.toString()
+                    )
+                    rgWord.clearCheck()
+                    rgTranslate.clearCheck()
+                }
+            }
+            btnExit.setOnClickListener {
+                activity?.onBackPressed()
+            }
+            lavSuccess.setOnClickListener { }
+        }
+    }
+
+    override fun showWords(wordsList: List<String?>, translateList: List<String?>) {
+        with(viewBinding) {
+            btnWord1.text = wordsList[0]
+            btnWord2.text = wordsList[1]
+            btnWord3.text = wordsList[2]
+            btnWord4.text = wordsList[3]
+            btnWord5.text = wordsList[4]
+
+            btnTranslate1.text = translateList[0]
+            btnTranslate2.text = translateList[1]
+            btnTranslate3.text = translateList[2]
+            btnTranslate4.text = translateList[3]
+            btnTranslate5.text = translateList[4]
+        }
+    }
+
+    override fun onFindPairResult(success: Boolean) {
+        if (success) {
+            selectedWord?.makeInvisible()
+            selectedTranslate?.makeInvisible()
+        }
+        selectedWord = null
+        selectedTranslate = null
+    }
+
+    override fun endGame() {
+        with(viewBinding) {
+            flContentContainer.makeGone()
+            rlEnGameContainer.makeVisible()
+            lavSuccess.playAnimation()
+        }
+    }
+
+    override fun startLoading() {
+        with(viewBinding) {
+            flContentContainer.makeGone()
+            pvLoad.makeVisible()
+        }
+    }
+
+    override fun errorLoading(errorMessage: String?) {
+        Toast.makeText(context, "$errorMessage", Toast.LENGTH_SHORT).show()
+        with(viewBinding) {
+            flContentContainer.makeGone()
+            pvLoad.makeGone()
+        }
+    }
+
+    override fun completeLoading() {
+        with(viewBinding) {
+            flContentContainer.makeVisible()
+            pvLoad.makeGone()
+        }
     }
 }

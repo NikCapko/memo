@@ -11,6 +11,7 @@
     <string name="skip">Пропустить</string>
     <string name="word">Слово</string>
     <string name="translate">Перевод</string>
+    <string name="frequency">Изученность</string>
 
     <string name="attention">Внимание</string>
     <string name="clear_database">Очистить базу данных при выходе из аккаунта ?</string>
@@ -22,4 +23,10 @@
     <string name="delete">Удалить</string>
 
     <string name="load_dictionary">Загрузить слова из данного словаря ?</string>
+    <string name="game_over">Игра успешно окончена</string>
+    <string name="finish">Закончить</string>
+
+    <string name="game_level_success">Успешно</string>
+    <string name="game_level_error">Ошибок</string>
+
 </resources>

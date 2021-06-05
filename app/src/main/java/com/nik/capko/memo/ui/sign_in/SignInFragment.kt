@@ -21,7 +21,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class SignInFragment : MvpAppCompatFragment(), SignInMvpView {
+class SignInFragment : MvpAppCompatFragment(), SignInView {
 
     @Inject
     lateinit var presenterProvider: Provider<SignInPresenter>

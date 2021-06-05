@@ -7,8 +7,8 @@ import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface WordDetailMvpView : MvpView, ProgressDialogView {
-    fun initView(word: Word)
+interface WordDetailView : MvpView, ProgressDialogView {
+    fun initView(word: Word?)
     fun sendSuccessResult()
     fun onCloseScreen()
 }

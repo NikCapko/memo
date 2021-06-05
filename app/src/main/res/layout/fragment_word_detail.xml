@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -56,14 +58,39 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilFrequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:hint="@string/frequency"
+            app:boxBackgroundColor="@color/white"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFrequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:editable="false"
+                android:focusable="false"
+                android:inputType="none"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_14sdp"
+                tools:text="0.3" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/llEditWordContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/_8sdp"
         android:orientation="horizontal"
+        android:visibility="gone"
         android:weightSum="2">
 
         <com.google.android.material.button.MaterialButton
@@ -74,9 +101,8 @@
             android:layout_weight="1"
             android:text="@string/save"
             android:textAllCaps="false"
-            android:textSize="@dimen/_14sdp"
-            app:errorEnabled="true"
-            app:passwordToggleEnabled="true" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14sdp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDelete"
@@ -92,5 +118,24 @@
             android:textSize="@dimen/_14sdp" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/flAddWordContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/_8sdp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:textColor="@color/white"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:text="@string/save"
+            android:textAllCaps="false"
+            android:textSize="@dimen/_14sdp" />
+
+    </FrameLayout>
 
 </RelativeLayout>

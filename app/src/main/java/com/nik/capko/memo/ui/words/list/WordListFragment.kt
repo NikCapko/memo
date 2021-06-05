@@ -38,7 +38,7 @@ import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListMvpView {
+class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListView {
 
     @Inject
     lateinit var presenterProvider: Provider<WordListPresenter>
@@ -47,6 +47,8 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
 
     private lateinit var adapter: WordListAdapter
+
+    private var gameMenuItem: MenuItem? = null
 
     private val localBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -67,9 +69,11 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
         inflater.inflate(R.menu.menu_action, menu)
+        val logoutMenuItem = menu.findItem(R.id.action_logout)
         if (appStorage.get(Constants.IS_REGISTER, false)) {
-            menu.getItem(2).isVisible = false
+            logoutMenuItem.isVisible = false
         }
+        gameMenuItem = menu.findItem(R.id.action_games)
     }
 
     override fun onResume() {
@@ -132,6 +136,7 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListM
     }
 
     override fun showWords(wordsList: List<Word>) {
+        gameMenuItem?.isVisible = wordsList.isNotEmpty()
         adapter.words = wordsList
     }
 

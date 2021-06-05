@@ -7,4 +7,4 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
-class SignUpPresenter @Inject constructor() : MvpPresenter<SignUpMvpView>()
+class SignUpPresenter @Inject constructor() : MvpPresenter<SignUpView>()
