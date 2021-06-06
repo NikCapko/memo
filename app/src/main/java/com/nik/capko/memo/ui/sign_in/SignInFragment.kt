@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.databinding.FragmentSignInBinding
-import com.nik.capko.memo.ui.base.MainActivity
+import com.nik.capko.memo.ui.main.MainActivity
 import com.nik.capko.memo.ui.words.list.WordListFragment
 import com.nik.capko.memo.utils.extensions.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint

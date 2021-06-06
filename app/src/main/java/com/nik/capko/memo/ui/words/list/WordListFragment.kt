@@ -22,9 +22,9 @@ import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordListBinding
-import com.nik.capko.memo.ui.base.MainActivity
 import com.nik.capko.memo.ui.dictionary.DictionaryFragment
 import com.nik.capko.memo.ui.games.list.GamesFragment
+import com.nik.capko.memo.ui.main.MainActivity
 import com.nik.capko.memo.ui.sign_in.SignInFragment
 import com.nik.capko.memo.ui.words.detail.WordDetailFragment
 import com.nik.capko.memo.ui.words.list.adapter.WordListAdapter
@@ -71,9 +71,7 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListV
         menu.clear()
         inflater.inflate(R.menu.menu_action, menu)
         val logoutMenuItem = menu.findItem(R.id.action_logout)
-        if (appStorage.get(Constants.IS_REGISTER, false)) {
-            logoutMenuItem.isVisible = false
-        }
+        logoutMenuItem.isVisible = appStorage.get(Constants.IS_REGISTER, false)
         gameMenuItem = menu.findItem(R.id.action_games)
     }
 

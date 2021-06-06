@@ -14,11 +14,11 @@ import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.GameType
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentGamesBinding
-import com.nik.capko.memo.ui.base.MainActivity
 import com.nik.capko.memo.ui.games.find_pairs.FindPairsFragment
 import com.nik.capko.memo.ui.games.list.adapter.GamesAdapter
 import com.nik.capko.memo.ui.games.phrases.PhrasesFragment
 import com.nik.capko.memo.ui.games.select_translate.SelectTranslateFragment
+import com.nik.capko.memo.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter

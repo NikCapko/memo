@@ -19,7 +19,8 @@ class SignInPresenter @Inject constructor() : MvpPresenter<SignInView>() {
     }
 
     fun skip() {
-        appStorage.put(Constants.IS_REGISTER, true)
+        appStorage.put(Constants.IS_REGISTER, false)
+        appStorage.put(Constants.IS_SKIP_REGISTER, true)
         viewState.openWordsList()
     }
 }

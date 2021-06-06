@@ -16,8 +16,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.data.Dictionary
 import com.nik.capko.memo.databinding.FragmentDictionaryBinding
-import com.nik.capko.memo.ui.base.MainActivity
 import com.nik.capko.memo.ui.dictionary.adapter.DictionaryAdapter
+import com.nik.capko.memo.ui.main.MainActivity
 import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible

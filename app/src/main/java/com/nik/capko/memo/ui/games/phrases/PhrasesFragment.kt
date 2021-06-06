@@ -59,13 +59,15 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
             tvPhrase.text = phrase
             val ids = mutableListOf<Int>()
             translates?.forEach { it ->
-                val button = MaterialButton(requireContext())
-                button.id = View.generateViewId()
-                button.text = it
-                button.setOnClickListener { it1 ->
-                    onAddTranslate((it1 as Button).text.toString())
+                val button = MaterialButton(requireContext()).apply {
+                    id = View.generateViewId()
+                    text = it
+                    isAllCaps = false
+                    setOnClickListener { it1 ->
+                        onAddTranslate((it1 as Button).text.toString())
+                    }
+                    ids.add(id)
                 }
-                ids.add(button.id)
                 clContainer.addView(button)
             }
             fTranslates.referencedIds = ids.toIntArray()

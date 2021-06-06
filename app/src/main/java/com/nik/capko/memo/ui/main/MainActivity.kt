@@ -1,4 +1,4 @@
-package com.nik.capko.memo.ui.base
+package com.nik.capko.memo.ui.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -20,7 +20,9 @@ class MainActivity : MvpAppCompatActivity() {
     }
 
     private fun openDefaultFragment() {
-        if (appStorage.get(Constants.IS_REGISTER, false)) {
+        if (appStorage.get(Constants.IS_REGISTER, false) ||
+            appStorage.get(Constants.IS_SKIP_REGISTER, false)
+        ) {
             openFragment(WordListFragment::class.java)
         } else {
             openFragment(SignInFragment::class.java)
