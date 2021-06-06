@@ -24,6 +24,7 @@
 
     <string name="load_dictionary">Загрузить слова из данного словаря ?</string>
     <string name="game_over">Игра успешно окончена</string>
+    <string name="your_results">Выши результаты:</string>
     <string name="finish">Закончить</string>
 
     <string name="game_level_success">Успешно</string>

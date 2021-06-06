@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.app.appStorage
+import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordListBinding
 import com.nik.capko.memo.ui.base.MainActivity
@@ -136,7 +137,8 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListV
     }
 
     override fun showWords(wordsList: List<Word>) {
-        gameMenuItem?.isVisible = wordsList.isNotEmpty()
+        gameMenuItem?.isVisible =
+            wordsList.isNotEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
     }
 

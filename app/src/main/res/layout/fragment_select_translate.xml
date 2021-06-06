@@ -146,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_100sdp"
                 android:gravity="center_horizontal"
-                android:text="@string/game_over"
+                android:text="@string/your_results"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_20sdp" />
 
@@ -159,15 +159,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
-                    android:src="@drawable/ic_success" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_16sdp"
                     android:text="@string/game_level_success"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp" />
@@ -181,6 +175,12 @@
                     android:textSize="@dimen/_14sdp"
                     tools:text="5" />
 
+                <ImageView
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:src="@drawable/ic_success" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -192,15 +192,9 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
-                    android:src="@drawable/ic_error" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_16sdp"
                     android:text="@string/game_level_error"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14sdp" />
@@ -214,6 +208,12 @@
                     android:textSize="@dimen/_14sdp"
                     tools:text="5" />
 
+                <ImageView
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:src="@drawable/ic_error" />
+
             </LinearLayout>
 
         </LinearLayout>
@@ -223,8 +223,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_50sdp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="@dimen/_8sdp"
             android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
             android:text="@string/finish"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -235,8 +235,8 @@
     <com.nik.capko.memo.utils.view.ProgressView
         android:id="@+id/pvLoad"
         android:layout_width="@dimen/_100sdp"
-        android:visibility="gone"
         android:layout_height="@dimen/_100sdp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

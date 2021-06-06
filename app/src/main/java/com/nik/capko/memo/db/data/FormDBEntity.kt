@@ -2,11 +2,11 @@ package com.nik.capko.memo.db.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 import com.nik.capko.memo.data.Form
 
 @Entity(
     tableName = "forms",
+    primaryKeys = ["key", "wordId"],
     foreignKeys = [
         ForeignKey(
             entity = WordDBEntity::class,
@@ -16,7 +16,6 @@ import com.nik.capko.memo.data.Form
     ]
 )
 data class FormDBEntity(
-    @PrimaryKey
     var key: String,
     var name: String? = null,
     var value: String? = null,

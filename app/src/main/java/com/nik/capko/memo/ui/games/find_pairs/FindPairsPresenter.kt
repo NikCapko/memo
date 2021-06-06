@@ -4,7 +4,7 @@ package com.nik.capko.memo.ui.games.find_pairs
 
 import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
-import com.nik.capko.memo.repository.WordRepository
+import com.nik.capko.memo.repository.GameRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 class FindPairsPresenter @Inject constructor(
-    private val wordRepository: WordRepository
+    private val gameRepository: GameRepository
 ) : MvpPresenter<FindPairsView>() {
 
     private var words = emptyList<Word>()
@@ -29,8 +29,7 @@ class FindPairsPresenter @Inject constructor(
             launch(Dispatchers.Main) {
                 viewState.startLoading()
             }
-            words = wordRepository.getWordsForGameFromDB()
-                .filter { it.primaryLanguage }
+            words = gameRepository.getWordsForGameByLimit(Game.MAX_WORDS_COUNT_FIND_PAIRS)
 
             val wordList = words.toMutableList()
                 .map { it.word }

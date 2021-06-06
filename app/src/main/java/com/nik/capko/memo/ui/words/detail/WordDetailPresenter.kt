@@ -40,7 +40,7 @@ class WordDetailPresenter @Inject constructor(
                 null,
                 null,
                 translate,
-                null,
+                0f,
                 true
             )
             wordRepository.saveWord(wordDBEntity)

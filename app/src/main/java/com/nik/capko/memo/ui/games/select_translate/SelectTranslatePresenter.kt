@@ -6,7 +6,7 @@ import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.data.FormDBEntity
 import com.nik.capko.memo.db.data.WordDBEntity
-import com.nik.capko.memo.repository.WordRepository
+import com.nik.capko.memo.repository.GameRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 class SelectTranslatePresenter @Inject constructor(
-    private val wordRepository: WordRepository
+    private val gameRepository: GameRepository
 ) : MvpPresenter<SelectTranslateView>() {
 
     private var words: List<Word>? = null
@@ -34,8 +34,7 @@ class SelectTranslatePresenter @Inject constructor(
             launch(Dispatchers.Main) {
                 viewState.startLoading()
             }
-            words = wordRepository.getWordsForGameFromDB()
-                .filter { it.primaryLanguage }
+            words = gameRepository.getWordsForGameByLimit(Game.MAX_WORDS_COUNT_SELECT_TRANSLATE)
             launch(Dispatchers.Main) {
                 updateWord()
                 viewState.completeLoading()
@@ -65,7 +64,7 @@ class SelectTranslatePresenter @Inject constructor(
     }
 
     fun onAnimationEnd() {
-        if (counter == Game.MAX_WORDS_COUNT_SELECT_TRANSFER - 1) {
+        if (counter == Game.MAX_WORDS_COUNT_SELECT_TRANSLATE - 1) {
             updateWordsDB()
         } else {
             counter++
@@ -85,9 +84,9 @@ class SelectTranslatePresenter @Inject constructor(
                     word.frequency,
                     word.primaryLanguage
                 )
-                wordRepository.saveWord(wordDBEntity)
+                gameRepository.saveWord(wordDBEntity)
                 word.forms?.forEach { form ->
-                    wordRepository.saveForm(
+                    gameRepository.saveForm(
                         FormDBEntity(form.key!!, form.name, form.value, word.id)
                     )
                 }

@@ -16,5 +16,9 @@ data class WordType(
         const val GENDER_M = "m"
         const val GENDER_F = "f"
         const val GENDER_N = "n"
+
+        const val PHRASE_TYPE_ADJ_NONE_F = "adj#form[f_gender] noun#gender=f"
+        const val PHRASE_TYPE_ADJ_NONE_M = "adj#form[m_gender] noun#gender=m"
+        const val PHRASE_TYPE_ADJ_NONE_N = "adj#form[n_gender] noun#gender=n"
     }
 }

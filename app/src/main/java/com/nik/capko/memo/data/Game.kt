@@ -6,7 +6,7 @@ data class Game(
 ) {
     companion object {
 
-        const val MAX_WORDS_COUNT_SELECT_TRANSFER = 5
+        const val MAX_WORDS_COUNT_SELECT_TRANSLATE = 5
         const val MAX_WORDS_COUNT_FIND_PAIRS = 5
 
         fun getDefaultList(): List<Game> {
