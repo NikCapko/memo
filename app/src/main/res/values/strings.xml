@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Memo</string>
+
+    <string name="action_games">Игры</string>
+    <string name="action_dictionary">Словари</string>
+    <string name="action_logout">Выйти</string>
+
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="sign_in">Войти</string>
+    <string name="skip">Пропустить</string>
+    <string name="word">Слово</string>
+    <string name="translate">Перевод</string>
+    <string name="frequency">Изученность</string>
+
+    <string name="attention">Внимание</string>
+    <string name="clear_database">Очистить базу данных при выходе из аккаунта ?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="ok">Ок</string>
+
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+
+    <string name="load_dictionary">Загрузить слова из данного словаря ?</string>
+    <string name="game_over">Игра успешно окончена</string>
+    <string name="your_results">Выши результаты:</string>
+    <string name="finish">Закончить</string>
+
+    <string name="game_level_success">Успешно</string>
+    <string name="game_level_error">Ошибок</string>
+
 </resources>
