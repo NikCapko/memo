@@ -29,20 +29,32 @@ class WordDetailPresenter @Inject constructor(
         viewState.initView(word)
     }
 
-    fun onSaveWord(word: String, translate: String) {
+    fun onSaveWord(wordArg: String, translate: String) {
         CoroutineScope(Dispatchers.Default).launch {
             launch(Dispatchers.Main) {
                 viewState.startProgressDialog()
             }
-            val wordDBEntity = WordDBEntity(
-                Date().time,
-                word,
-                null,
-                null,
-                translate,
-                0f,
-                true
-            )
+            val wordDBEntity = if (word != null) {
+                WordDBEntity(
+                    word?.id ?: Date().time,
+                    wordArg,
+                    word?.type,
+                    word?.gender,
+                    translate,
+                    word?.frequency,
+                    true
+                )
+            } else {
+                WordDBEntity(
+                    Date().time,
+                    wordArg,
+                    null,
+                    null,
+                    translate,
+                    0f,
+                    true
+                )
+            }
             wordRepository.saveWord(wordDBEntity)
             launch(Dispatchers.Main) {
                 viewState.completeProgressDialog()

@@ -15,4 +15,5 @@ interface WordListView : MvpView, ProgressMvpView {
     fun showGamesScreen()
     fun showDictionaryScreen()
     fun openSignInScreen()
+    fun speakOut(word: String?)
 }

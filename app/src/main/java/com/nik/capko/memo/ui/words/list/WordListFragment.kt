@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -34,12 +36,21 @@ import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListView {
+class WordListFragment @Inject constructor() :
+    MvpAppCompatFragment(),
+    WordListView,
+    TextToSpeech.OnInitListener {
+
+    @Suppress("ClassOrdering")
+    companion object {
+        const val SPEECH_RATE = 0.6f
+    }
 
     @Inject
     lateinit var presenterProvider: Provider<WordListPresenter>
@@ -50,6 +61,8 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListV
     private lateinit var adapter: WordListAdapter
 
     private var gameMenuItem: MenuItem? = null
+
+    private var tts: TextToSpeech? = null
 
     private val localBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -64,6 +77,8 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListV
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        tts = TextToSpeech(context, this)
+        tts?.setSpeechRate(SPEECH_RATE)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -122,9 +137,14 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListV
 
     private fun setListeners() {
         viewBinding.btnAddWord.setOnClickListener { presenter.onAddWordClick() }
-        adapter = WordListAdapter { position ->
-            presenter.onItemClick(position)
-        }
+        adapter = WordListAdapter(
+            { position ->
+                presenter.onItemClick(position)
+            },
+            { position ->
+                presenter.onEnableSound(position)
+            }
+        )
     }
 
     private fun initAdapters() {
@@ -181,6 +201,21 @@ class WordListFragment @Inject constructor() : MvpAppCompatFragment(), WordListV
 
     override fun openSignInScreen() {
         (activity as? MainActivity)?.openFragment(SignInFragment::class.java)
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val result: Int = tts?.setLanguage(Locale.US) ?: TextToSpeech.LANG_NOT_SUPPORTED
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported")
+            }
+        } else {
+            Log.e("TTS", "Initilization Failed!")
+        }
+    }
+
+    override fun speakOut(word: String?) {
+        tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null)
     }
 
     override fun startLoading() {

@@ -42,6 +42,11 @@ class WordListPresenter @Inject constructor(
         viewState.showWordDetail(word)
     }
 
+    fun onEnableSound(position: Int) {
+        val word = wordsList.getOrNull(position)
+        viewState.speakOut(word?.word)
+    }
+
     fun onAddWordClick() {
         viewState.showAddWordScreen()
     }

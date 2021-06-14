@@ -15,6 +15,7 @@ import com.nik.capko.memo.data.Form
         )
     ]
 )
+
 data class FormDBEntity(
     var key: String,
     var name: String? = null,

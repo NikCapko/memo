@@ -7,7 +7,10 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.ItemWordListBinding
 import kotlin.properties.Delegates
 
-class WordListAdapter(val onItemClick: (Int) -> Unit) :
+class WordListAdapter(
+    val onItemClick: (Int) -> Unit,
+    val onEnableSound: (Int) -> Unit,
+) :
     RecyclerView.Adapter<WordListAdapter.ItemViewHolder>() {
 
     var words: List<Word>? by Delegates.observable(emptyList()) { _, _, _ -> notifyDataSetChanged() }
@@ -28,7 +31,12 @@ class WordListAdapter(val onItemClick: (Int) -> Unit) :
         RecyclerView.ViewHolder(itemBinding.root) {
 
         init {
-            itemView.setOnClickListener { onItemClick.invoke(absoluteAdapterPosition) }
+            itemView.setOnClickListener {
+                onItemClick.invoke(absoluteAdapterPosition)
+            }
+            itemBinding.ivSoundWaves.setOnClickListener {
+                onEnableSound.invoke(absoluteAdapterPosition)
+            }
         }
 
         fun bind(word: Word?) {

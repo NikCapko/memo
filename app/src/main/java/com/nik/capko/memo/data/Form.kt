@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Form(
-    @SerializedName("key") var key: String? = null,
+    @SerializedName("key") var key: String,
     @SerializedName("name") var name: String? = null,
     @SerializedName("value") var value: String? = null,
 ) : Parcelable

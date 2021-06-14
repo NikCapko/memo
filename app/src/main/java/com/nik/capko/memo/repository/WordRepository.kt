@@ -5,19 +5,18 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.AppDatabase
 import com.nik.capko.memo.db.data.FormDBEntity
 import com.nik.capko.memo.db.data.WordDBEntity
-import com.nik.capko.memo.db.data.WordFormDBEntity.Companion.toWordModel
+import com.nik.capko.memo.db.mapper.WordFormDBMapper
 import com.nik.capko.memo.network.ApiServiceImpl
 import javax.inject.Inject
 
 class WordRepository @Inject constructor(
     appDatabase: AppDatabase,
-    api: ApiServiceImpl
+    var apiService: ApiServiceImpl,
+    var wordFormMapper: WordFormDBMapper,
 ) {
 
     private val wordsDao = appDatabase.wordDao()
     private val formsDao = appDatabase.formDao()
-
-    private val apiService = api
 
     suspend fun saveWord(word: WordDBEntity) {
         wordsDao.insert(word)
@@ -32,7 +31,7 @@ class WordRepository @Inject constructor(
     }
 
     suspend fun getWordsFromDB(): List<Word> {
-        return wordsDao.getAllWords().map { it.toWordModel() }
+        return wordFormMapper.mapFromEntityList(wordsDao.getAllWords())
     }
 
     suspend fun getWordsFromServer(): Resource<List<Word>> {

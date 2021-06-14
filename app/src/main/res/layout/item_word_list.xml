@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -20,6 +20,7 @@
         android:id="@+id/tvWordTranslate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tvWordTitle"
         android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_8sdp"
         android:layout_marginBottom="@dimen/_8sdp"
@@ -29,8 +30,18 @@
 
     <View
         android:layout_width="match_parent"
-        android:background="@color/gray40"
+        android:layout_height="1dp"
+        android:layout_below="@+id/tvWordTranslate"
         android:layout_marginHorizontal="@dimen/_8sdp"
-        android:layout_height="1dp" />
+        android:background="@color/gray40" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/ivSoundWaves"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:src="@drawable/ic_sound_waves" />
+
+</RelativeLayout>
