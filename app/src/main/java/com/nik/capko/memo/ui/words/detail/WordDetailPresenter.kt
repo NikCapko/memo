@@ -1,5 +1,6 @@
 package com.nik.capko.memo.ui.words.detail
 
+import com.github.terrakok.cicerone.Router
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.data.WordDBEntity
 import com.nik.capko.memo.repository.WordRepository
@@ -11,7 +12,8 @@ import java.util.Date
 import javax.inject.Inject
 
 class WordDetailPresenter @Inject constructor(
-    private val wordRepository: WordRepository
+    private val router: Router,
+    private val wordRepository: WordRepository,
 ) : MvpPresenter<WordDetailView>() {
 
     private var word: Word? = null
@@ -57,9 +59,9 @@ class WordDetailPresenter @Inject constructor(
             }
             wordRepository.saveWord(wordDBEntity)
             launch(Dispatchers.Main) {
-                viewState.completeProgressDialog()
                 viewState.sendSuccessResult()
-                viewState.onCloseScreen()
+                viewState.completeProgressDialog()
+                router.exit()
             }
         }
     }
@@ -71,9 +73,9 @@ class WordDetailPresenter @Inject constructor(
             }
             wordRepository.deleteWordById(word?.id ?: 0)
             launch(Dispatchers.Main) {
-                viewState.completeProgressDialog()
                 viewState.sendSuccessResult()
-                viewState.onCloseScreen()
+                viewState.completeProgressDialog()
+                router.exit()
             }
         }
     }

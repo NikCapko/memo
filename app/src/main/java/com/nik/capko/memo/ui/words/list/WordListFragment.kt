@@ -15,26 +15,20 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.app.appStorage
+import com.nik.capko.memo.base.ui.BaseFragment
 import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordListBinding
-import com.nik.capko.memo.ui.dictionary.DictionaryFragment
-import com.nik.capko.memo.ui.games.list.GamesFragment
-import com.nik.capko.memo.ui.main.MainActivity
-import com.nik.capko.memo.ui.sign_in.SignInFragment
-import com.nik.capko.memo.ui.words.detail.WordDetailFragment
 import com.nik.capko.memo.ui.words.list.adapter.WordListAdapter
 import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.Locale
 import javax.inject.Inject
@@ -43,7 +37,7 @@ import javax.inject.Provider
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
 class WordListFragment @Inject constructor() :
-    MvpAppCompatFragment(),
+    BaseFragment(),
     WordListView,
     TextToSpeech.OnInitListener {
 
@@ -160,17 +154,6 @@ class WordListFragment @Inject constructor() :
         adapter.words = wordsList
     }
 
-    override fun showWordDetail(word: Word?) {
-        val bundle = bundleOf(
-            WordDetailFragment.WORD to word,
-        )
-        (activity as? MainActivity)?.openFragment(WordDetailFragment::class.java, bundle)
-    }
-
-    override fun showAddWordScreen() {
-        (activity as? MainActivity)?.openFragment(WordDetailFragment::class.java)
-    }
-
     override fun showClearDatabaseDialog() {
         AlertDialog.Builder(activity).apply {
             setTitle(R.string.attention)
@@ -189,18 +172,6 @@ class WordListFragment @Inject constructor() :
                 presenter.logout(false)
             }
         }.create().show()
-    }
-
-    override fun showGamesScreen() {
-        (activity as? MainActivity)?.openFragment(GamesFragment::class.java)
-    }
-
-    override fun showDictionaryScreen() {
-        (activity as? MainActivity)?.openFragment(DictionaryFragment::class.java)
-    }
-
-    override fun openSignInScreen() {
-        (activity as? MainActivity)?.openFragment(SignInFragment::class.java)
     }
 
     override fun onInit(status: Int) {

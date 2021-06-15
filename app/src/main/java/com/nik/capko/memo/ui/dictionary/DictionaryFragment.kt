@@ -17,7 +17,6 @@ import com.nik.capko.memo.R
 import com.nik.capko.memo.data.Dictionary
 import com.nik.capko.memo.databinding.FragmentDictionaryBinding
 import com.nik.capko.memo.ui.dictionary.adapter.DictionaryAdapter
-import com.nik.capko.memo.ui.main.MainActivity
 import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible
@@ -109,10 +108,6 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
     override fun sendSuccessResult() {
         val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
-    }
-
-    override fun onCloseScreen() {
-        (activity as? MainActivity)?.closeFragment()
     }
 
     override fun startLoading() {

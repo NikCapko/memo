@@ -79,12 +79,13 @@ class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
                 }
             }
             btnExit.setOnClickListener {
-                activity?.onBackPressed()
+                presenter.onBackPressed()
             }
             lavSuccess.setOnClickListener { }
         }
     }
 
+    @Suppress("MagicNumber")
     override fun showWords(wordsList: List<String?>, translateList: List<String?>) {
         with(viewBinding) {
             btnWord1.text = wordsList[0]

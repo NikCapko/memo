@@ -1,8 +1,10 @@
 package com.nik.capko.memo.ui.words.list
 
+import com.github.terrakok.cicerone.Router
 import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.repository.WordRepository
+import com.nik.capko.memo.ui.Screens
 import com.nik.capko.memo.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +15,8 @@ import javax.inject.Inject
 
 @InjectViewState
 class WordListPresenter @Inject constructor(
-    private val wordRepository: WordRepository
+    private val router: Router,
+    private val wordRepository: WordRepository,
 ) : MvpPresenter<WordListView>() {
 
     private var wordsList = emptyList<Word>()
@@ -39,7 +42,7 @@ class WordListPresenter @Inject constructor(
 
     fun onItemClick(position: Int) {
         val word = wordsList.getOrNull(position)
-        viewState.showWordDetail(word)
+        router.navigateTo(Screens.wordDetailScreen(word))
     }
 
     fun onEnableSound(position: Int) {
@@ -48,15 +51,15 @@ class WordListPresenter @Inject constructor(
     }
 
     fun onAddWordClick() {
-        viewState.showAddWordScreen()
+        router.navigateTo(Screens.wordDetailScreen(null))
     }
 
     fun openGamesScreen() {
-        viewState.showGamesScreen()
+        router.navigateTo(Screens.gamesScreen())
     }
 
     fun openDictionaryScreen() {
-        viewState.showDictionaryScreen()
+        router.navigateTo(Screens.dictionaryScreen())
     }
 
     fun logout() {
@@ -70,7 +73,7 @@ class WordListPresenter @Inject constructor(
                 wordRepository.clearDatabase()
             }
             launch(Dispatchers.Main) {
-                viewState.openSignInScreen()
+                router.replaceScreen(Screens.signInScreen())
             }
         }
     }

@@ -82,7 +82,7 @@ class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
             btnTranslate5.setOnClickListener { onClickTranslate(it as Button) }
 
             btnExit.setOnClickListener {
-                activity?.onBackPressed()
+                presenter.onBackPressed()
             }
         }
     }
@@ -91,6 +91,7 @@ class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
         presenter.onTranslateClick(button.text.toString())
     }
 
+    @Suppress("MagicNumber")
     override fun showWord(word: Word?, translates: List<String>) {
         with(viewBinding) {
             lavSuccess.makeGone()

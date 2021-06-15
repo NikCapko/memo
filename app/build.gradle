@@ -98,7 +98,7 @@ dependencies {
     // implementation project(':flipview')
 
     // navigation cicerone
-    // implementation "com.github.terrakok:cicerone:5.1.0"
+    implementation "com.github.terrakok:cicerone:6.6"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

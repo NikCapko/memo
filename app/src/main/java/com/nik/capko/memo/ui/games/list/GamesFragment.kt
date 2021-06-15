@@ -6,18 +6,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.data.Game
-import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentGamesBinding
-import com.nik.capko.memo.ui.games.find_pairs.FindPairsFragment
 import com.nik.capko.memo.ui.games.list.adapter.GamesAdapter
-import com.nik.capko.memo.ui.games.phrases.PhrasesFragment
-import com.nik.capko.memo.ui.games.select_translate.SelectTranslateFragment
-import com.nik.capko.memo.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -74,31 +68,5 @@ class GamesFragment @Inject constructor() : MvpAppCompatFragment(), GamesMvpView
 
     override fun showGames(games: List<Game>) {
         adapter.games = games
-    }
-
-    override fun showGame(id: Game.Type, words: List<Word>) {
-        when (id) {
-            Game.Type.SELECT_TRANSLATE -> {
-                val bundle = bundleOf(
-                    SelectTranslateFragment.WORDS to words
-                )
-                (activity as? MainActivity)?.openFragment(
-                    SelectTranslateFragment::class.java,
-                    bundle
-                )
-            }
-            Game.Type.FIND_PAIRS -> {
-                val bundle = bundleOf(
-                    FindPairsFragment.WORDS to words
-                )
-                (activity as? MainActivity)?.openFragment(FindPairsFragment::class.java, bundle)
-            }
-            Game.Type.PHRASES -> {
-                val bundle = bundleOf(
-                    PhrasesFragment.WORDS to words
-                )
-                (activity as? MainActivity)?.openFragment(PhrasesFragment::class.java, bundle)
-            }
-        }
     }
 }

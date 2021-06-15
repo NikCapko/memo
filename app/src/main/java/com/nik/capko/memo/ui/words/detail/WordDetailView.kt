@@ -10,5 +10,4 @@ import moxy.viewstate.strategy.StateStrategyType
 interface WordDetailView : MvpView, ProgressDialogView {
     fun initView(word: Word?)
     fun sendSuccessResult()
-    fun onCloseScreen()
 }

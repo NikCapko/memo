@@ -3,16 +3,35 @@ package com.nik.capko.memo.ui.main
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
+import com.github.terrakok.cicerone.Command
+import com.github.terrakok.cicerone.Navigator
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.nik.capko.memo.R
 import com.nik.capko.memo.app.appStorage
-import com.nik.capko.memo.ui.sign_in.SignInFragment
-import com.nik.capko.memo.ui.words.list.WordListFragment
+import com.nik.capko.memo.ui.Screens
 import com.nik.capko.memo.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatActivity
+import java.lang.ref.WeakReference
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : MvpAppCompatActivity() {
+class MainActivity : MvpAppCompatActivity(), ChainHolder {
+
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
+    override val chain = ArrayList<WeakReference<Fragment>>()
+
+    private val navigator: Navigator = object : AppNavigator(this, R.id.fcView) {
+
+        override fun applyCommands(commands: Array<out Command>) {
+            super.applyCommands(commands)
+            supportFragmentManager.executePendingTransactions()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,35 +59,19 @@ class MainActivity : MvpAppCompatActivity() {
         if (appStorage.get(Constants.IS_REGISTER, false) ||
             appStorage.get(Constants.IS_SKIP_REGISTER, false)
         ) {
-            openFragment(WordListFragment::class.java)
+            navigator.applyCommands(arrayOf<Command>(Replace(Screens.wordListScreen())))
         } else {
-            openFragment(SignInFragment::class.java)
+            navigator.applyCommands(arrayOf<Command>(Replace(Screens.signInScreen())))
         }
     }
 
-    fun <T : Fragment> replaceFragment(clazz: Class<T>, bundle: Bundle? = null) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fcView, newInstance(clazz, bundle))
-            .addToBackStack(clazz.name)
-            .commitAllowingStateLoss()
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        navigatorHolder.setNavigator(navigator)
     }
 
-    fun <T : Fragment> openFragment(clazz: Class<T>, bundle: Bundle? = null) {
-        supportFragmentManager.beginTransaction()
-            .add(R.id.fcView, newInstance(clazz, bundle))
-            .addToBackStack(clazz.name)
-            .commitAllowingStateLoss()
-    }
-
-    private fun <T : Fragment> newInstance(clazz: Class<T>, bundle: Bundle?): T {
-        return clazz.newInstance().apply {
-            if (bundle != null) {
-                arguments = bundle
-            }
-        }
-    }
-
-    fun closeFragment() {
-        supportFragmentManager.popBackStack()
+    override fun onPause() {
+        navigatorHolder.removeNavigator()
+        super.onPause()
     }
 }

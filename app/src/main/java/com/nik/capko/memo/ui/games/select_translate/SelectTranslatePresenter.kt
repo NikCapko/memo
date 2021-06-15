@@ -2,6 +2,7 @@
 
 package com.nik.capko.memo.ui.games.select_translate
 
+import com.github.terrakok.cicerone.Router
 import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.data.FormDBEntity
@@ -14,7 +15,8 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 class SelectTranslatePresenter @Inject constructor(
-    private val gameRepository: GameRepository
+    private val router: Router,
+    private val gameRepository: GameRepository,
 ) : MvpPresenter<SelectTranslateView>() {
 
     private var words: List<Word>? = null
@@ -87,7 +89,7 @@ class SelectTranslatePresenter @Inject constructor(
                 gameRepository.saveWord(wordDBEntity)
                 word.forms?.forEach { form ->
                     gameRepository.saveForm(
-                        FormDBEntity(form.key!!, form.name, form.value, word.id)
+                        FormDBEntity(form.key, form.name, form.value, word.id)
                     )
                 }
             }
@@ -95,5 +97,9 @@ class SelectTranslatePresenter @Inject constructor(
                 viewState.showEndGame(successCounter, errorCounter)
             }
         }
+    }
+
+    fun onBackPressed() {
+        router.exit()
     }
 }

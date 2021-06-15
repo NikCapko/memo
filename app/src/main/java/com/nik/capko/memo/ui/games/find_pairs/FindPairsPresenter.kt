@@ -2,6 +2,7 @@
 
 package com.nik.capko.memo.ui.games.find_pairs
 
+import com.github.terrakok.cicerone.Router
 import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.repository.GameRepository
@@ -12,7 +13,8 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 class FindPairsPresenter @Inject constructor(
-    private val gameRepository: GameRepository
+    private val router: Router,
+    private val gameRepository: GameRepository,
 ) : MvpPresenter<FindPairsView>() {
 
     private var words = emptyList<Word>()
@@ -57,5 +59,9 @@ class FindPairsPresenter @Inject constructor(
             }
         }
         viewState.onFindPairResult(false)
+    }
+
+    fun onBackPressed() {
+        router.exit()
     }
 }

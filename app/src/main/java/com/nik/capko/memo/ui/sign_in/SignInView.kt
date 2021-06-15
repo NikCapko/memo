@@ -7,6 +7,4 @@ import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface SignInView : MvpView {
-    fun openWordsList()
-}
+interface SignInView : MvpView

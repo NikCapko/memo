@@ -1,15 +1,15 @@
 package com.nik.capko.memo.ui.games.list
 
+import com.github.terrakok.cicerone.Router
 import com.nik.capko.memo.data.Game
-import com.nik.capko.memo.data.Word
-import com.nik.capko.memo.repository.WordRepository
+import com.nik.capko.memo.ui.Screens
 import moxy.InjectViewState
 import moxy.MvpPresenter
 import javax.inject.Inject
 
 @InjectViewState
 class GamesPresenter @Inject constructor(
-    private val wordRepository: WordRepository
+    private var router: Router,
 ) : MvpPresenter<GamesMvpView>() {
 
     private var games = emptyList<Game>()
@@ -25,8 +25,10 @@ class GamesPresenter @Inject constructor(
     }
 
     fun onItemClick(position: Int) {
-        games.getOrNull(position)?.let {
-            viewState.showGame(it.type, listOf<Word>())
+        when (games.getOrNull(position)?.type) {
+            Game.Type.SELECT_TRANSLATE -> router.navigateTo(Screens.selectTranslateScreen())
+            Game.Type.FIND_PAIRS -> router.navigateTo(Screens.findPairsScreen())
+            Game.Type.PHRASES -> router.navigateTo(Screens.phrasesScreen())
         }
     }
 }

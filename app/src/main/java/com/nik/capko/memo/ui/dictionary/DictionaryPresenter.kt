@@ -1,5 +1,6 @@
 package com.nik.capko.memo.ui.dictionary
 
+import com.github.terrakok.cicerone.Router
 import com.nik.capko.memo.base.network.Resource
 import com.nik.capko.memo.data.Dictionary
 import com.nik.capko.memo.data.Word
@@ -14,8 +15,9 @@ import moxy.MvpPresenter
 import javax.inject.Inject
 
 class DictionaryPresenter @Inject constructor(
+    private val router: Router,
     private val dictionaryRepository: DictionaryRepository,
-    private val wordRepository: WordRepository
+    private val wordRepository: WordRepository,
 ) : MvpPresenter<DictionaryView>() {
 
     private var dictionaryList = emptyList<Dictionary>()
@@ -93,7 +95,7 @@ class DictionaryPresenter @Inject constructor(
                 launch(Dispatchers.Main) {
                     viewState.completeProgressDialog()
                     viewState.sendSuccessResult()
-                    viewState.onCloseScreen()
+                    router.exit()
                 }
             }
             Resource.Status.ERROR -> {
