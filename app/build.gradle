@@ -14,8 +14,8 @@ android {
         applicationId "com.nik.capko.memo"
         minSdkVersion deps.minSdkVersion
         targetSdkVersion deps.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 110
+        versionName "1.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
