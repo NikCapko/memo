@@ -1,7 +1,7 @@
 package com.nik.capko.memo.data
 
 data class Game(
-    val type: GameType,
+    val type: Type,
     val name: String,
 ) {
     companion object {
@@ -11,16 +11,16 @@ data class Game(
 
         fun getDefaultList(): List<Game> {
             return listOf(
-                Game(GameType.SELECT_TRANSLATE, "Выбери перевод"),
-                Game(GameType.FIND_PAIRS, "Найди пару"),
-                Game(GameType.PHRASES, "Словосочетания"),
+                Game(Type.SELECT_TRANSLATE, "Выбери перевод"),
+                Game(Type.FIND_PAIRS, "Найди пару"),
+                Game(Type.PHRASES, "Словосочетания"),
             )
         }
     }
-}
 
-enum class GameType {
-    SELECT_TRANSLATE,
-    FIND_PAIRS,
-    PHRASES,
+    enum class Type {
+        SELECT_TRANSLATE,
+        FIND_PAIRS,
+        PHRASES,
+    }
 }

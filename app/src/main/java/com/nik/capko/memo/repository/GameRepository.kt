@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class GameRepository @Inject constructor(
     appDatabase: AppDatabase,
-    var wordFormMapper: WordFormDBMapper,
+    private var wordFormMapper: WordFormDBMapper,
 ) {
 
     private val wordsDao = appDatabase.wordDao()

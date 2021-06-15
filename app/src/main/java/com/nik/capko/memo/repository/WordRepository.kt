@@ -7,12 +7,14 @@ import com.nik.capko.memo.db.data.FormDBEntity
 import com.nik.capko.memo.db.data.WordDBEntity
 import com.nik.capko.memo.db.mapper.WordFormDBMapper
 import com.nik.capko.memo.network.ApiServiceImpl
+import com.nik.capko.memo.network.mapper.WordEntityMapper
 import javax.inject.Inject
 
 class WordRepository @Inject constructor(
     appDatabase: AppDatabase,
     var apiService: ApiServiceImpl,
-    var wordFormMapper: WordFormDBMapper,
+    private var wordFormMapper: WordFormDBMapper,
+    private val wordEntityMapper: WordEntityMapper,
 ) {
 
     private val wordsDao = appDatabase.wordDao()
@@ -35,7 +37,14 @@ class WordRepository @Inject constructor(
     }
 
     suspend fun getWordsFromServer(): Resource<List<Word>> {
-        return apiService.getWordList()
+        val response = apiService.getWordList()
+        return if (response.status == Resource.Status.SUCCESS) {
+            Resource.success(
+                wordEntityMapper.mapFromEntityList(response.data ?: emptyList())
+            )
+        } else {
+            Resource.error(response.message ?: "")
+        }
     }
 
     suspend fun clearDatabase() {

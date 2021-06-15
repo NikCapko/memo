@@ -9,20 +9,20 @@ class WordDBMapper @Inject constructor() : EntityMapper<WordDBEntity, Word> {
 
     override fun mapFromEntity(entity: WordDBEntity): Word {
         return Word(
-            id = entity.id ?: 0,
+            id = entity.id,
             word = entity.word,
             type = entity.type,
             gender = entity.gender,
             translation = entity.translation,
             frequency = entity.frequency,
-            forms = null,
+            forms = emptyList(),
             primaryLanguage = entity.primaryLanguage
         )
     }
 
     override fun mapToEntity(model: Word): WordDBEntity {
         return WordDBEntity(
-            id = model.id ?: 0,
+            id = model.id,
             word = model.word,
             type = model.type,
             gender = model.gender,

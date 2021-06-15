@@ -6,7 +6,9 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.data.WordFormDBEntity
 import javax.inject.Inject
 
-class WordFormDBMapper @Inject constructor() :
+class WordFormDBMapper @Inject constructor(
+    private var formDBMapper: FormDBMapper,
+) :
     EntityMapper<WordFormDBEntity, Word>,
     EntityListMapper<WordFormDBEntity, Word> {
 
@@ -18,7 +20,7 @@ class WordFormDBMapper @Inject constructor() :
             gender = entity.word?.gender,
             translation = entity.word?.translation,
             frequency = entity.word?.frequency,
-            forms = FormDBMapper().mapFromEntityList(entity.forms),
+            forms = formDBMapper.mapFromEntityList(entity.forms),
             primaryLanguage = entity.word?.primaryLanguage ?: false
         )
     }
