@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
-import android.widget.Toast
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.databinding.FragmentFindPairsBinding
@@ -116,23 +115,27 @@ class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
 
     override fun startLoading() {
         with(viewBinding) {
+            pvLoad.startLoading()
             flContentContainer.makeGone()
-            pvLoad.makeVisible()
         }
     }
 
     override fun errorLoading(errorMessage: String?) {
-        Toast.makeText(context, "$errorMessage", Toast.LENGTH_SHORT).show()
         with(viewBinding) {
+            pvLoad.errorLoading(errorMessage)
+            pvLoad.onRetryClick = { onRetry() }
             flContentContainer.makeGone()
-            pvLoad.makeGone()
         }
     }
 
     override fun completeLoading() {
         with(viewBinding) {
+            pvLoad.completeLoading()
             flContentContainer.makeVisible()
-            pvLoad.makeGone()
         }
+    }
+
+    override fun onRetry() {
+        presenter.loadWords()
     }
 }

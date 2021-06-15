@@ -27,7 +27,7 @@ class DictionaryPresenter @Inject constructor(
         loadDictionaryList()
     }
 
-    private fun loadDictionaryList() {
+    fun loadDictionaryList() {
         CoroutineScope(Dispatchers.Default).launch {
             launch(Dispatchers.Main) {
                 viewState.startLoading()

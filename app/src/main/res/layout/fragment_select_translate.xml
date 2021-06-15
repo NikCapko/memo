@@ -234,8 +234,8 @@
 
     <com.nik.capko.memo.utils.view.ProgressView
         android:id="@+id/pvLoad"
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="@dimen/_100sdp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

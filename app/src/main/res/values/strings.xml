@@ -9,6 +9,7 @@
     <string name="password">Пароль</string>
     <string name="sign_in">Войти</string>
     <string name="skip">Пропустить</string>
+
     <string name="word">Слово</string>
     <string name="translate">Перевод</string>
     <string name="frequency">Изученность</string>
@@ -29,5 +30,7 @@
 
     <string name="game_level_success">Успешно</string>
     <string name="game_level_error">Ошибок</string>
+
+    <string name="retry">Повторить</string>
 
 </resources>

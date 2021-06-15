@@ -191,10 +191,10 @@ class WordListFragment @Inject constructor() :
     override fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
             pvLoad.errorLoading(errorMessage)
+            pvLoad.onRetryClick = { onRetry() }
             rvWords.makeGone()
             btnAddWord.makeGone()
         }
-        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
     }
 
     override fun completeLoading() {
@@ -203,6 +203,10 @@ class WordListFragment @Inject constructor() :
             rvWords.makeVisible()
             btnAddWord.makeVisible()
         }
+    }
+
+    override fun onRetry() {
+        presenter.loadWords()
     }
 
     override fun onDestroy() {

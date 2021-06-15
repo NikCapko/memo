@@ -83,7 +83,7 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
 
     override fun startLoading() {
         with(viewBinding) {
-            pvLoad.makeVisible()
+            pvLoad.startLoading()
             tvPhrase.makeGone()
             tvTranslate.makeGone()
             fTranslates.makeGone()
@@ -92,7 +92,8 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
 
     override fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
-            pvLoad.makeGone()
+            pvLoad.errorLoading(errorMessage)
+            pvLoad.onRetryClick = { onRetry() }
             tvPhrase.makeGone()
             tvTranslate.makeGone()
             fTranslates.makeGone()
@@ -101,10 +102,14 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
 
     override fun completeLoading() {
         with(viewBinding) {
-            pvLoad.makeGone()
+            pvLoad.completeLoading()
             tvPhrase.makeVisible()
             tvTranslate.makeVisible()
             fTranslates.makeVisible()
         }
+    }
+
+    override fun onRetry() {
+        presenter.loadWords()
     }
 }

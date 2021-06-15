@@ -32,6 +32,10 @@ class SelectTranslatePresenter @Inject constructor(
     }
 
     private fun initView() {
+        loadWords()
+    }
+
+    fun loadWords() {
         CoroutineScope(Dispatchers.Default).launch {
             launch(Dispatchers.Main) {
                 viewState.startLoading()

@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -111,19 +110,29 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
     }
 
     override fun startLoading() {
-        viewBinding.pvLoad.makeVisible()
-        viewBinding.rvDictionary.makeVisible()
+        with(viewBinding) {
+            pvLoad.startLoading()
+            rvDictionary.makeVisible()
+        }
     }
 
     override fun errorLoading(errorMessage: String?) {
-        Toast.makeText(activity, "$errorMessage", Toast.LENGTH_SHORT).show()
-        viewBinding.pvLoad.makeGone()
-        viewBinding.rvDictionary.makeGone()
+        with(viewBinding) {
+            pvLoad.errorLoading(errorMessage)
+            pvLoad.onRetryClick = { onRetry() }
+            rvDictionary.makeGone()
+        }
     }
 
     override fun completeLoading() {
-        viewBinding.pvLoad.makeGone()
-        viewBinding.rvDictionary.makeVisible()
+        with(viewBinding) {
+            pvLoad.completeLoading()
+            rvDictionary.makeVisible()
+        }
+    }
+
+    override fun onRetry() {
+        presenter.loadDictionaryList()
     }
 
     override fun startProgressDialog() {
