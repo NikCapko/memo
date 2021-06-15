@@ -5,7 +5,7 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.data.WordDBEntity
 import javax.inject.Inject
 
-class WordDBMapper @Inject constructor() : EntityMapper<WordDBEntity, Word> {
+class WordDBEntityMapper @Inject constructor() : EntityMapper<WordDBEntity, Word> {
 
     override fun mapFromEntity(entity: WordDBEntity): Word {
         return Word(

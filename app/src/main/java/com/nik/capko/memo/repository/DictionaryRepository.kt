@@ -9,12 +9,10 @@ import com.nik.capko.memo.network.mapper.WordEntityMapper
 import javax.inject.Inject
 
 class DictionaryRepository @Inject constructor(
-    api: ApiServiceImpl,
+    private val apiService: ApiServiceImpl,
     private val dictionaryEntityMapper: DictionaryEntityMapper,
     private val wordEntityMapper: WordEntityMapper,
 ) {
-    private val apiService = api
-
     suspend fun getDictionaryList(): Resource<List<Dictionary>> {
         val response = apiService.getDictionaryList()
         return if (response.status == Resource.Status.SUCCESS) {

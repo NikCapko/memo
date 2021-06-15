@@ -6,8 +6,8 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.data.WordFormDBEntity
 import javax.inject.Inject
 
-class WordFormDBMapper @Inject constructor(
-    private var formDBMapper: FormDBMapper,
+class WordFormDBEntityMapper @Inject constructor(
+    private var formDBEntityMapper: FormDBEntityMapper,
 ) :
     EntityMapper<WordFormDBEntity, Word>,
     EntityListMapper<WordFormDBEntity, Word> {
@@ -20,15 +20,15 @@ class WordFormDBMapper @Inject constructor(
             gender = entity.word?.gender,
             translation = entity.word?.translation,
             frequency = entity.word?.frequency,
-            forms = formDBMapper.mapFromEntityList(entity.forms),
+            forms = formDBEntityMapper.mapFromEntityList(entity.forms),
             primaryLanguage = entity.word?.primaryLanguage ?: false
         )
     }
 
     override fun mapToEntity(model: Word): WordFormDBEntity {
         return WordFormDBEntity(
-            word = WordDBMapper().mapToEntity(model),
-            forms = model.forms?.let { FormDBMapper().mapToEntityList(it) } ?: listOf()
+            word = WordDBEntityMapper().mapToEntity(model),
+            forms = model.forms?.let { FormDBEntityMapper().mapToEntityList(it) } ?: listOf()
         )
     }
 

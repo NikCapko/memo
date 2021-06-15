@@ -6,7 +6,7 @@ import com.nik.capko.memo.data.Form
 import com.nik.capko.memo.db.data.FormDBEntity
 import javax.inject.Inject
 
-class FormDBMapper @Inject constructor() :
+class FormDBEntityMapper @Inject constructor() :
     EntityMapper<FormDBEntity, Form>,
     EntityListMapper<FormDBEntity, Form> {
 
