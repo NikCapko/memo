@@ -19,12 +19,12 @@ class SignInPresenter @Inject constructor(
         appStorage.put(Constants.LOGIN, login)
         appStorage.put(Constants.PASSWORD, password)
         appStorage.put(Constants.IS_REGISTER, true)
-        router.navigateTo(Screens.wordListScreen())
+        router.replaceScreen(Screens.wordListScreen())
     }
 
     fun skip() {
         appStorage.put(Constants.IS_REGISTER, false)
         appStorage.put(Constants.IS_SKIP_REGISTER, true)
-        router.navigateTo(Screens.wordListScreen())
+        router.replaceScreen(Screens.wordListScreen())
     }
 }

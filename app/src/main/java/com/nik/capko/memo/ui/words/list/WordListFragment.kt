@@ -70,6 +70,9 @@ class WordListFragment @Inject constructor() :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val intentFilter = IntentFilter(Constants.LOAD_WORDS_EVENT)
+        LocalBroadcastManager.getInstance(requireContext())
+            .registerReceiver(localBroadcastReceiver, intentFilter)
         setHasOptionsMenu(true)
         tts = TextToSpeech(context, this)
         tts?.setSpeechRate(SPEECH_RATE)
@@ -82,19 +85,6 @@ class WordListFragment @Inject constructor() :
         val logoutMenuItem = menu.findItem(R.id.action_logout)
         logoutMenuItem.isVisible = appStorage.get(Constants.IS_REGISTER, false)
         gameMenuItem = menu.findItem(R.id.action_games)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val intentFilter = IntentFilter(Constants.LOAD_WORDS_EVENT)
-        LocalBroadcastManager.getInstance(requireContext())
-            .registerReceiver(localBroadcastReceiver, intentFilter)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        LocalBroadcastManager.getInstance(requireContext())
-            .unregisterReceiver(localBroadcastReceiver)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -212,5 +202,11 @@ class WordListFragment @Inject constructor() :
             rvWords.makeVisible()
             btnAddWord.makeVisible()
         }
+    }
+
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(requireContext())
+            .unregisterReceiver(localBroadcastReceiver)
+        super.onDestroy()
     }
 }
