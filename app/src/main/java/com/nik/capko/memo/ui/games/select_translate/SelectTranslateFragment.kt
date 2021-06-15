@@ -28,11 +28,6 @@ import javax.inject.Provider
 @AndroidEntryPoint
 class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
 
-    @Suppress("ClassOrdering")
-    companion object {
-        const val WORDS = "SelectTranslateFragment.WORDS"
-    }
-
     @Inject
     lateinit var presenterProvider: Provider<SelectTranslatePresenter>
     private val presenter: SelectTranslatePresenter by moxyPresenter { presenterProvider.get() }

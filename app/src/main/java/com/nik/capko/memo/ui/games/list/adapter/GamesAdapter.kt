@@ -7,14 +7,15 @@ import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.databinding.ItemGameListBinding
 import kotlin.properties.Delegates
 
-class GamesAdapter(val onItemClick: (Int) -> Unit) :
-    RecyclerView.Adapter<GamesAdapter.ItemViewHolder>() {
+class GamesAdapter(
+    val onItemClick: (Int) -> Unit,
+) : RecyclerView.Adapter<GamesAdapter.ItemViewHolder>() {
 
     var games: List<Game>? by Delegates.observable(emptyList()) { _, _, _ -> notifyDataSetChanged() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val itemBinding =
-            ItemGameListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val itemBinding = ItemGameListBinding.inflate(inflater, parent, false)
         return ItemViewHolder(itemBinding)
     }
 

@@ -10,14 +10,13 @@ import kotlin.properties.Delegates
 class WordListAdapter(
     val onItemClick: (Int) -> Unit,
     val onEnableSound: (Int) -> Unit,
-) :
-    RecyclerView.Adapter<WordListAdapter.ItemViewHolder>() {
+) : RecyclerView.Adapter<WordListAdapter.ItemViewHolder>() {
 
     var words: List<Word>? by Delegates.observable(emptyList()) { _, _, _ -> notifyDataSetChanged() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val itemBinding =
-            ItemWordListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val itemBinding = ItemWordListBinding.inflate(inflater, parent, false)
         return ItemViewHolder(itemBinding)
     }
 

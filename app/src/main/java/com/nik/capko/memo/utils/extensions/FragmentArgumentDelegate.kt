@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class FragmentArgumentDelegate<T : Any?> :
+class FragmentArgumentDelegate<T : Any?>(
+    private var key: String
+) :
     ReadWriteProperty<Fragment, T?> {
 
     @Suppress("UNCHECKED_CAST")
@@ -14,7 +16,6 @@ class FragmentArgumentDelegate<T : Any?> :
         thisRef: Fragment,
         property: KProperty<*>
     ): T? {
-        val key = property.name
         return thisRef.arguments?.get(key) as? T
     }
 
@@ -30,9 +31,10 @@ class FragmentArgumentDelegate<T : Any?> :
     }
 }
 
-fun <T : Any> argument(): ReadWriteProperty<Fragment, T?> =
-    FragmentArgumentDelegate()
+fun <T : Any> argument(key: String): ReadWriteProperty<Fragment, T?> =
+    FragmentArgumentDelegate(key)
 
+@Suppress("ComplexMethod")
 fun <T> Bundle.put(key: String, value: T) {
     when (value) {
         is Boolean -> putBoolean(key, value)

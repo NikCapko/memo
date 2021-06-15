@@ -23,11 +23,6 @@ import javax.inject.Provider
 @AndroidEntryPoint
 class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
 
-    @Suppress("ClassOrdering")
-    companion object {
-        const val WORDS = "SelectTranslateFragment.WORDS"
-    }
-
     @Inject
     lateinit var presenterProvider: Provider<FindPairsPresenter>
     private val presenter: FindPairsPresenter by moxyPresenter { presenterProvider.get() }

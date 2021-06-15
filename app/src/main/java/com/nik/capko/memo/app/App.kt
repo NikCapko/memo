@@ -10,7 +10,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class App : Application() {
     companion object {
-        var prefs: AppStorage? = null
+        lateinit var prefs: AppStorage
         lateinit var instance: App
             private set
     }
@@ -25,5 +25,5 @@ class App : Application() {
 }
 
 val appStorage: AppStorage by lazy {
-    App.prefs!!
+    App.prefs
 }

@@ -22,11 +22,6 @@ import javax.inject.Provider
 @AndroidEntryPoint
 class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
 
-    @Suppress("ClassOrdering")
-    companion object {
-        const val WORDS = "SelectTranslateFragment.WORDS"
-    }
-
     @Inject
     lateinit var presenterProvider: Provider<PhrasesPresenter>
     private val presenter: PhrasesPresenter by moxyPresenter { presenterProvider.get() }
@@ -83,7 +78,7 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
     }
 
     override fun showMessage(text: String) {
-        Toast.makeText(context, "$text", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
     override fun startLoading() {

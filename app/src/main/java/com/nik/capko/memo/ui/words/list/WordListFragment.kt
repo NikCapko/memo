@@ -177,6 +177,7 @@ class WordListFragment @Inject constructor() :
 
     override fun speakOut(word: String?) {
         tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null)
+        Toast.makeText(context, word, Toast.LENGTH_SHORT).show()
     }
 
     override fun startLoading() {

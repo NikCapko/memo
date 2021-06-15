@@ -32,7 +32,7 @@ import javax.inject.Provider
 class WordDetailFragment : BaseFragment(), WordDetailView {
 
     companion object {
-        const val WORD = "word"
+        const val WORD = "WordDetailFragment.WORD"
     }
 
     @Inject
@@ -41,7 +41,7 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
 
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
 
-    private var word: Word? by argument()
+    private var word: Word? by argument(WORD)
 
     private val proDialog: ProgressDialog by lazy {
         ProgressDialog(context).apply {
