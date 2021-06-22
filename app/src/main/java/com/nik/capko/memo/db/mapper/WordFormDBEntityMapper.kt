@@ -15,11 +15,11 @@ class WordFormDBEntityMapper @Inject constructor(
     override fun mapFromEntity(entity: WordFormDBEntity): Word {
         return Word(
             id = entity.word?.id ?: 0,
-            word = entity.word?.word,
-            type = entity.word?.type,
-            gender = entity.word?.gender,
-            translation = entity.word?.translation,
-            frequency = entity.word?.frequency,
+            word = entity.word?.word.orEmpty(),
+            type = entity.word?.type.orEmpty(),
+            gender = entity.word?.gender.orEmpty(),
+            translation = entity.word?.translation.orEmpty(),
+            frequency = entity.word?.frequency ?: 0f,
             forms = formDBEntityMapper.mapFromEntityList(entity.forms),
             primaryLanguage = entity.word?.primaryLanguage ?: false
         )
@@ -28,7 +28,7 @@ class WordFormDBEntityMapper @Inject constructor(
     override fun mapToEntity(model: Word): WordFormDBEntity {
         return WordFormDBEntity(
             word = WordDBEntityMapper().mapToEntity(model),
-            forms = model.forms?.let { FormDBEntityMapper().mapToEntityList(it) } ?: listOf()
+            forms = model.forms.let { FormDBEntityMapper().mapToEntityList(it) }
         )
     }
 

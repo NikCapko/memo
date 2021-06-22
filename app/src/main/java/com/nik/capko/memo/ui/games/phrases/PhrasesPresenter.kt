@@ -46,7 +46,7 @@ class PhrasesPresenter @Inject constructor(
             val traslates = adjWordTranslate?.forms
                 ?.map { it.value }
                 ?.toMutableList()
-            traslates?.add(noneWordTranslate?.word)
+            traslates?.add(noneWordTranslate?.word.orEmpty())
             traslates?.addAll(verbWordTranslate?.forms?.map { it.value }.orEmpty())
             traslates?.shuffle()
 

@@ -13,8 +13,8 @@ class FormDBEntityMapper @Inject constructor() :
     override fun mapFromEntity(entity: FormDBEntity): Form {
         return Form(
             key = entity.key,
-            name = entity.name,
-            value = entity.value,
+            name = entity.name.orEmpty(),
+            value = entity.value.orEmpty(),
         )
     }
 

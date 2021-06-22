@@ -3,7 +3,7 @@ package com.nik.capko.memo.utils.resources
 import android.graphics.drawable.Drawable
 import com.nik.capko.memo.app.App
 
-class FieldConverter : IResourceManager {
+object FieldConverter : IResourceManager {
 
     override fun getString(resId: Int): String {
         return ResourceManager.getString(App.instance, resId)

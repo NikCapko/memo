@@ -49,7 +49,7 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
         }
     }
 
-    override fun initView(phrase: String, translates: MutableList<String?>?) {
+    override fun initView(phrase: String, translates: List<String>?) {
         with(viewBinding) {
             tvPhrase.text = phrase
             val ids = mutableListOf<Int>()

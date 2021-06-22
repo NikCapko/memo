@@ -15,11 +15,11 @@ class WordEntityMapper @Inject constructor(
     override fun mapFromEntity(entity: WordEntity): Word {
         return Word(
             id = entity.id,
-            word = entity.word,
-            type = entity.type,
-            gender = entity.gender,
-            translation = entity.translation,
-            frequency = entity.frequency,
+            word = entity.word.orEmpty(),
+            type = entity.type.orEmpty(),
+            gender = entity.gender.orEmpty(),
+            translation = entity.translation.orEmpty(),
+            frequency = entity.frequency ?: 0f,
             primaryLanguage = entity.primaryLanguage,
             forms = formEntityMapper.mapFromEntityList(entity.forms ?: emptyList()),
         )
@@ -34,7 +34,7 @@ class WordEntityMapper @Inject constructor(
             translation = model.translation,
             frequency = model.frequency,
             primaryLanguage = model.primaryLanguage,
-            forms = formEntityMapper.mapToEntityList(model.forms ?: emptyList()),
+            forms = formEntityMapper.mapToEntityList(model.forms),
         )
     }
 

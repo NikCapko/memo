@@ -52,18 +52,18 @@ class SelectTranslatePresenter @Inject constructor(
         word = words?.getOrNull(counter)
         val translates = words?.toMutableList()
             ?.shuffled()
-            ?.map { it.translation.toString() }
+            ?.map { it.translation }
             .orEmpty()
         viewState.showWord(word, translates)
     }
 
     fun onTranslateClick(translate: String) {
         if (word?.translation.equals(translate)) {
-            word?.frequency = word?.frequency?.plus(Word.WORD_GAME_PRICE)
+            word?.frequency = word?.frequency?.plus(Word.WORD_GAME_PRICE) ?: Word.WORD_GAME_PRICE
             viewState.showSuccessAnimation()
             successCounter++
         } else {
-            word?.frequency = word?.frequency?.minus(Word.WORD_GAME_PRICE)
+            word?.frequency = word?.frequency?.minus(Word.WORD_GAME_PRICE) ?: -Word.WORD_GAME_PRICE
             viewState.showErrorAnimation()
             errorCounter++
         }
@@ -91,7 +91,7 @@ class SelectTranslatePresenter @Inject constructor(
                     word.primaryLanguage
                 )
                 gameRepository.saveWord(wordDBEntity)
-                word.forms?.forEach { form ->
+                word.forms.forEach { form ->
                     gameRepository.saveForm(
                         FormDBEntity(form.key, form.name, form.value, word.id)
                     )

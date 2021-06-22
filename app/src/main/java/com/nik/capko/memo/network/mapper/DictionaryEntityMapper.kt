@@ -12,8 +12,8 @@ class DictionaryEntityMapper @Inject constructor() :
 
     override fun mapFromEntity(entity: DictionaryEntity): Dictionary {
         return Dictionary(
-            id = entity.id,
-            name = entity.name,
+            id = entity.id.orEmpty(),
+            name = entity.name.orEmpty(),
             size = entity.size,
         )
     }
