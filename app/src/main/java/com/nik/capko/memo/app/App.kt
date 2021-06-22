@@ -9,18 +9,22 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class App : Application() {
+
     companion object {
-        lateinit var prefs: AppStorage
-        lateinit var instance: App
-            private set
+
+        private var _instance: App? = null
+        val instance get() = checkNotNull(_instance) { "App isn`t initialized" }
+
+        private var _prefs: AppStorage? = null
+        val prefs get() = checkNotNull(_prefs) { "AppStorage isn`t initialized" }
     }
 
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        instance = this
-        prefs = AppStorage(applicationContext)
+        _instance = this
+        _prefs = AppStorage(applicationContext)
     }
 }
 

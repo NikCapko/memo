@@ -195,7 +195,7 @@
 
     </FrameLayout>
 
-    <com.nik.capko.memo.utils.view.ProgressView
+    <com.nik.capko.memo.utils.view.progressview.ProgressView
         android:id="@+id/pvLoad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -240,7 +240,7 @@
             android:layout_marginBottom="@dimen/_8sdp"
             android:layout_alignParentBottom="true"
             android:layout_marginHorizontal="@dimen/_8sdp"
-            android:text="@string/finish"
+            android:text="@string/game_finish"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="@dimen/_14sdp" />

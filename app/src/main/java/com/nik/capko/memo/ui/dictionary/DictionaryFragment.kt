@@ -89,7 +89,7 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
     override fun showLoadingDialog(position: Int) {
         AlertDialog.Builder(activity).apply {
             setTitle(R.string.app_name)
-            setMessage(R.string.load_dictionary)
+            setMessage(R.string.dictionary_load_words)
             setPositiveButton(
                 R.string.yes
             ) { dialog, _ ->

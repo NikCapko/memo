@@ -7,7 +7,10 @@ import com.nik.capko.memo.utils.extensions.put
 
 class AppStorage(context: Context) {
 
-    private val APP_PREFERENCES = "MEMO_APP_PREFERENCES"
+    @Suppress("ClassOrdering")
+    companion object {
+        private const val APP_PREFERENCES = "MEMO_APP_PREFERENCES"
+    }
 
     val preferences: SharedPreferences =
         context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)

@@ -4,6 +4,8 @@ import com.github.terrakok.cicerone.Router
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.data.WordDBEntity
 import com.nik.capko.memo.repository.WordRepository
+import io.reactivex.Observable
+import io.reactivex.disposables.Disposables
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,6 +19,8 @@ class WordDetailPresenter @Inject constructor(
 ) : MvpPresenter<WordDetailView>() {
 
     private var word: Word? = null
+
+    private var disposable = Disposables.empty()
 
     fun setArguments(vararg params: Any?) {
         word = params[0] as? Word
@@ -78,5 +82,22 @@ class WordDetailPresenter @Inject constructor(
                 router.exit()
             }
         }
+    }
+
+    fun setValidationFields(vararg observables: Observable<CharSequence>) {
+        val wordObservable = observables[0]
+        val translateObservable = observables[1]
+        disposable = Observable.combineLatest(
+            wordObservable, translateObservable,
+            { word: CharSequence, translate: CharSequence ->
+                word.toString().trim().isNotEmpty() && translate.toString().trim().isNotEmpty()
+            }
+        )
+            .subscribe { isEnable: Boolean -> viewState.enableSaveButton(isEnable) }
+    }
+
+    override fun onDestroy() {
+        disposable.dispose()
+        super.onDestroy()
     }
 }

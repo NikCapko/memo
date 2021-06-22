@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
-    <com.nik.capko.memo.utils.view.ProgressView
+    <com.nik.capko.memo.utils.view.progressview.ProgressView
         android:id="@+id/pvLoad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

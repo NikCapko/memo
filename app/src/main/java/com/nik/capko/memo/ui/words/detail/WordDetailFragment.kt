@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.jakewharton.rxbinding2.widget.RxTextView
 import com.nik.capko.memo.R
 import com.nik.capko.memo.base.ui.BaseFragment
 import com.nik.capko.memo.data.Word
@@ -99,6 +100,10 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
                 hideKeyboard()
                 presenter.onDeleteWord()
             }
+            presenter.setValidationFields(
+                RxTextView.textChanges(etWord),
+                RxTextView.textChanges(etTranslate),
+            )
         }
     }
 
@@ -121,6 +126,11 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
     override fun sendSuccessResult() {
         val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
+    }
+
+    override fun enableSaveButton(enable: Boolean) {
+        viewBinding.btnAdd.isEnabled = enable
+        viewBinding.btnSave.isEnabled = enable
     }
 
     override fun startProgressDialog() {

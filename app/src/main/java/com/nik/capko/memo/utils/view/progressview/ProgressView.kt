@@ -1,4 +1,4 @@
-package com.nik.capko.memo.utils.view
+package com.nik.capko.memo.utils.view.progressview
 
 import android.content.Context
 import android.util.AttributeSet
