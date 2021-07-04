@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
@@ -63,6 +64,7 @@ class GamesFragment @Inject constructor() : MvpAppCompatFragment(), GamesMvpView
         viewBinding.rvGames.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@GamesFragment.adapter
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
     }
 
