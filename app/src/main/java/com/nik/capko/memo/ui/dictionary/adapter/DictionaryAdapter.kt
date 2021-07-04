@@ -32,9 +32,11 @@ class DictionaryAdapter(val onItemClick: (Int) -> Unit) :
         }
 
         fun bind(dictionary: Dictionary?) {
-            dictionary?.let {
-                itemBinding.tvDictionaryName.text = it.name
-                itemBinding.tvDictionarySize.text = it.size.toString()
+            itemBinding.apply {
+                dictionary?.let {
+                    tvDictionaryName.text = it.name
+                    tvDictionarySize.text = it.size.toString()
+                }
             }
         }
     }

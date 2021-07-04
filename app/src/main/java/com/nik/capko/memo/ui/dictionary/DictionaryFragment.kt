@@ -10,6 +10,7 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
@@ -79,6 +80,7 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
         viewBinding.rvDictionary.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@DictionaryFragment.adapter
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
     }
 
@@ -90,15 +92,11 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
         AlertDialog.Builder(activity).apply {
             setTitle(R.string.app_name)
             setMessage(R.string.dictionary_load_words)
-            setPositiveButton(
-                R.string.yes
-            ) { dialog, _ ->
+            setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
                 presenter.loadDictionary(position)
             }
-            setNegativeButton(
-                R.string.no
-            ) { dialog, _ ->
+            setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
             }
         }.create().show()

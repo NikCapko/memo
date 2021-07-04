@@ -39,9 +39,11 @@ class WordListAdapter(
         }
 
         fun bind(word: Word?) {
-            word?.let {
-                itemBinding.tvWordTitle.text = it.word
-                itemBinding.tvWordTranslate.text = it.translation
+            itemBinding.apply {
+                word?.let {
+                    tvWordTitle.text = it.word
+                    tvWordTranslate.text = it.translation
+                }
             }
         }
     }

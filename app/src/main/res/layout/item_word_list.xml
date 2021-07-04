@@ -28,13 +28,6 @@
         android:textStyle="italic"
         tools:text="Привет" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/tvWordTranslate"
-        android:layout_marginHorizontal="@dimen/_8sdp"
-        android:background="@color/gray40" />
-
     <ImageView
         android:id="@+id/ivSoundWaves"
         android:layout_width="@dimen/_40sdp"

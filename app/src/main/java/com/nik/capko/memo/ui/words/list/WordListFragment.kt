@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
@@ -135,6 +136,7 @@ class WordListFragment @Inject constructor() :
         viewBinding.rvWords.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@WordListFragment.adapter
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
     }
 
@@ -149,15 +151,11 @@ class WordListFragment @Inject constructor() :
             setTitle(R.string.attention)
             setMessage(R.string.clear_database)
             setCancelable(true)
-            setPositiveButton(
-                R.string.yes
-            ) { dialog, _ ->
+            setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
                 presenter.logout(true)
             }
-            setNegativeButton(
-                R.string.no
-            ) { dialog, _ ->
+            setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
                 presenter.logout(false)
             }
