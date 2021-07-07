@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ApiServiceImpl @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
 ) : BaseDataSource() {
 
     suspend fun getWordList() = getResult { apiService.getWordList() }

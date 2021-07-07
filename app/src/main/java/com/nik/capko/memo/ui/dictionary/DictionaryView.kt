@@ -12,5 +12,4 @@ interface DictionaryView : MvpView, ProgressMvpView, ProgressDialogView {
     fun showDictionaryList(dictionary: List<Dictionary>)
     fun showLoadingDialog(position: Int)
     fun sendSuccessResult()
-    fun onCloseScreen()
 }

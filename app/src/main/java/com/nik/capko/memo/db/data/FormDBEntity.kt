@@ -1,8 +1,8 @@
 package com.nik.capko.memo.db.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import com.nik.capko.memo.data.Form
 
 @Entity(
     tableName = "forms",
@@ -15,19 +15,10 @@ import com.nik.capko.memo.data.Form
         )
     ]
 )
+
 data class FormDBEntity(
-    var key: String,
-    var name: String? = null,
-    var value: String? = null,
-    var wordId: Long,
-) {
-    companion object {
-        fun FormDBEntity.toFormModel(): Form {
-            return Form(
-                key,
-                name,
-                value
-            )
-        }
-    }
-}
+    @ColumnInfo(name = "key") var key: String,
+    @ColumnInfo(name = "name") var name: String? = null,
+    @ColumnInfo(name = "value") var value: String? = null,
+    @ColumnInfo(name = "wordId") var wordId: Long,
+)

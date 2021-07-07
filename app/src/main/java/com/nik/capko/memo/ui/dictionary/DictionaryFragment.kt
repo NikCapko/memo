@@ -9,14 +9,13 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.data.Dictionary
 import com.nik.capko.memo.databinding.FragmentDictionaryBinding
-import com.nik.capko.memo.ui.base.MainActivity
 import com.nik.capko.memo.ui.dictionary.adapter.DictionaryAdapter
 import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.extensions.makeGone
@@ -81,6 +80,7 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
         viewBinding.rvDictionary.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@DictionaryFragment.adapter
+            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         }
     }
 
@@ -91,16 +91,12 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
     override fun showLoadingDialog(position: Int) {
         AlertDialog.Builder(activity).apply {
             setTitle(R.string.app_name)
-            setMessage(R.string.load_dictionary)
-            setPositiveButton(
-                R.string.yes
-            ) { dialog, _ ->
+            setMessage(R.string.dictionary_load_words)
+            setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
                 presenter.loadDictionary(position)
             }
-            setNegativeButton(
-                R.string.no
-            ) { dialog, _ ->
+            setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
             }
         }.create().show()
@@ -111,24 +107,30 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
     }
 
-    override fun onCloseScreen() {
-        (activity as? MainActivity)?.closeFragment()
-    }
-
     override fun startLoading() {
-        viewBinding.pvLoad.makeVisible()
-        viewBinding.rvDictionary.makeVisible()
+        with(viewBinding) {
+            pvLoad.startLoading()
+            rvDictionary.makeVisible()
+        }
     }
 
     override fun errorLoading(errorMessage: String?) {
-        Toast.makeText(activity, "$errorMessage", Toast.LENGTH_SHORT).show()
-        viewBinding.pvLoad.makeGone()
-        viewBinding.rvDictionary.makeGone()
+        with(viewBinding) {
+            pvLoad.errorLoading(errorMessage)
+            pvLoad.onRetryClick = { onRetry() }
+            rvDictionary.makeGone()
+        }
     }
 
     override fun completeLoading() {
-        viewBinding.pvLoad.makeGone()
-        viewBinding.rvDictionary.makeVisible()
+        with(viewBinding) {
+            pvLoad.completeLoading()
+            rvDictionary.makeVisible()
+        }
+    }
+
+    override fun onRetry() {
+        presenter.loadDictionaryList()
     }
 
     override fun startProgressDialog() {

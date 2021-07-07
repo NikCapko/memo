@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
@@ -27,11 +26,6 @@ import javax.inject.Provider
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
 class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
-
-    @Suppress("ClassOrdering")
-    companion object {
-        const val WORDS = "SelectTranslateFragment.WORDS"
-    }
 
     @Inject
     lateinit var presenterProvider: Provider<SelectTranslatePresenter>
@@ -82,7 +76,7 @@ class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
             btnTranslate5.setOnClickListener { onClickTranslate(it as Button) }
 
             btnExit.setOnClickListener {
-                activity?.onBackPressed()
+                presenter.onBackPressed()
             }
         }
     }
@@ -91,6 +85,7 @@ class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
         presenter.onTranslateClick(button.text.toString())
     }
 
+    @Suppress("MagicNumber")
     override fun showWord(word: Word?, translates: List<String>) {
         with(viewBinding) {
             lavSuccess.makeGone()
@@ -139,23 +134,27 @@ class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
 
     override fun startLoading() {
         with(viewBinding) {
+            pvLoad.startLoading()
             llContentContainer.makeGone()
-            pvLoad.makeVisible()
         }
     }
 
     override fun errorLoading(errorMessage: String?) {
-        Toast.makeText(context, "$errorMessage", Toast.LENGTH_SHORT).show()
         with(viewBinding) {
+            pvLoad.errorLoading(errorMessage)
+            pvLoad.onRetryClick = { onRetry() }
             llContentContainer.makeGone()
-            pvLoad.makeGone()
         }
     }
 
     override fun completeLoading() {
         with(viewBinding) {
+            pvLoad.completeLoading()
             llContentContainer.makeVisible()
-            pvLoad.makeGone()
         }
+    }
+
+    override fun onRetry() {
+        presenter.loadWords()
     }
 }

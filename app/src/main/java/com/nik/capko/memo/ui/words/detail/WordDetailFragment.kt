@@ -13,7 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.jakewharton.rxbinding2.widget.RxTextView
 import com.nik.capko.memo.R
+import com.nik.capko.memo.base.ui.BaseFragment
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordDetailBinding
 import com.nik.capko.memo.utils.Constants
@@ -22,17 +24,16 @@ import com.nik.capko.memo.utils.extensions.hideKeyboard
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordDetailFragment : MvpAppCompatFragment(), WordDetailView {
+class WordDetailFragment : BaseFragment(), WordDetailView {
 
     companion object {
-        const val WORD = "word"
+        const val WORD = "WordDetailFragment.WORD"
     }
 
     @Inject
@@ -41,7 +42,7 @@ class WordDetailFragment : MvpAppCompatFragment(), WordDetailView {
 
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
 
-    private var word: Word? by argument()
+    private var word: Word? by argument(WORD)
 
     private val proDialog: ProgressDialog by lazy {
         ProgressDialog(context).apply {
@@ -99,6 +100,10 @@ class WordDetailFragment : MvpAppCompatFragment(), WordDetailView {
                 hideKeyboard()
                 presenter.onDeleteWord()
             }
+            presenter.setValidationFields(
+                RxTextView.textChanges(etWord),
+                RxTextView.textChanges(etTranslate),
+            )
         }
     }
 
@@ -121,11 +126,11 @@ class WordDetailFragment : MvpAppCompatFragment(), WordDetailView {
     override fun sendSuccessResult() {
         val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
-        onCloseScreen()
     }
 
-    override fun onCloseScreen() {
-        activity?.onBackPressed()
+    override fun enableSaveButton(enable: Boolean) {
+        viewBinding.btnAdd.isEnabled = enable
+        viewBinding.btnSave.isEnabled = enable
     }
 
     override fun startProgressDialog() {

@@ -2,6 +2,7 @@ package com.nik.capko.memo.utils.extensions
 
 import android.content.SharedPreferences
 
+@Suppress("ReturnCount")
 inline fun <reified T> SharedPreferences.get(key: String, defaultValue: T): T {
     when (T::class) {
         Boolean::class -> return this.getBoolean(key, defaultValue as Boolean) as T

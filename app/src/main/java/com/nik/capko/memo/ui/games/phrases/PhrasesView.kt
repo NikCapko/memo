@@ -7,6 +7,6 @@ import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface PhrasesView : MvpView, ProgressMvpView {
-    fun initView(phrase: String, translates: MutableList<String?>?)
+    fun initView(phrase: String, translates: List<String>?)
     fun showMessage(text: String)
 }

@@ -9,6 +9,7 @@
     <string name="password">Пароль</string>
     <string name="sign_in">Войти</string>
     <string name="skip">Пропустить</string>
+
     <string name="word">Слово</string>
     <string name="translate">Перевод</string>
     <string name="frequency">Изученность</string>
@@ -22,12 +23,17 @@
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
 
-    <string name="load_dictionary">Загрузить слова из данного словаря ?</string>
-    <string name="game_over">Игра успешно окончена</string>
-    <string name="your_results">Выши результаты:</string>
-    <string name="finish">Закончить</string>
+    <string name="dictionary_load_words">Загрузить слова из данного словаря ?</string>
 
+    <string name="game_type_select_translate">Выбери перевод</string>
+    <string name="game_type_find_pairs">Найди пару</string>
+    <string name="game_type_phrases">Словосочетания</string>
     <string name="game_level_success">Успешно</string>
     <string name="game_level_error">Ошибок</string>
+    <string name="game_over">Игра успешно окончена</string>
+    <string name="game_your_results">Выши результаты:</string>
+    <string name="game_finish">Закончить</string>
+
+    <string name="retry">Повторить</string>
 
 </resources>

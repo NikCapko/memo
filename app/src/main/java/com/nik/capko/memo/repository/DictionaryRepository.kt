@@ -4,18 +4,34 @@ import com.nik.capko.memo.base.network.Resource
 import com.nik.capko.memo.data.Dictionary
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.network.ApiServiceImpl
+import com.nik.capko.memo.network.mapper.DictionaryEntityMapper
+import com.nik.capko.memo.network.mapper.WordEntityMapper
 import javax.inject.Inject
 
 class DictionaryRepository @Inject constructor(
-    api: ApiServiceImpl
+    private val apiService: ApiServiceImpl,
+    private val dictionaryEntityMapper: DictionaryEntityMapper,
+    private val wordEntityMapper: WordEntityMapper,
 ) {
-    private val apiService = api
-
     suspend fun getDictionaryList(): Resource<List<Dictionary>> {
-        return apiService.getDictionaryList()
+        val response = apiService.getDictionaryList()
+        return if (response.status == Resource.Status.SUCCESS) {
+            Resource.success(
+                dictionaryEntityMapper.mapFromEntityList(response.data ?: emptyList())
+            )
+        } else {
+            Resource.error(response.message ?: "")
+        }
     }
 
     suspend fun getDictionary(id: String): Resource<List<Word>> {
-        return apiService.getDictionary(id)
+        val response = apiService.getDictionary(id)
+        return if (response.status == Resource.Status.SUCCESS) {
+            Resource.success(
+                wordEntityMapper.mapFromEntityList(response.data ?: emptyList())
+            )
+        } else {
+            Resource.error(response.message ?: "")
+        }
     }
 }

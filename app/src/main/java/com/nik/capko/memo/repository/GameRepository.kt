@@ -4,13 +4,13 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.AppDatabase
 import com.nik.capko.memo.db.data.FormDBEntity
 import com.nik.capko.memo.db.data.WordDBEntity
-import com.nik.capko.memo.db.data.WordFormDBEntity.Companion.toWordModel
+import com.nik.capko.memo.db.mapper.WordFormDBEntityMapper
 import javax.inject.Inject
 
 class GameRepository @Inject constructor(
-    appDatabase: AppDatabase
+    appDatabase: AppDatabase,
+    private var wordFormEntityMapper: WordFormDBEntityMapper,
 ) {
-
     private val wordsDao = appDatabase.wordDao()
     private val formsDao = appDatabase.formDao()
 
@@ -23,14 +23,14 @@ class GameRepository @Inject constructor(
     }
 
     suspend fun getWords(): List<Word> {
-        return wordsDao.getAllWords().map { it.toWordModel() }
+        return wordFormEntityMapper.mapFromEntityList(wordsDao.getAllWords())
     }
 
     suspend fun getWordsForGame(): List<Word> {
-        return wordsDao.getWordsForGame().map { it.toWordModel() }
+        return wordFormEntityMapper.mapFromEntityList(wordsDao.getWordsForGame())
     }
 
     suspend fun getWordsForGameByLimit(limit: Int): List<Word> {
-        return wordsDao.getWordsForGameByLimit(limit).map { it.toWordModel() }
+        return wordFormEntityMapper.mapFromEntityList(wordsDao.getWordsForGameByLimit(limit))
     }
 }

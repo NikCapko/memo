@@ -21,6 +21,10 @@ class PhrasesPresenter @Inject constructor(
     }
 
     private fun initView() {
+        loadWords()
+    }
+
+    fun loadWords() {
         CoroutineScope(Dispatchers.Default).launch {
             launch(Dispatchers.Main) {
                 viewState.startLoading()
@@ -31,16 +35,19 @@ class PhrasesPresenter @Inject constructor(
 
             val adjWord = wordForGame.firstOrNull { it.type == WordType.WORD_TYPE_ADJECTIVE }
             val noneWord = wordForGame.firstOrNull { it.type == WordType.WORD_TYPE_NOUN }
+            val verbWord = wordForGame.firstOrNull { it.type == WordType.WORD_TYPE_VERB }
             val adjWordTranslate = allWords.firstOrNull { it.word == adjWord?.translation }
             val noneWordTranslate = allWords.firstOrNull { it.word == noneWord?.translation }
+            val verbWordTranslate = allWords.firstOrNull { it.word == verbWord?.translation }
 
-            checkTranslate(adjWordTranslate, noneWordTranslate)
+            checkTranslate(adjWordTranslate, noneWordTranslate, verbWordTranslate)
 
-            val phrase = adjWord?.word + " " + noneWord?.word
+            val phrase = adjWord?.word + " " + noneWord?.word + " " + verbWord?.word
             val traslates = adjWordTranslate?.forms
                 ?.map { it.value }
                 ?.toMutableList()
-            traslates?.add(noneWordTranslate?.word)
+            traslates?.add(noneWordTranslate?.word.orEmpty())
+            traslates?.addAll(verbWordTranslate?.forms?.map { it.value }.orEmpty())
             traslates?.shuffle()
 
             launch(Dispatchers.Main) {
@@ -51,17 +58,21 @@ class PhrasesPresenter @Inject constructor(
     }
 
     @Suppress("NestedBlockDepth", "CollapsibleIfStatements")
-    private fun CoroutineScope.checkTranslate(adjWordTranslate: Word?, noneWordTranslate: Word?) =
+    private fun CoroutineScope.checkTranslate(
+        adjWordTranslate: Word?,
+        noneWordTranslate: Word?,
+        verbWordTranslate: Word?
+    ) =
         launch {
             val phrasePattern = when (noneWordTranslate?.gender) {
-                WordType.GENDER_F -> WordType.PHRASE_TYPE_ADJ_NONE_F
-                WordType.GENDER_M -> WordType.PHRASE_TYPE_ADJ_NONE_M
-                WordType.GENDER_N -> WordType.PHRASE_TYPE_ADJ_NONE_N
+                WordType.GENDER_F -> WordType.PHRASE_TYPE_ADJ_NONE_VERB_F
+                WordType.GENDER_M -> WordType.PHRASE_TYPE_ADJ_NONE_VERB_M
+                WordType.GENDER_N -> WordType.PHRASE_TYPE_ADJ_NONE_VERB_N
                 else -> ""
             }
             val wordTypes: List<WordType> = parseStringPattern(phrasePattern)
             var text = ""
-            val words = listOf(adjWordTranslate, noneWordTranslate)
+            val words = listOf(adjWordTranslate, noneWordTranslate, verbWordTranslate)
             wordTypes.forEach { wordType ->
                 words.forEach { word ->
                     if (wordType.type == word?.type) {

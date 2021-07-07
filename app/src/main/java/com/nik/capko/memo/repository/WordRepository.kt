@@ -5,19 +5,19 @@ import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.db.AppDatabase
 import com.nik.capko.memo.db.data.FormDBEntity
 import com.nik.capko.memo.db.data.WordDBEntity
-import com.nik.capko.memo.db.data.WordFormDBEntity.Companion.toWordModel
+import com.nik.capko.memo.db.mapper.WordFormDBEntityMapper
 import com.nik.capko.memo.network.ApiServiceImpl
+import com.nik.capko.memo.network.mapper.WordEntityMapper
 import javax.inject.Inject
 
 class WordRepository @Inject constructor(
     appDatabase: AppDatabase,
-    api: ApiServiceImpl
+    private var apiService: ApiServiceImpl,
+    private var wordFormEntityMapper: WordFormDBEntityMapper,
+    private val wordEntityMapper: WordEntityMapper,
 ) {
-
     private val wordsDao = appDatabase.wordDao()
     private val formsDao = appDatabase.formDao()
-
-    private val apiService = api
 
     suspend fun saveWord(word: WordDBEntity) {
         wordsDao.insert(word)
@@ -32,11 +32,18 @@ class WordRepository @Inject constructor(
     }
 
     suspend fun getWordsFromDB(): List<Word> {
-        return wordsDao.getAllWords().map { it.toWordModel() }
+        return wordFormEntityMapper.mapFromEntityList(wordsDao.getAllWords())
     }
 
     suspend fun getWordsFromServer(): Resource<List<Word>> {
-        return apiService.getWordList()
+        val response = apiService.getWordList()
+        return if (response.status == Resource.Status.SUCCESS) {
+            Resource.success(
+                wordEntityMapper.mapFromEntityList(response.data ?: emptyList())
+            )
+        } else {
+            Resource.error(response.message ?: "")
+        }
     }
 
     suspend fun clearDatabase() {

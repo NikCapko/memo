@@ -22,11 +22,6 @@ import javax.inject.Provider
 @AndroidEntryPoint
 class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
 
-    @Suppress("ClassOrdering")
-    companion object {
-        const val WORDS = "SelectTranslateFragment.WORDS"
-    }
-
     @Inject
     lateinit var presenterProvider: Provider<PhrasesPresenter>
     private val presenter: PhrasesPresenter by moxyPresenter { presenterProvider.get() }
@@ -54,18 +49,20 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
         }
     }
 
-    override fun initView(phrase: String, translates: MutableList<String?>?) {
+    override fun initView(phrase: String, translates: List<String>?) {
         with(viewBinding) {
             tvPhrase.text = phrase
             val ids = mutableListOf<Int>()
             translates?.forEach { it ->
-                val button = MaterialButton(requireContext())
-                button.id = View.generateViewId()
-                button.text = it
-                button.setOnClickListener { it1 ->
-                    onAddTranslate((it1 as Button).text.toString())
+                val button = MaterialButton(requireContext()).apply {
+                    id = View.generateViewId()
+                    text = it
+                    isAllCaps = false
+                    setOnClickListener { it1 ->
+                        onAddTranslate((it1 as Button).text.toString())
+                    }
+                    ids.add(id)
                 }
-                ids.add(button.id)
                 clContainer.addView(button)
             }
             fTranslates.referencedIds = ids.toIntArray()
@@ -81,12 +78,12 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
     }
 
     override fun showMessage(text: String) {
-        Toast.makeText(context, "$text", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 
     override fun startLoading() {
         with(viewBinding) {
-            pvLoad.makeVisible()
+            pvLoad.startLoading()
             tvPhrase.makeGone()
             tvTranslate.makeGone()
             fTranslates.makeGone()
@@ -95,7 +92,8 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
 
     override fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
-            pvLoad.makeGone()
+            pvLoad.errorLoading(errorMessage)
+            pvLoad.onRetryClick = { onRetry() }
             tvPhrase.makeGone()
             tvTranslate.makeGone()
             fTranslates.makeGone()
@@ -104,10 +102,14 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
 
     override fun completeLoading() {
         with(viewBinding) {
-            pvLoad.makeGone()
+            pvLoad.completeLoading()
             tvPhrase.makeVisible()
             tvTranslate.makeVisible()
             fTranslates.makeVisible()
         }
+    }
+
+    override fun onRetry() {
+        presenter.loadWords()
     }
 }
