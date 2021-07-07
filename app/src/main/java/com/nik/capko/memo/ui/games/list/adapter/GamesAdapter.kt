@@ -34,7 +34,7 @@ class GamesAdapter(
 
         override fun onBind(item: Game) {
             itemBinding.apply {
-                tvGameName.text = item.name
+                tvGameName.text = itemView.context.getString(item.nameStringId)
             }
         }
     }

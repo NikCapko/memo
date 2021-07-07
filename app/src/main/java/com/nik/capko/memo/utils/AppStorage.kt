@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.nik.capko.memo.utils.extensions.get
 import com.nik.capko.memo.utils.extensions.put
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AppStorage(context: Context) {
+@Singleton
+class AppStorage @Inject constructor(val context: Context) {
 
     @Suppress("ClassOrdering")
     companion object {

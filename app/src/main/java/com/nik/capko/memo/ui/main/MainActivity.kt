@@ -9,8 +9,8 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Replace
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.nik.capko.memo.R
-import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.ui.Screens
+import com.nik.capko.memo.utils.AppStorage
 import com.nik.capko.memo.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatActivity
@@ -22,6 +22,9 @@ class MainActivity : MvpAppCompatActivity(), ChainHolder {
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
+
+    @Inject
+    lateinit var appStorage: AppStorage
 
     override val chain = ArrayList<WeakReference<Fragment>>()
 

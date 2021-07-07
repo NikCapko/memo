@@ -20,12 +20,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
-import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.base.ui.BaseFragment
 import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordListBinding
 import com.nik.capko.memo.ui.words.list.adapter.WordListAdapter
+import com.nik.capko.memo.utils.AppStorage
 import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible
@@ -50,6 +50,9 @@ class WordListFragment @Inject constructor() :
     @Inject
     lateinit var presenterProvider: Provider<WordListPresenter>
     private val presenter: WordListPresenter by moxyPresenter { presenterProvider.get() }
+
+    @Inject
+    lateinit var appStorage: AppStorage
 
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
 

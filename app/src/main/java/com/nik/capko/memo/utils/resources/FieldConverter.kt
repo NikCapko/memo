@@ -1,19 +1,22 @@
 package com.nik.capko.memo.utils.resources
 
+import android.content.Context
 import android.graphics.drawable.Drawable
-import com.nik.capko.memo.app.App
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object FieldConverter : IResourceManager {
+@Singleton
+class FieldConverter @Inject constructor(val context: Context) : IResourceManager {
 
     override fun getString(resId: Int): String {
-        return ResourceManager.getString(App.instance, resId)
+        return ResourceManager.getString(context, resId)
     }
 
     override fun getColor(resId: Int): Int {
-        return ResourceManager.getColor(App.instance, resId)
+        return ResourceManager.getColor(context, resId)
     }
 
     override fun getDrawable(resId: Int): Drawable? {
-        return ResourceManager.getDrawable(App.instance, resId)
+        return ResourceManager.getDrawable(context, resId)
     }
 }

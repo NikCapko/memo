@@ -3,8 +3,8 @@
 package com.nik.capko.memo.ui.sign_in
 
 import com.github.terrakok.cicerone.Router
-import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.ui.Screens
+import com.nik.capko.memo.utils.AppStorage
 import com.nik.capko.memo.utils.Constants
 import moxy.InjectViewState
 import moxy.MvpPresenter
@@ -13,6 +13,7 @@ import javax.inject.Inject
 @InjectViewState
 class SignInPresenter @Inject constructor(
     private val router: Router,
+    private val appStorage: AppStorage,
 ) : MvpPresenter<SignInView>() {
 
     fun signIn(login: String, password: String) {

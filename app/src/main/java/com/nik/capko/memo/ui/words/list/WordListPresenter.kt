@@ -1,10 +1,10 @@
 package com.nik.capko.memo.ui.words.list
 
 import com.github.terrakok.cicerone.Router
-import com.nik.capko.memo.app.appStorage
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.repository.WordRepository
 import com.nik.capko.memo.ui.Screens
+import com.nik.capko.memo.utils.AppStorage
 import com.nik.capko.memo.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +17,7 @@ import javax.inject.Inject
 class WordListPresenter @Inject constructor(
     private val router: Router,
     private val wordRepository: WordRepository,
+    private val appStorage: AppStorage,
 ) : MvpPresenter<WordListView>() {
 
     private var wordsList = emptyList<Word>()
