@@ -25,4 +25,6 @@ object Dependencies {
     const val lottieAnimationVersion = "5.2.0"
     const val sdpAndroidVersion = "1.0.6"
     const val ciceroneVersion = "6.6"
+    const val lifecycleVersion = "2.3.1"
+    const val lifecycleExtensionsVersion = "2.2.0"
 }

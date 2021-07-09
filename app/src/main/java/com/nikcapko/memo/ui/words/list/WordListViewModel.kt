@@ -1,5 +1,9 @@
 package com.nikcapko.memo.ui.words.list
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.ui.Screens
@@ -7,38 +11,36 @@ import com.nikcapko.memo.usecases.ClearDatabaseUseCase
 import com.nikcapko.memo.usecases.PrimaryWordListUseCase
 import com.nikcapko.memo.utils.AppStorage
 import com.nikcapko.memo.utils.Constants
-import kotlinx.coroutines.CoroutineScope
+import com.nikcapko.memo.utils.extensions.default
+import com.nikcapko.memo.utils.extensions.set
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
-import moxy.MvpPresenter
 import javax.inject.Inject
 
-@InjectViewState
-class WordListPresenter @Inject constructor(
+@HiltViewModel
+class WordListViewModel @Inject constructor(
     private val router: Router,
     private val appStorage: AppStorage,
     private val primaryWordListUseCase: PrimaryWordListUseCase,
     private val clearDatabaseUseCase: ClearDatabaseUseCase,
-) : MvpPresenter<WordListView>() {
+) : ViewModel() {
+
+    private val _state = MutableLiveData<State>().default(initialValue = State.LoadingState)
+    val state: LiveData<State>
+        get() = _state
 
     private var wordsList = emptyList<Word>()
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
+    init {
         loadWords()
     }
 
     fun loadWords() {
-        CoroutineScope(Dispatchers.Default).launch {
-            launch(Dispatchers.Main) {
-                viewState.startLoading()
-            }
+        viewModelScope.launch {
+            _state.postValue(State.LoadingState)
             wordsList = primaryWordListUseCase.getWordList()
-            launch(Dispatchers.Main) {
-                viewState.showWords(wordsList)
-                viewState.completeLoading()
-            }
+            _state.postValue(State.LoadedState(wordsList))
         }
     }
 
@@ -49,7 +51,7 @@ class WordListPresenter @Inject constructor(
 
     fun onEnableSound(position: Int) {
         val word = wordsList.getOrNull(position)
-        viewState.speakOut(word?.word)
+        _state.set(State.SpeakOut(word?.word))
     }
 
     fun onAddWordClick() {
@@ -65,12 +67,12 @@ class WordListPresenter @Inject constructor(
     }
 
     fun logout() {
-        viewState.showClearDatabaseDialog()
+        _state.set(State.ClearDatabase)
     }
 
     fun logout(clearDataBase: Boolean) {
         appStorage.put(Constants.IS_REGISTER, false)
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch {
             if (clearDataBase) {
                 clearDatabaseUseCase.clearDatabase()
             }
@@ -78,5 +80,14 @@ class WordListPresenter @Inject constructor(
                 router.replaceScreen(Screens.signInScreen())
             }
         }
+    }
+
+    sealed class State {
+        object LoadingState : State()
+        object NoItemsState : State()
+        data class LoadedState<T>(var data: List<T>?) : State()
+        data class ErrorState(var exception: Throwable) : State()
+        data class SpeakOut(var word: String?) : State()
+        object ClearDatabase : State()
     }
 }
