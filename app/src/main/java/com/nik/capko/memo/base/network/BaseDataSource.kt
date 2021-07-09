@@ -1,6 +1,9 @@
 package com.nik.capko.memo.base.network
 
 import retrofit2.Response
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 @Suppress("UnnecessaryAbstractClass")
 abstract class BaseDataSource {
@@ -17,7 +20,12 @@ abstract class BaseDataSource {
             }
             return error(" ${response.code()} ${response.message()}")
         } catch (e: Exception) {
-            return error(e.message ?: e.toString())
+            return when (e) {
+                is SocketTimeoutException -> error(message = "connection error!")
+                is ConnectException -> error(message = "no internet access!")
+                is UnknownHostException -> error(message = "no internet access!")
+                else -> error(e.message ?: e.toString())
+            }
         }
     }
 

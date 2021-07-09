@@ -75,7 +75,7 @@ class WordDetailPresenter @Inject constructor(
             launch(Dispatchers.Main) {
                 viewState.startProgressDialog()
             }
-            wordRepository.deleteWordById(word?.id ?: 0)
+            word?.let { wordRepository.deleteWord(it) }
             launch(Dispatchers.Main) {
                 viewState.sendSuccessResult()
                 viewState.completeProgressDialog()
