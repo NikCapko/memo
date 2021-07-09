@@ -9,6 +9,7 @@ import com.nik.capko.memo.network.RestConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -53,7 +54,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    internal fun provideCache(context: Context): Cache {
+    internal fun provideCache(@ApplicationContext context: Context): Cache {
         val httpCacheDirectory = File(context.cacheDir.absolutePath, "HttpCache")
         return Cache(httpCacheDirectory, CACHE_SIZE_BYTES)
     }
