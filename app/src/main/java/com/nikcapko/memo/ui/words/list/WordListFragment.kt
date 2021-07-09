@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,27 +28,18 @@ import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
 import com.nikcapko.memo.ui.words.list.adapter.WordListAdapter
-import com.nikcapko.memo.utils.AppStorage
 import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.lazyUnsafe
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.ktx.moxyPresenter
 import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
+class WordListFragment : BaseFragment(), ProgressMvpView {
 
-    @Inject
-    lateinit var appStorage: AppStorage
-
-    @Inject
-    lateinit var presenterProvider: Provider<WordListPresenter>
-    private val presenter: WordListPresenter by moxyPresenter { presenterProvider.get() }
+    private val viewModel by viewModels<WordListViewModel>()
 
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
 
@@ -57,8 +49,8 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
 
     private val adapter: WordListAdapter by lazyUnsafe {
         WordListAdapter(
-            onItemClick = { position -> presenter.onItemClick(position) },
-            onEnableSound = { position -> presenter.onEnableSound(position) }
+            onItemClick = { position -> viewModel.onItemClick(position) },
+            onEnableSound = { position -> viewModel.onEnableSound(position) }
         )
     }
 
@@ -66,7 +58,7 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 Constants.LOAD_WORDS_EVENT -> {
-                    presenter.loadWords()
+                    viewModel.loadWords()
                 }
             }
         }
@@ -84,22 +76,22 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
         menu.clear()
         inflater.inflate(R.menu.menu_action, menu)
         val logoutMenuItem = menu.findItem(R.id.action_logout)
-        logoutMenuItem.isVisible = appStorage.get(Constants.IS_REGISTER, false)
+        logoutMenuItem.isVisible = false // appStorage.get(Constants.IS_REGISTER, false)
         gameMenuItem = menu.findItem(R.id.action_games)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_games -> {
-                presenter.openGamesScreen()
+                viewModel.openGamesScreen()
                 true
             }
             R.id.action_dictionary -> {
-                presenter.openDictionaryScreen()
+                viewModel.openDictionaryScreen()
                 true
             }
             R.id.action_logout -> {
-                presenter.logout()
+                viewModel.logout()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -116,6 +108,22 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
         setListeners()
         initAdapters()
         initTextToSpeech()
+        viewModel.state.observe(
+            viewLifecycleOwner
+        ) { state ->
+            when (state) {
+                WordListViewModel.State.ClearDatabase -> showClearDatabaseDialog()
+                is WordListViewModel.State.ErrorState -> TODO()
+                is WordListViewModel.State.LoadedState<*> -> {
+                    val data = (state.data as? List<*>)?.filterIsInstance<Word>()
+                    showWords(data)
+                    completeLoading()
+                }
+                WordListViewModel.State.LoadingState -> startLoading()
+                WordListViewModel.State.NoItemsState -> TODO()
+                is WordListViewModel.State.SpeakOut -> speakOut(state.word)
+            }
+        }
     }
 
     private fun initToolbar() {
@@ -126,8 +134,8 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
     }
 
     private fun setListeners() {
-        viewBinding.apply {
-            btnAddWord.setOnClickListener { presenter.onAddWordClick() }
+        with(viewBinding) {
+            btnAddWord.setOnClickListener { viewModel.onAddWordClick() }
             pvLoad.onRetryClick = { onRetry() }
         }
     }
@@ -154,28 +162,28 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
         tts?.setSpeechRate(SPEECH_RATE)
     }
 
-    override fun showWords(wordsList: List<Word>) {
+    private fun showWords(wordsList: List<Word>?) {
         gameMenuItem?.isVisible = !wordsList.isNullOrEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
     }
 
-    override fun showClearDatabaseDialog() {
+    private fun showClearDatabaseDialog() {
         AlertDialog.Builder(activity).apply {
             setTitle(R.string.attention)
             setMessage(R.string.clear_database)
             setCancelable(true)
             setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
-                presenter.logout(true)
+                viewModel.logout(true)
             }
             setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
-                presenter.logout(false)
+                viewModel.logout(false)
             }
         }.create().show()
     }
 
-    override fun speakOut(word: String?) {
+    private fun speakOut(word: String?) {
         tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null, null)
         Toast.makeText(context, word, Toast.LENGTH_SHORT).show()
     }
@@ -205,7 +213,7 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
     }
 
     override fun onRetry() {
-        presenter.loadWords()
+        viewModel.loadWords()
     }
 
     override fun onPause() {

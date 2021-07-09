@@ -61,6 +61,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:${Dependencies.constraintLayoutVersion}")
     implementation("androidx.recyclerview:recyclerview:${Dependencies.recyclerviewVersion}")
     implementation("com.google.android.material:material:${Dependencies.materialVersion}")
+    implementation("androidx.fragment:fragment-ktx:1.3.5")
 
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:${Dependencies.retrofitVersion}")
@@ -103,4 +104,10 @@ dependencies {
 
     // navigation cicerone
     implementation("com.github.terrakok:cicerone:${Dependencies.ciceroneVersion}")
+
+    // androidx.lifecycle
+    implementation("androidx.lifecycle:lifecycle-extensions:${Dependencies.lifecycleExtensionsVersion}")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Dependencies.lifecycleVersion}")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Dependencies.lifecycleVersion}")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:${Dependencies.lifecycleVersion}")
 }
