@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package com.nik.capko.memo.utils.extensions
 
 import android.app.Activity

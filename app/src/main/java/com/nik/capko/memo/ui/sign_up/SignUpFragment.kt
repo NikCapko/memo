@@ -37,6 +37,7 @@ class SignUpFragment : MvpAppCompatFragment(), SignUpView {
         setListeners()
     }
 
+    @Suppress("EmptyFunctionBlock")
     private fun setListeners() {
     }
 }
