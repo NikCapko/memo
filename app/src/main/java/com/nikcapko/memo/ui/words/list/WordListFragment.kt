@@ -112,7 +112,7 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
             viewLifecycleOwner
         ) { state ->
             when (state) {
-                WordListViewModel.State.ClearDatabase -> showClearDatabaseDialog()
+                WordListViewModel.State.ShowDialogState -> showClearDatabaseDialog()
                 is WordListViewModel.State.ErrorState -> TODO()
                 is WordListViewModel.State.LoadedState<*> -> {
                     val data = (state.data as? List<*>)?.filterIsInstance<Word>()
