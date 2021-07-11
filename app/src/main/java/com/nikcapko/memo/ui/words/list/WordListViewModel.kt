@@ -67,7 +67,7 @@ class WordListViewModel @Inject constructor(
     }
 
     fun logout() {
-        _state.set(State.ClearDatabase)
+        _state.set(State.ShowDialogState)
     }
 
     fun logout(clearDataBase: Boolean) {
@@ -88,6 +88,6 @@ class WordListViewModel @Inject constructor(
         data class LoadedState<T>(var data: List<T>?) : State()
         data class ErrorState(var exception: Throwable) : State()
         data class SpeakOut(var word: String?) : State()
-        object ClearDatabase : State()
+        object ShowDialogState : State()
     }
 }
