@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.nik.capko.memo.network.ApiService
-import com.nik.capko.memo.network.ApiServiceImpl
 import com.nik.capko.memo.network.RestConfig
 import dagger.Module
 import dagger.Provides
@@ -64,8 +63,4 @@ object NetworkModule {
 
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
-
-    @Provides
-    @Singleton
-    fun provideApiServiceHelper(api: ApiService): ApiServiceImpl = ApiServiceImpl(api)
 }
