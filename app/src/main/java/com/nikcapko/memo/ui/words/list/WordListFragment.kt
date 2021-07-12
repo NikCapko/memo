@@ -108,21 +108,27 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
         setListeners()
         initAdapters()
         initTextToSpeech()
-        viewModel.state.observe(
-            viewLifecycleOwner
-        ) { state ->
+        observe()
+    }
+
+    private fun observe() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                WordListViewModel.State.ShowDialogState -> showClearDatabaseDialog()
-                is WordListViewModel.State.ErrorState -> TODO()
+                WordListViewModel.State.LoadingState -> startLoading()
+                WordListViewModel.State.NoItemsState -> TODO()
                 is WordListViewModel.State.LoadedState<*> -> {
                     val data = (state.data as? List<*>)?.filterIsInstance<Word>()
                     showWords(data)
                     completeLoading()
                 }
-                WordListViewModel.State.LoadingState -> startLoading()
-                WordListViewModel.State.NoItemsState -> TODO()
-                is WordListViewModel.State.SpeakOut -> speakOut(state.word)
+                is WordListViewModel.State.ErrorState -> TODO()
             }
+        }
+        viewModel.speakOut.observe(viewLifecycleOwner) { speakOut ->
+            speakOut.word?.let { speakOut(it) }
+        }
+        viewModel.showClearDatabaseDialog.observe(viewLifecycleOwner) {
+            showClearDatabaseDialog()
         }
     }
 

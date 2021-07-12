@@ -30,6 +30,14 @@ class WordListViewModel @Inject constructor(
     val state: LiveData<State>
         get() = _state
 
+    private val _speakOut = MutableLiveData<SpeakOut>()
+    val speakOut: LiveData<SpeakOut>
+        get() = _speakOut
+
+    private val _showClearDatabaseDialog = MutableLiveData<ShowClearDatabaseDialog>()
+    val showClearDatabaseDialog: LiveData<ShowClearDatabaseDialog>
+        get() = _showClearDatabaseDialog
+
     private var wordsList = emptyList<Word>()
 
     init {
@@ -51,7 +59,7 @@ class WordListViewModel @Inject constructor(
 
     fun onEnableSound(position: Int) {
         val word = wordsList.getOrNull(position)
-        _state.set(State.SpeakOut(word?.word))
+        _speakOut.set(SpeakOut(word?.word))
     }
 
     fun onAddWordClick() {
@@ -67,7 +75,7 @@ class WordListViewModel @Inject constructor(
     }
 
     fun logout() {
-        _state.set(State.ShowDialogState)
+        _showClearDatabaseDialog.set(ShowClearDatabaseDialog)
     }
 
     fun logout(clearDataBase: Boolean) {
@@ -87,7 +95,9 @@ class WordListViewModel @Inject constructor(
         object NoItemsState : State()
         data class LoadedState<T>(var data: List<T>?) : State()
         data class ErrorState(var exception: Throwable) : State()
-        data class SpeakOut(var word: String?) : State()
-        object ShowDialogState : State()
     }
+
+    data class SpeakOut(var word: String?) : State()
+
+    object ShowClearDatabaseDialog : State()
 }
