@@ -97,7 +97,7 @@ class WordListViewModel @Inject constructor(
         data class ErrorState(var exception: Throwable) : State()
     }
 
-    data class SpeakOut(var word: String?) : State()
+    data class SpeakOut(var word: String?)
 
-    object ShowClearDatabaseDialog : State()
+    object ShowClearDatabaseDialog
 }
