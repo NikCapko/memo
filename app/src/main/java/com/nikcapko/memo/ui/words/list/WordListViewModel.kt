@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
+import com.nikcapko.core.viewmodel.LoadingViewModelState
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.ui.Screens
 import com.nikcapko.memo.usecases.ClearDatabaseUseCase
@@ -26,8 +27,8 @@ class WordListViewModel @Inject constructor(
     private val clearDatabaseUseCase: ClearDatabaseUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableLiveData<State>().default(initialValue = State.LoadingState)
-    val state: LiveData<State>
+    private val _state = MutableLiveData<LoadingViewModelState>().default(initialValue = LoadingViewModelState.LoadingState)
+    val loadingViewModelState: LiveData<LoadingViewModelState>
         get() = _state
 
     private val _speakOut = MutableLiveData<SpeakOut>()
@@ -46,9 +47,9 @@ class WordListViewModel @Inject constructor(
 
     fun loadWords() {
         viewModelScope.launch {
-            _state.postValue(State.LoadingState)
+            _state.postValue(LoadingViewModelState.LoadingState)
             wordsList = primaryWordListUseCase.getWordList()
-            _state.postValue(State.LoadedState(wordsList))
+            _state.postValue(LoadingViewModelState.LoadedState(wordsList))
         }
     }
 
@@ -88,13 +89,6 @@ class WordListViewModel @Inject constructor(
                 router.replaceScreen(Screens.signInScreen())
             }
         }
-    }
-
-    sealed class State {
-        object LoadingState : State()
-        object NoItemsState : State()
-        data class LoadedState<T>(var data: List<T>?) : State()
-        data class ErrorState(var exception: Throwable) : State()
     }
 
     data class SpeakOut(var word: String?)

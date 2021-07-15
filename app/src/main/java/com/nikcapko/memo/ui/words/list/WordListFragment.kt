@@ -24,6 +24,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.base.view.ProgressMvpView
+import com.nikcapko.core.viewmodel.LoadingViewModelState
 import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
@@ -112,16 +113,16 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
     }
 
     private fun observe() {
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        viewModel.loadingViewModelState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                WordListViewModel.State.LoadingState -> startLoading()
-                WordListViewModel.State.NoItemsState -> TODO()
-                is WordListViewModel.State.LoadedState<*> -> {
+                LoadingViewModelState.LoadingState -> startLoading()
+                LoadingViewModelState.NoItemsState -> TODO()
+                is LoadingViewModelState.LoadedState<*> -> {
                     val data = (state.data as? List<*>)?.filterIsInstance<Word>()
                     showWords(data)
                     completeLoading()
                 }
-                is WordListViewModel.State.ErrorState -> TODO()
+                is LoadingViewModelState.ErrorState -> TODO()
             }
         }
         viewModel.speakOut.observe(viewLifecycleOwner) { speakOut ->
