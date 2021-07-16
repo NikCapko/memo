@@ -232,7 +232,7 @@
 
     </RelativeLayout>
 
-    <com.nik.capko.memo.utils.view.progressview.ProgressView
+    <com.nikcapko.memo.utils.view.progressview.ProgressView
         android:id="@+id/pvLoad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
