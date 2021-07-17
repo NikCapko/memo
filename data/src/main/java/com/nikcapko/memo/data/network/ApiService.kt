@@ -2,7 +2,6 @@ package com.nikcapko.memo.data.network
 
 import com.nikcapko.memo.data.network.data.DictionaryEntity
 import com.nikcapko.memo.data.network.data.WordEntity
-import com.nikcapko.memo.network.RestConfig
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

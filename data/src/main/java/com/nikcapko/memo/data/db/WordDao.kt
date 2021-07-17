@@ -21,9 +21,11 @@ interface WordDao : BaseDao<WordDBEntity> {
     @Query("SELECT * FROM words WHERE primaryLanguage == 1 order by frequency asc LIMIT :limit")
     suspend fun getWordsForGameByLimit(limit: Int): List<WordFormDBEntity>
 
+    @Transaction
     @Query("DELETE FROM words")
     suspend fun removeAll()
 
+    @Transaction
     @Query("DELETE FROM words WHERE id == :id")
     suspend fun deleteWordById(id: Long)
 }

@@ -51,11 +51,11 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:${Dependencies.androidxJunitVersion}")
     androidTestImplementation("androidx.test.espresso:espresso-core:${Dependencies.espressoVersion}")
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${Dependencies.kotlinVersion}")
-
     implementation(project(":core"))
     implementation(project(":data"))
     implementation(project(":domain"))
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${Dependencies.kotlinVersion}")
 
     implementation("androidx.core:core-ktx:${Dependencies.coreKtxVersion}")
     implementation("androidx.constraintlayout:constraintlayout:${Dependencies.constraintLayoutVersion}")

@@ -1,4 +1,4 @@
-package com.nikcapko.memo.network
+package com.nikcapko.memo.data.network
 
 object RestConfig {
     const val BASE_API_URL = "http://192.168.0.107:8000/"

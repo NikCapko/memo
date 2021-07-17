@@ -7,7 +7,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 @Suppress("UnnecessaryAbstractClass")
-abstract class BaseDataSource {
+abstract class BaseRemoteDataSource {
 
     @Suppress("ReturnCount", "TooGenericExceptionCaught")
     protected suspend fun <T> getResult(call: suspend () -> Response<T>): Resource<T> {

@@ -9,7 +9,7 @@ import moxy.viewstate.strategy.StateStrategyType
 
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface DictionaryView : MvpView, ProgressMvpView, ProgressDialogView {
-    fun showDictionaryList(dictionary: List<Dictionary>)
+    fun showDictionaryList(dictionaryList: List<Dictionary>)
     fun showLoadingDialog(position: Int)
     fun sendSuccessResult()
 }

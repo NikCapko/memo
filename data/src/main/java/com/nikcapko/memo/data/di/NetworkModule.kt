@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.nikcapko.memo.data.network.ApiService
-import com.nikcapko.memo.network.RestConfig
+import com.nikcapko.memo.data.network.RestConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
