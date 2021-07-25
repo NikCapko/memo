@@ -7,15 +7,15 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Deps.compileSdkVersion)
-    buildToolsVersion = Deps.buildToolsVersion
+    compileSdkVersion(AppConfig.compileSdkVersion)
+    buildToolsVersion = AppConfig.buildToolsVersion
 
     defaultConfig {
-        applicationId = "com.nik.capko.memo"
-        minSdkVersion(Deps.minSdkVersion)
-        targetSdkVersion(Deps.targetSdkVersion)
-        versionCode = Deps.versionCode
-        versionName = Deps.versionName
+        applicationId = AppConfig.applicationId
+        minSdkVersion(AppConfig.minSdkVersion)
+        targetSdkVersion(AppConfig.targetSdkVersion)
+        versionCode = AppConfig.versionCode
+        versionName = AppConfig.versionName
 
         testInstrumentationRunner("androidx.test.runner.AndroidJUnitRunner")
     }
@@ -46,59 +46,56 @@ android {
 
 dependencies {
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    testImplementation("junit:junit:${Dependencies.junitVersion}")
+    androidTestImplementation("androidx.test.ext:junit:${Dependencies.androidxJunitVersion}")
+    androidTestImplementation("androidx.test.espresso:espresso-core:${Dependencies.espressoVersion}")
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${Deps.kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${Dependencies.kotlinVersion}")
 
-    implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.core:core-ktx:1.6.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.core:core-ktx:${Dependencies.coreKtxVersion}")
+    implementation("androidx.constraintlayout:constraintlayout:${Dependencies.constraintLayoutVersion}")
+    implementation("androidx.recyclerview:recyclerview:${Dependencies.recyclerviewVersion}")
+    implementation("com.google.android.material:material:${Dependencies.materialVersion}")
 
     // retrofit
-    implementation("com.squareup.retrofit2:retrofit:${Deps.retrofitVersion}")
-    implementation("com.squareup.retrofit2:converter-gson:${Deps.retrofitVersion}")
+    implementation("com.squareup.retrofit2:retrofit:${Dependencies.retrofitVersion}")
+    implementation("com.squareup.retrofit2:converter-gson:${Dependencies.retrofitVersion}")
 
     // okhttp
-    implementation("com.squareup.okhttp3:okhttp:${Deps.okhttpVersion}")
-    implementation("com.squareup.okhttp3:logging-interceptor:${Deps.okhttpVersion}")
+    implementation("com.squareup.okhttp3:okhttp:${Dependencies.okhttpVersion}")
+    implementation("com.squareup.okhttp3:logging-interceptor:${Dependencies.okhttpVersion}")
 
     // room
-    implementation("androidx.room:room-runtime:${Deps.roomVersion}")
-    implementation("androidx.room:room-ktx:${Deps.roomVersion}")
-    kapt("androidx.room:room-compiler:${Deps.roomVersion}")
+    implementation("androidx.room:room-runtime:${Dependencies.roomVersion}")
+    implementation("androidx.room:room-ktx:${Dependencies.roomVersion}")
+    kapt("androidx.room:room-compiler:${Dependencies.roomVersion}")
 
     // moxy
-    implementation("com.github.moxy-community:moxy:${Deps.moxyVersion}")
-    implementation("com.github.moxy-community:moxy-androidx:${Deps.moxyVersion}")
-    implementation("com.github.moxy-community:moxy-ktx:${Deps.moxyVersion}")
-    kapt("com.github.moxy-community:moxy-compiler:${Deps.moxyVersion}")
+    implementation("com.github.moxy-community:moxy:${Dependencies.moxyVersion}")
+    implementation("com.github.moxy-community:moxy-androidx:${Dependencies.moxyVersion}")
+    implementation("com.github.moxy-community:moxy-ktx:${Dependencies.moxyVersion}")
+    kapt("com.github.moxy-community:moxy-compiler:${Dependencies.moxyVersion}")
 
     // Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:${Deps.daggerHiltVersion}")
-    kapt("com.google.dagger:hilt-android-compiler:${Deps.daggerHiltVersion}")
+    implementation("com.google.dagger:hilt-android:${Dependencies.daggerHiltVersion}")
+    kapt("com.google.dagger:hilt-android-compiler:${Dependencies.daggerHiltVersion}")
 
     // ViewBindingPropertyDelegate
-    implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.4.4")
+    implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:${Dependencies.viewBindingPropertyDelegateVersion}")
 
     // coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Deps.coroutineVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Deps.coroutineVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Dependencies.coroutineVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Dependencies.coroutineVersion}")
 
     // rx binding
-    implementation("com.jakewharton.rxbinding2:rxbinding:2.0.0")
+    implementation("com.jakewharton.rxbinding2:rxbinding:${Dependencies.rxBindingVersion}")
 
     // lottie animation
-    implementation("com.airbnb.android:lottie:3.7.0")
+    implementation("com.airbnb.android:lottie:${Dependencies.lottieAnimationVersion}")
 
-    implementation("com.intuit.sdp:sdp-android:1.0.6")
+    // sdp-android
+    implementation("com.intuit.sdp:sdp-android:${Dependencies.sdpAndroidVersion}")
 
     // navigation cicerone
-    implementation("com.github.terrakok:cicerone:6.6")
-
-    // rxbinding
-    implementation("com.jakewharton.rxbinding2:rxbinding:2.0.0")
+    implementation("com.github.terrakok:cicerone:${Dependencies.ciceroneVersion}")
 }
