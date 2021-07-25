@@ -2,11 +2,12 @@ package com.nik.capko.memo.utils.resources
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FieldConverter @Inject constructor(val context: Context) : IResourceManager {
+class FieldConverter @Inject constructor(@ApplicationContext var context: Context) : IResourceManager {
 
     override fun getString(resId: Int): String {
         return ResourceManager.getString(context, resId)
