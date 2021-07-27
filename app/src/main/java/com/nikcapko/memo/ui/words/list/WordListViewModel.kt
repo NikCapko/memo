@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
-import com.nikcapko.core.viewmodel.LoadingViewModelState
+import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.ui.Screens
 import com.nikcapko.memo.usecases.ClearDatabaseUseCase
@@ -27,8 +27,8 @@ class WordListViewModel @Inject constructor(
     private val clearDatabaseUseCase: ClearDatabaseUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableLiveData<LoadingViewModelState>().default(initialValue = LoadingViewModelState.LoadingState)
-    val loadingViewModelState: LiveData<LoadingViewModelState>
+    private val _state = MutableLiveData<DataLoadingViewModelState>().default(initialValue = DataLoadingViewModelState.LoadingState)
+    val dataLoadingViewModelState: LiveData<DataLoadingViewModelState>
         get() = _state
 
     private val _speakOut = MutableLiveData<SpeakOut>()
@@ -47,9 +47,9 @@ class WordListViewModel @Inject constructor(
 
     fun loadWords() {
         viewModelScope.launch {
-            _state.postValue(LoadingViewModelState.LoadingState)
+            _state.postValue(DataLoadingViewModelState.LoadingState)
             wordsList = primaryWordListUseCase.getWordList()
-            _state.postValue(LoadingViewModelState.LoadedState(wordsList))
+            _state.postValue(DataLoadingViewModelState.LoadedState(wordsList))
         }
     }
 
