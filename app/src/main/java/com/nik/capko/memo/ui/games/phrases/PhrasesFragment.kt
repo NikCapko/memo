@@ -54,6 +54,7 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
             tvTranslate.setOnClickListener {
                 tvTranslate.text = ""
             }
+            pvLoad.onRetryClick = { onRetry() }
         }
     }
 
@@ -101,7 +102,6 @@ class PhrasesFragment : MvpAppCompatFragment(), PhrasesView {
     override fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
             pvLoad.errorLoading(errorMessage)
-            pvLoad.onRetryClick = { onRetry() }
             tvPhrase.makeGone()
             tvTranslate.makeGone()
             fTranslates.makeGone()

@@ -123,15 +123,18 @@ class WordListFragment @Inject constructor() : BaseFragment(), WordListView, Pro
     }
 
     private fun setListeners() {
-        viewBinding.btnAddWord.setOnClickListener { presenter.onAddWordClick() }
-        adapter = WordListAdapter(
-            { position ->
-                presenter.onItemClick(position)
-            },
-            { position ->
-                presenter.onEnableSound(position)
-            }
-        )
+        viewBinding.apply {
+            adapter = WordListAdapter(
+                { position ->
+                    presenter.onItemClick(position)
+                },
+                { position ->
+                    presenter.onEnableSound(position)
+                }
+            )
+            btnAddWord.setOnClickListener { presenter.onAddWordClick() }
+            pvLoad.onRetryClick = { onRetry() }
+        }
     }
 
     private fun initAdapters() {
@@ -193,7 +196,6 @@ class WordListFragment @Inject constructor() : BaseFragment(), WordListView, Pro
     override fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
             pvLoad.errorLoading(errorMessage)
-            pvLoad.onRetryClick = { onRetry() }
             rvWords.makeGone()
             btnAddWord.makeGone()
         }

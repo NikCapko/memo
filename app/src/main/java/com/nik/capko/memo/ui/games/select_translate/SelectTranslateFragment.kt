@@ -85,6 +85,7 @@ class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
             btnExit.setOnClickListener {
                 presenter.onBackPressed()
             }
+            pvLoad.onRetryClick = { onRetry() }
         }
     }
 
@@ -149,7 +150,6 @@ class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
     override fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
             pvLoad.errorLoading(errorMessage)
-            pvLoad.onRetryClick = { onRetry() }
             llContentContainer.makeGone()
         }
     }

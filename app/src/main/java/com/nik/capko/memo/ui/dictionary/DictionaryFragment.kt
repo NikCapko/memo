@@ -78,8 +78,11 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
     }
 
     private fun setListeners() {
-        adapter = DictionaryAdapter { position ->
-            presenter.onItemClick(position)
+        viewBinding.apply {
+            adapter = DictionaryAdapter { position ->
+                presenter.onItemClick(position)
+            }
+            pvLoad.onRetryClick = { onRetry() }
         }
     }
 
@@ -124,7 +127,6 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
     override fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
             pvLoad.errorLoading(errorMessage)
-            pvLoad.onRetryClick = { onRetry() }
             rvDictionary.makeGone()
         }
     }

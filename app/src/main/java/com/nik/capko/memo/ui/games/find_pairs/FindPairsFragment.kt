@@ -84,6 +84,7 @@ class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
                 presenter.onBackPressed()
             }
             lavSuccess.setOnClickListener { }
+            pvLoad.onRetryClick = { onRetry() }
         }
     }
 
@@ -131,7 +132,6 @@ class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
     override fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
             pvLoad.errorLoading(errorMessage)
-            pvLoad.onRetryClick = { onRetry() }
             flContentContainer.makeGone()
         }
     }
