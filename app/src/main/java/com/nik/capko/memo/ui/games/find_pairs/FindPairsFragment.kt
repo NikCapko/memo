@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
+import androidx.appcompat.app.AppCompatActivity
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.databinding.FragmentFindPairsBinding
@@ -19,6 +20,7 @@ import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
+@Suppress("TooManyFunctions")
 @AndroidEntryPoint
 class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
 
@@ -41,7 +43,13 @@ class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
         setListeners()
+    }
+
+    private fun initToolbar() {
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as? AppCompatActivity)?.supportActionBar?.setHomeButtonEnabled(true)
     }
 
     private fun setListeners() {

@@ -15,12 +15,14 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nik.capko.memo.R
 import com.nik.capko.memo.base.ui.BaseFragment
+import com.nik.capko.memo.base.view.ProgressMvpView
 import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.data.Word
 import com.nik.capko.memo.databinding.FragmentWordListBinding
@@ -37,10 +39,7 @@ import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordListFragment @Inject constructor() :
-    BaseFragment(),
-    WordListView,
-    TextToSpeech.OnInitListener {
+class WordListFragment @Inject constructor() : BaseFragment(), WordListView, ProgressMvpView {
 
     @Suppress("ClassOrdering")
     companion object {
@@ -74,12 +73,9 @@ class WordListFragment @Inject constructor() :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val intentFilter = IntentFilter(Constants.LOAD_WORDS_EVENT)
         LocalBroadcastManager.getInstance(requireContext())
-            .registerReceiver(localBroadcastReceiver, intentFilter)
+            .registerReceiver(localBroadcastReceiver, IntentFilter(Constants.LOAD_WORDS_EVENT))
         setHasOptionsMenu(true)
-        tts = TextToSpeech(context, this)
-        tts?.setSpeechRate(SPEECH_RATE)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -109,18 +105,21 @@ class WordListFragment @Inject constructor() :
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_word_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
         setListeners()
         initAdapters()
+        initTextToSpeech()
+    }
+
+    private fun initToolbar() {
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as? AppCompatActivity)?.supportActionBar?.setHomeButtonEnabled(false)
     }
 
     private fun setListeners() {
@@ -143,9 +142,22 @@ class WordListFragment @Inject constructor() :
         }
     }
 
+    private fun initTextToSpeech() {
+        tts = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result: Int = tts?.setLanguage(Locale.US) ?: TextToSpeech.LANG_NOT_SUPPORTED
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    Log.e("TTS", "This Language is not supported")
+                }
+            } else {
+                Log.e("TTS", "Initialization Failed!")
+            }
+        }
+        tts?.setSpeechRate(SPEECH_RATE)
+    }
+
     override fun showWords(wordsList: List<Word>) {
-        gameMenuItem?.isVisible =
-            wordsList.isNotEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
+        gameMenuItem?.isVisible = !wordsList.isNullOrEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
     }
 
@@ -163,17 +175,6 @@ class WordListFragment @Inject constructor() :
                 presenter.logout(false)
             }
         }.create().show()
-    }
-
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            val result: Int = tts?.setLanguage(Locale.US) ?: TextToSpeech.LANG_NOT_SUPPORTED
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported")
-            }
-        } else {
-            Log.e("TTS", "Initilization Failed!")
-        }
     }
 
     override fun speakOut(word: String?) {

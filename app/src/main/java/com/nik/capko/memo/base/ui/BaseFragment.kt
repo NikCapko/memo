@@ -12,9 +12,7 @@ open class BaseFragment : MvpAppCompatFragment() {
         super.onAttach(context)
 
         val activity = activity
-        if (activity is ChainHolder) {
-            (activity as ChainHolder).chain.add(WeakReference<Fragment>(this))
-        }
+        (activity as? ChainHolder)?.chain?.add(WeakReference<Fragment>(this))
     }
 
     override fun onDetach() {
