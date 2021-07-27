@@ -21,10 +21,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.base.view.ProgressMvpView
-import com.nikcapko.core.viewmodel.LoadingViewModelState
 import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
@@ -112,27 +112,6 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
         observe()
     }
 
-    private fun observe() {
-        viewModel.loadingViewModelState.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                LoadingViewModelState.LoadingState -> startLoading()
-                LoadingViewModelState.NoItemsState -> TODO()
-                is LoadingViewModelState.LoadedState<*> -> {
-                    val data = (state.data as? List<*>)?.filterIsInstance<Word>()
-                    showWords(data)
-                    completeLoading()
-                }
-                is LoadingViewModelState.ErrorState -> TODO()
-            }
-        }
-        viewModel.speakOut.observe(viewLifecycleOwner) { speakOut ->
-            speakOut.word?.let { speakOut(it) }
-        }
-        viewModel.showClearDatabaseDialog.observe(viewLifecycleOwner) {
-            showClearDatabaseDialog()
-        }
-    }
-
     private fun initToolbar() {
         (activity as? AppCompatActivity)?.supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(false)
@@ -167,6 +146,27 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
             }
         }
         tts?.setSpeechRate(SPEECH_RATE)
+    }
+
+    private fun observe() {
+        viewModel.dataLoadingViewModelState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                DataLoadingViewModelState.LoadingState -> startLoading()
+                DataLoadingViewModelState.NoItemsState -> showWords(emptyList())
+                is DataLoadingViewModelState.LoadedState<*> -> {
+                    val data = (state.data as? List<*>)?.filterIsInstance<Word>()
+                    showWords(data)
+                    completeLoading()
+                }
+                is DataLoadingViewModelState.ErrorState -> TODO()
+            }
+        }
+        viewModel.speakOut.observe(viewLifecycleOwner) { speakOut ->
+            speakOut.word?.let { speakOut(it) }
+        }
+        viewModel.showClearDatabaseDialog.observe(viewLifecycleOwner) {
+            showClearDatabaseDialog()
+        }
     }
 
     private fun showWords(wordsList: List<Word>?) {
