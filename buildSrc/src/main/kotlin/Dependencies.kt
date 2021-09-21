@@ -5,6 +5,7 @@ object Dependencies {
     const val daggerHiltVersion = "2.35"
     const val detektPluginVersion = "1.15.0"
 
+    const val mockkVersion = "1.12.0"
     const val junitVersion = "4.13.2"
     const val androidxJunitVersion = "1.1.3"
     const val espressoVersion = "3.4.0"

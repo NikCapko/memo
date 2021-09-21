@@ -42,11 +42,17 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
 
     testImplementation("junit:junit:${Dependencies.junitVersion}")
+    testImplementation("io.mockk:mockk:${Dependencies.mockkVersion}")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
     androidTestImplementation("androidx.test.ext:junit:${Dependencies.androidxJunitVersion}")
     androidTestImplementation("androidx.test.espresso:espresso-core:${Dependencies.espressoVersion}")
 
