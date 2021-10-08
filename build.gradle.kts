@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:${Dependencies.gradlePluginVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Dependencies.kotlinPluginVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
         classpath("com.google.dagger:hilt-android-gradle-plugin:${Dependencies.daggerHiltVersion}")
         classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Dependencies.detektPluginVersion}")
 

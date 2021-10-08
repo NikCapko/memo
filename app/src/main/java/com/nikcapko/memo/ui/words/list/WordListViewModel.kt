@@ -17,6 +17,9 @@ import com.nikcapko.memo.utils.extensions.set
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ru.ar2code.mutableliveevent.Event
+import ru.ar2code.mutableliveevent.EventArgs
+import ru.ar2code.mutableliveevent.MutableLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,12 +34,12 @@ class WordListViewModel @Inject constructor(
     val dataLoadingViewModelState: LiveData<DataLoadingViewModelState>
         get() = _state
 
-    private val _speakOut = MutableLiveData<SpeakOut>()
-    val speakOut: LiveData<SpeakOut>
+    private val _speakOut = MutableLiveEvent<SpeakOutEvent>()
+    val speakOut: LiveData<SpeakOutEvent>
         get() = _speakOut
 
-    private val _showClearDatabaseDialog = MutableLiveData<ShowClearDatabaseDialog>()
-    val showClearDatabaseDialog: LiveData<ShowClearDatabaseDialog>
+    private val _showClearDatabaseDialog = MutableLiveEvent<ShowClearDatabaseDialogEvent>()
+    val showClearDatabaseDialog: LiveData<ShowClearDatabaseDialogEvent>
         get() = _showClearDatabaseDialog
 
     private var wordsList = emptyList<Word>()
@@ -60,7 +63,7 @@ class WordListViewModel @Inject constructor(
 
     fun onEnableSound(position: Int) {
         val word = wordsList.getOrNull(position)
-        _speakOut.set(SpeakOut(word?.word))
+        _speakOut.set(SpeakOutEvent(word?.word.orEmpty()))
     }
 
     fun onAddWordClick() {
@@ -76,7 +79,7 @@ class WordListViewModel @Inject constructor(
     }
 
     fun logout() {
-        _showClearDatabaseDialog.set(ShowClearDatabaseDialog)
+        _showClearDatabaseDialog.set(ShowClearDatabaseDialogEvent)
     }
 
     fun logout(clearDataBase: Boolean) {
@@ -91,7 +94,7 @@ class WordListViewModel @Inject constructor(
         }
     }
 
-    data class SpeakOut(var word: String?)
+    class SpeakOutEvent(data: String) : EventArgs<String>(data)
 
-    object ShowClearDatabaseDialog
+    object ShowClearDatabaseDialogEvent : Event()
 }

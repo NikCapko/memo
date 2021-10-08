@@ -10,7 +10,7 @@ object Dependencies {
     const val espressoVersion = "3.4.0"
 
     const val coreKtxVersion = "1.6.0"
-    const val constraintLayoutVersion = "2.0.4"
+    const val constraintLayoutVersion = "2.1.1"
     const val recyclerviewVersion = "1.2.1"
     const val materialVersion = "1.4.0"
 
