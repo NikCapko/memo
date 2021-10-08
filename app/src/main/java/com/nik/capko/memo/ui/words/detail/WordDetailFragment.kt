@@ -83,8 +83,10 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
     }
 
     private fun initToolbar() {
-        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        (activity as? AppCompatActivity)?.supportActionBar?.setHomeButtonEnabled(true)
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+        }
     }
 
     private fun setListeners() {

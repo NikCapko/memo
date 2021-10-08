@@ -53,8 +53,10 @@ class SignInFragment : MvpAppCompatFragment(), SignInView {
     }
 
     private fun initToolbar() {
-        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        (activity as? AppCompatActivity)?.supportActionBar?.setHomeButtonEnabled(false)
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setHomeButtonEnabled(false)
+        }
     }
 
     private fun setListeners() {

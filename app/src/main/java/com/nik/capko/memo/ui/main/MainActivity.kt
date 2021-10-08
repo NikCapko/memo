@@ -44,8 +44,10 @@ class MainActivity : MvpAppCompatActivity(), ChainHolder {
     }
 
     private fun initToolbar() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
