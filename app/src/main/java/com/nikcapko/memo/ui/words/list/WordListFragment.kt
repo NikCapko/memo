@@ -162,10 +162,12 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
             }
         }
         viewModel.speakOut.observe(viewLifecycleOwner) { speakOut ->
-            speakOut.word?.let { speakOut(it) }
+            speakOut.data?.let { speakOut(it) }
+            speakOut.handled = true
         }
         viewModel.showClearDatabaseDialog.observe(viewLifecycleOwner) {
             showClearDatabaseDialog()
+            it.handled = true
         }
     }
 
@@ -191,8 +193,10 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
     }
 
     private fun speakOut(word: String?) {
-        tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null, null)
-        Toast.makeText(context, word, Toast.LENGTH_SHORT).show()
+        if (!word.isNullOrEmpty()) {
+            tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null, null)
+            Toast.makeText(context, word, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun startLoading() {

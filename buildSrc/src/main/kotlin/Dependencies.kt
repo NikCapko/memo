@@ -13,7 +13,6 @@ object Dependencies {
     const val constraintLayoutVersion = "2.1.4"
     const val recyclerviewVersion = "1.2.1"
     const val materialVersion = "1.4.0"
-    const val lifecycleVersion = "2.5.0"
 
     const val retrofitVersion = "2.9.0"
     const val okhttpVersion = "4.9.1"
@@ -25,6 +24,6 @@ object Dependencies {
     const val lottieAnimationVersion = "5.2.0"
     const val sdpAndroidVersion = "1.0.6"
     const val ciceroneVersion = "6.6"
-    const val lifecycleVersion = "2.3.1"
+    const val lifecycleVersion = "2.5.0"
     const val lifecycleExtensionsVersion = "2.2.0"
 }
