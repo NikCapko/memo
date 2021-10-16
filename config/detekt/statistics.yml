@@ -1,6 +1,6 @@
 processors:
   active: true
-  exclude: [ ]
+  exclude: []
 
 console-reports:
   active: true

@@ -19,6 +19,7 @@ import com.nik.capko.memo.data.Dictionary
 import com.nik.capko.memo.databinding.FragmentDictionaryBinding
 import com.nik.capko.memo.ui.dictionary.adapter.DictionaryAdapter
 import com.nik.capko.memo.utils.Constants
+import com.nik.capko.memo.utils.extensions.lazyUnsafe
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,9 +38,13 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
 
     private val viewBinding by viewBinding(FragmentDictionaryBinding::bind)
 
-    private lateinit var adapter: DictionaryAdapter
+    private val adapter: DictionaryAdapter by lazyUnsafe {
+        DictionaryAdapter { position ->
+            presenter.onItemClick(position)
+        }
+    }
 
-    private val proDialog: ProgressDialog by lazy {
+    private val proDialog: ProgressDialog by lazyUnsafe {
         ProgressDialog(context).apply {
             setTitle("Загрузка...")
             setCancelable(false)
@@ -67,25 +72,7 @@ class DictionaryFragment : MvpAppCompatFragment(), DictionaryView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initToolbar()
-        setListeners()
         initAdapters()
-    }
-
-    private fun initToolbar() {
-        (activity as? AppCompatActivity)?.supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeButtonEnabled(true)
-        }
-    }
-
-    private fun setListeners() {
-        viewBinding.apply {
-            adapter = DictionaryAdapter { position ->
-                presenter.onItemClick(position)
-            }
-            pvLoad.onRetryClick = { onRetry() }
-        }
     }
 
     private fun initAdapters() {

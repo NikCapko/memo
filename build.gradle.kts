@@ -1,3 +1,5 @@
+import io.gitlab.arturbosch.detekt.detekt
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 
@@ -17,7 +19,6 @@ buildscript {
 }
 
 allprojects {
-    apply("$rootDir/detekt.gradle")
     repositories {
         google()
         mavenCentral()
@@ -26,6 +27,20 @@ allprojects {
         maven { url = uri("https://plugins.gradle.org/m2/") }
         maven { url = uri("https://dl.google.com/dl/android/maven2/") }
         maven { url = uri("https://dl.bintray.com/terrakok/terramaven/") }
+    }
+}
+
+subprojects {
+    apply(plugin = "io.gitlab.arturbosch.detekt")
+    detekt {
+        input = files("src/main/java")
+        parallel = true
+        autoCorrect = true
+        config = files("$rootDir/config/detekt/config.yml")
+        baseline = file("$rootDir/config/detekt/baseline.xml")
+        reports.html.enabled = true
+        reports.xml.enabled = false
+        reports.txt.enabled = false
     }
 }
 

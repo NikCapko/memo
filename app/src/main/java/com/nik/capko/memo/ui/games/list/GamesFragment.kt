@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -14,6 +13,7 @@ import com.nik.capko.memo.R
 import com.nik.capko.memo.data.Game
 import com.nik.capko.memo.databinding.FragmentGamesBinding
 import com.nik.capko.memo.ui.games.list.adapter.GamesAdapter
+import com.nik.capko.memo.utils.extensions.lazyUnsafe
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -21,7 +21,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @AndroidEntryPoint
-class GamesFragment @Inject constructor() : MvpAppCompatFragment(), GamesMvpView {
+class GamesFragment : MvpAppCompatFragment(), GamesMvpView {
 
     @Inject
     lateinit var presenterProvider: Provider<GamesPresenter>
@@ -29,7 +29,11 @@ class GamesFragment @Inject constructor() : MvpAppCompatFragment(), GamesMvpView
 
     private val viewBinding by viewBinding(FragmentGamesBinding::bind)
 
-    private lateinit var adapter: GamesAdapter
+    private val adapter: GamesAdapter by lazyUnsafe {
+        GamesAdapter { position ->
+            presenter.onItemClick(position)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,22 +55,7 @@ class GamesFragment @Inject constructor() : MvpAppCompatFragment(), GamesMvpView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initToolbar()
-        setListeners()
         initAdapters()
-    }
-
-    private fun initToolbar() {
-        (activity as? AppCompatActivity)?.supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeButtonEnabled(true)
-        }
-    }
-
-    private fun setListeners() {
-        adapter = GamesAdapter { position ->
-            presenter.onItemClick(position)
-        }
     }
 
     private fun initAdapters() {

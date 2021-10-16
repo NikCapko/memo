@@ -86,7 +86,7 @@ class DictionaryPresenter @Inject constructor(
                         word.primaryLanguage
                     )
                     wordRepository.saveWord(wordDBEntity)
-                    word.forms?.forEach { form ->
+                    word.forms.forEach { form ->
                         wordRepository.saveForm(
                             FormDBEntity(form.key, form.name, form.value, word.id)
                         )

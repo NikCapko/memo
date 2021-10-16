@@ -29,6 +29,7 @@ import com.nik.capko.memo.databinding.FragmentWordListBinding
 import com.nik.capko.memo.ui.words.list.adapter.WordListAdapter
 import com.nik.capko.memo.utils.AppStorage
 import com.nik.capko.memo.utils.Constants
+import com.nik.capko.memo.utils.extensions.lazyUnsafe
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,27 +40,27 @@ import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordListFragment @Inject constructor() : BaseFragment(), WordListView, ProgressMvpView {
+class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
 
-    @Suppress("ClassOrdering")
-    companion object {
-        const val SPEECH_RATE = 0.6f
-    }
+    @Inject
+    lateinit var appStorage: AppStorage
 
     @Inject
     lateinit var presenterProvider: Provider<WordListPresenter>
     private val presenter: WordListPresenter by moxyPresenter { presenterProvider.get() }
 
-    @Inject
-    lateinit var appStorage: AppStorage
-
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
-
-    private lateinit var adapter: WordListAdapter
 
     private var gameMenuItem: MenuItem? = null
 
     private var tts: TextToSpeech? = null
+
+    private val adapter: WordListAdapter by lazyUnsafe {
+        WordListAdapter(
+            onItemClick = { position -> presenter.onItemClick(position) },
+            onEnableSound = { position -> presenter.onEnableSound(position) }
+        )
+    }
 
     private val localBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -126,14 +127,6 @@ class WordListFragment @Inject constructor() : BaseFragment(), WordListView, Pro
 
     private fun setListeners() {
         viewBinding.apply {
-            adapter = WordListAdapter(
-                { position ->
-                    presenter.onItemClick(position)
-                },
-                { position ->
-                    presenter.onEnableSound(position)
-                }
-            )
             btnAddWord.setOnClickListener { presenter.onAddWordClick() }
             pvLoad.onRetryClick = { onRetry() }
         }
@@ -219,5 +212,9 @@ class WordListFragment @Inject constructor() : BaseFragment(), WordListView, Pro
         LocalBroadcastManager.getInstance(requireContext())
             .unregisterReceiver(localBroadcastReceiver)
         super.onDestroy()
+    }
+
+    companion object {
+        const val SPEECH_RATE = 0.6f
     }
 }

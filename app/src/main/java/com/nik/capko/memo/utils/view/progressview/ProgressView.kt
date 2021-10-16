@@ -22,7 +22,7 @@ class ProgressView @JvmOverloads constructor(
     private var rlErrorContainer: RelativeLayout
     private var tvErrorMessage: TextView
     private var btnRetry: MaterialButton
-    lateinit var onRetryClick: () -> Unit
+    var onRetryClick: (() -> Unit)? = null
 
     init {
         val inflater = LayoutInflater.from(context)
@@ -32,7 +32,7 @@ class ProgressView @JvmOverloads constructor(
         tvErrorMessage = rootView.findViewById(R.id.tvErrorMessage)
         btnRetry = rootView.findViewById(R.id.btnRetry)
         btnRetry.setOnClickListener {
-            onRetryClick.invoke()
+            onRetryClick?.invoke()
         }
     }
 

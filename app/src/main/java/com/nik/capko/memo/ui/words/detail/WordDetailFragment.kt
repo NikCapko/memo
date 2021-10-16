@@ -22,6 +22,7 @@ import com.nik.capko.memo.databinding.FragmentWordDetailBinding
 import com.nik.capko.memo.utils.Constants
 import com.nik.capko.memo.utils.extensions.argument
 import com.nik.capko.memo.utils.extensions.hideKeyboard
+import com.nik.capko.memo.utils.extensions.lazyUnsafe
 import com.nik.capko.memo.utils.extensions.makeGone
 import com.nik.capko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,10 +34,6 @@ import javax.inject.Provider
 @AndroidEntryPoint
 class WordDetailFragment : BaseFragment(), WordDetailView {
 
-    companion object {
-        const val WORD = "WordDetailFragment.WORD"
-    }
-
     @Inject
     lateinit var presenterProvider: Provider<WordDetailPresenter>
     private val presenter: WordDetailPresenter by moxyPresenter { presenterProvider.get() }
@@ -45,7 +42,7 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
 
     private var word: Word? by argument(WORD)
 
-    private val proDialog: ProgressDialog by lazy {
+    private val proDialog: ProgressDialog by lazyUnsafe {
         ProgressDialog(context).apply {
             setTitle("Загрузка...")
             setCancelable(false)
@@ -159,5 +156,9 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
 
     override fun completeProgressDialog() {
         proDialog.dismiss()
+    }
+
+    companion object {
+        const val WORD = "WordDetailFragment.WORD"
     }
 }
