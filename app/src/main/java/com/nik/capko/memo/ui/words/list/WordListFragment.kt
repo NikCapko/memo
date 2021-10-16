@@ -176,7 +176,7 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
     }
 
     override fun speakOut(word: String?) {
-        tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null)
+        tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null, null)
         Toast.makeText(context, word, Toast.LENGTH_SHORT).show()
     }
 
@@ -206,6 +206,11 @@ class WordListFragment : BaseFragment(), WordListView, ProgressMvpView {
 
     override fun onRetry() {
         presenter.loadWords()
+    }
+
+    override fun onPause() {
+        tts?.stop()
+        super.onPause()
     }
 
     override fun onDestroy() {
