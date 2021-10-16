@@ -22,7 +22,7 @@ import com.nikcapko.memo.databinding.FragmentWordDetailBinding
 import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.argument
 import com.nikcapko.memo.utils.extensions.hideKeyboard
-import com.nik.capko.memo.utils.extensions.lazyUnsafe
+import com.nikcapko.memo.utils.extensions.lazyUnsafe
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint

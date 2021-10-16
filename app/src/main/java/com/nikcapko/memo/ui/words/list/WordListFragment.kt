@@ -22,14 +22,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
-import com.nik.capko.memo.base.view.ProgressMvpView
+import com.nikcapko.memo.base.view.ProgressMvpView
 import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
 import com.nikcapko.memo.ui.words.list.adapter.WordListAdapter
 import com.nikcapko.memo.utils.AppStorage
 import com.nikcapko.memo.utils.Constants
-import com.nik.capko.memo.utils.extensions.lazyUnsafe
+import com.nikcapko.memo.utils.extensions.lazyUnsafe
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint

@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +18,7 @@ import com.nikcapko.memo.data.Dictionary
 import com.nikcapko.memo.databinding.FragmentDictionaryBinding
 import com.nikcapko.memo.ui.dictionary.adapter.DictionaryAdapter
 import com.nikcapko.memo.utils.Constants
-import com.nik.capko.memo.utils.extensions.lazyUnsafe
+import com.nikcapko.memo.utils.extensions.lazyUnsafe
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import dagger.hilt.android.AndroidEntryPoint

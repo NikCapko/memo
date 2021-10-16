@@ -13,7 +13,7 @@ import com.nikcapko.memo.R
 import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.databinding.FragmentGamesBinding
 import com.nikcapko.memo.ui.games.list.adapter.GamesAdapter
-import com.nik.capko.memo.utils.extensions.lazyUnsafe
+import com.nikcapko.memo.utils.extensions.lazyUnsafe
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
