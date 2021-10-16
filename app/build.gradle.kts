@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application")
     id("dagger.hilt.android.plugin")
-    kotlin("android")
-    kotlin("kapt")
+    id("kotlin-android")
+    id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
@@ -18,6 +18,7 @@ android {
         versionName = AppConfig.versionName
 
         testInstrumentationRunner("androidx.test.runner.AndroidJUnitRunner")
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -49,6 +50,10 @@ dependencies {
     testImplementation("junit:junit:${Dependencies.junitVersion}")
     androidTestImplementation("androidx.test.ext:junit:${Dependencies.androidxJunitVersion}")
     androidTestImplementation("androidx.test.espresso:espresso-core:${Dependencies.espressoVersion}")
+
+    implementation(project(":core"))
+    implementation(project(":data"))
+    implementation(project(":domain"))
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${Dependencies.kotlinVersion}")
 
