@@ -1,15 +1,11 @@
 package com.nik.capko.memo.ui.words.list
 
 import com.github.terrakok.cicerone.Router
-import com.nik.capko.memo.db.AppDatabase
-import com.nik.capko.memo.db.mapper.WordDBEntityMapper
-import com.nik.capko.memo.db.mapper.WordFormDBEntityMapper
-import com.nik.capko.memo.network.ApiServiceImpl
-import com.nik.capko.memo.network.mapper.WordEntityMapper
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.nik.capko.memo.repository.WordRepository
+import com.nik.capko.memo.ui.Screens
 import com.nik.capko.memo.utils.AppStorage
 import com.nik.capko.memo.utils.Constants
-import com.nik.capko.memo.utils.resources.FieldConverter
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -18,14 +14,15 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.runs
-import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -34,58 +31,32 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 internal class WordListPresenterTest {
 
-    private val router = spyk<Router>()
+    private val dispatcher = TestCoroutineDispatcher()
 
     @RelaxedMockK
-    private lateinit var appDatabase: AppDatabase
-
-    @MockK
-    private lateinit var apiService: ApiServiceImpl
+    private lateinit var router: Router
 
     @RelaxedMockK
-    private lateinit var wordFormDBEntityMapper: WordFormDBEntityMapper
-
-    @MockK
-    private lateinit var wordDBEntityMapper: WordDBEntityMapper
-
-    @MockK
-    private lateinit var wordEntityMapper: WordEntityMapper
-
-    @MockK
-    private lateinit var fieldConverter: FieldConverter
-
-    @MockK
     private lateinit var appStorage: AppStorage
 
+    @RelaxedMockK
+    private lateinit var viewState: WordListView
+
+    @MockK
     private lateinit var wordRepository: WordRepository
 
     private lateinit var wordListPresenter: WordListPresenter
-
-    val dispatcher = TestCoroutineDispatcher()
-
-    lateinit var viewState: WordListView
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
         Dispatchers.setMain(dispatcher)
-        viewState = spyk()
-        every { appDatabase.wordDao() } returns mockk(relaxed = true)
-        every { appDatabase.formDao() } returns mockk()
-        wordRepository = WordRepository(
-            appDatabase = appDatabase,
-            apiService = apiService,
-            wordFormDBEntityMapper = wordFormDBEntityMapper,
-            wordDBEntityMapper = wordDBEntityMapper,
-            wordEntityMapper = wordEntityMapper,
-            fieldConverter = fieldConverter,
-        )
         wordListPresenter = WordListPresenter(router, wordRepository, appStorage)
     }
 
     @Test
-    fun `test load data on first attach view to presenter`() {
-        coEvery { appDatabase.wordDao().getAllWords() } returns emptyList()
+    fun `test load data on first attach view to presenter`() = runBlockingTest {
+        coEvery { wordRepository.getWordsFromDB() } returns emptyList()
 
         wordListPresenter.attachView(viewState)
 
@@ -95,8 +66,8 @@ internal class WordListPresenterTest {
     }
 
     @Test
-    fun `test enable sound on click on item`() {
-        coEvery { appDatabase.wordDao().getAllWords() } returns emptyList()
+    fun `test enable sound on click on item`() = runBlockingTest {
+        coEvery { wordRepository.getWordsFromDB() } returns emptyList()
 
         wordListPresenter.attachView(viewState)
         wordListPresenter.onEnableSound(0)
@@ -113,20 +84,26 @@ internal class WordListPresenterTest {
     }
 
     @Test
-    fun `test logout with clear databases`() {
-        every { appStorage.put(Constants.IS_REGISTER, false) } just runs
-        verify { appStorage.put(Constants.IS_REGISTER, false) }
+    fun `test logout with clear databases`() = runBlockingTest {
+        coEvery { wordRepository.clearDatabase() } just runs
+
         wordListPresenter.attachView(viewState)
         wordListPresenter.logout(true)
 
+        verify { appStorage.put(Constants.IS_REGISTER, false) }
         coVerify { wordRepository.clearDatabase() }
     }
 
-    /*@Test
+    @Test
     fun `test open word detail screen`() {
+        val mockedWordDetailScreen = mockk<FragmentScreen>()
+
+        mockkObject(Screens)
+        every { Screens.wordDetailScreen(any()) } returns mockedWordDetailScreen
+
         wordListPresenter.onItemClick(0)
-        verify { router.navigateTo(Screens.wordDetailScreen(null)) }
-    }*/
+        verify { router.navigateTo(mockedWordDetailScreen) }
+    }
 
     @After
     fun tearDown() {
