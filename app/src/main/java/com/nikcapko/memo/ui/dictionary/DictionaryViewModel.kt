@@ -3,6 +3,7 @@ package com.nikcapko.memo.ui.dictionary
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.nikcapko.core.network.Resource
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
@@ -14,7 +15,6 @@ import com.nikcapko.memo.usecases.DictionaryUseCase
 import com.nikcapko.memo.usecases.SaveWordUseCase
 import com.nikcapko.memo.utils.extensions.default
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.ar2code.mutableliveevent.EventArgs
@@ -48,7 +48,7 @@ class DictionaryViewModel @Inject constructor(
     }
 
     fun loadDictionaryList() {
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch {
             launch(Dispatchers.Main) {
                 _state.postValue(DataLoadingViewModelState.LoadingState)
             }
@@ -57,11 +57,11 @@ class DictionaryViewModel @Inject constructor(
         }
     }
 
-    private fun CoroutineScope.checkDictionaryListResponse(resource: Resource<List<Dictionary>>) =
-        launch {
+    private fun checkDictionaryListResponse(resource: Resource<List<Dictionary>>) =
+        viewModelScope.launch {
             when (resource.status) {
                 Resource.Status.SUCCESS -> {
-                    dictionaryList = resource.data as List<Dictionary>
+                    dictionaryList = (resource.data as? List<*>)?.filterIsInstance<Dictionary>().orEmpty()
                     launch(Dispatchers.Main) {
                         _state.postValue(DataLoadingViewModelState.LoadedState(dictionaryList))
                     }
@@ -79,7 +79,7 @@ class DictionaryViewModel @Inject constructor(
     }
 
     fun loadDictionary(position: Int) {
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch {
             launch(Dispatchers.Main) {
                 _dictionaryLoadState.postValue(DataSendingViewModelState.SendingState)
             }
@@ -90,11 +90,11 @@ class DictionaryViewModel @Inject constructor(
         }
     }
 
-    private fun CoroutineScope.checkDictionaryResponse(resource: Resource<List<Word>>) =
-        launch {
+    private fun checkDictionaryResponse(resource: Resource<List<Word>>) =
+        viewModelScope.launch {
             when (resource.status) {
                 Resource.Status.SUCCESS -> {
-                    val words = resource.data as List<Word>
+                    val words = (resource.data as? List<*>)?.filterIsInstance<Word>().orEmpty()
                     words.forEach { word ->
                         saveWordUseCase.saveWord(word)
                         word.forms.forEach { form -> saveWordUseCase.saveForm(form) }

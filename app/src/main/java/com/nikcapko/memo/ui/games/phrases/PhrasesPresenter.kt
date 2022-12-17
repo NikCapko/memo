@@ -27,7 +27,7 @@ class PhrasesPresenter @Inject constructor(
     }
 
     fun loadWords() {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             launch(Dispatchers.Main) {
                 viewState.startLoading()
             }

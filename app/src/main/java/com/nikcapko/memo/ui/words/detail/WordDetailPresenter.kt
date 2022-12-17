@@ -37,7 +37,7 @@ class WordDetailPresenter @Inject constructor(
     }
 
     fun onSaveWord(wordArg: String, translate: String) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             launch(Dispatchers.Main) {
                 viewState.startProgressDialog()
             }
@@ -67,7 +67,7 @@ class WordDetailPresenter @Inject constructor(
     }
 
     fun onDeleteWord() {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             launch(Dispatchers.Main) {
                 viewState.startProgressDialog()
             }
@@ -84,11 +84,10 @@ class WordDetailPresenter @Inject constructor(
         val wordObservable = observables[0]
         val translateObservable = observables[1]
         disposable = Observable.combineLatest(
-            wordObservable, translateObservable,
-            { word: CharSequence, translate: CharSequence ->
-                word.toString().trim().isNotEmpty() && translate.toString().trim().isNotEmpty()
-            }
-        )
+            wordObservable, translateObservable
+        ) { word: CharSequence, translate: CharSequence ->
+            word.toString().trim().isNotEmpty() && translate.toString().trim().isNotEmpty()
+        }
             .subscribe { isEnable: Boolean -> viewState.enableSaveButton(isEnable) }
     }
 

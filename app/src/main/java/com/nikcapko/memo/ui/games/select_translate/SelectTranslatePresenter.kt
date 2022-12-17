@@ -36,7 +36,7 @@ class SelectTranslatePresenter @Inject constructor(
     }
 
     fun loadWords() {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             launch(Dispatchers.Main) {
                 viewState.startLoading()
             }
@@ -79,7 +79,7 @@ class SelectTranslatePresenter @Inject constructor(
     }
 
     private fun updateWordsDB() {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             words?.forEach { word ->
                 saveWordUseCase.saveWord(word)
                 word.forms.forEach { form ->
