@@ -15,7 +15,6 @@ import androidx.room.ForeignKey
         )
     ]
 )
-
 data class FormDBEntity(
     @ColumnInfo(name = "key") var key: String,
     @ColumnInfo(name = "name") var name: String? = null,

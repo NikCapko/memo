@@ -29,6 +29,7 @@ class GamesPresenter @Inject constructor(
             Game.Type.SELECT_TRANSLATE -> router.navigateTo(Screens.selectTranslateScreen())
             Game.Type.FIND_PAIRS -> router.navigateTo(Screens.findPairsScreen())
             Game.Type.PHRASES -> router.navigateTo(Screens.phrasesScreen())
+            else -> {}
         }
     }
 }
