@@ -1,7 +1,7 @@
 object Dependencies {
-    const val gradlePluginVersion = "7.3.1"
-    const val kotlinPluginVersion = "1.7.20"
-    const val kotlinVersion = "1.7.20"
+    const val gradlePluginVersion = "7.4.2"
+    const val kotlinPluginVersion = "1.8.10"
+    const val kotlinVersion = "1.8.10"
     const val daggerHiltVersion = "2.43.2"
     const val detektPluginVersion = "1.15.0"
 
