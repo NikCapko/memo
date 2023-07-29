@@ -46,72 +46,71 @@ android {
 
 dependencies {
 
-    testImplementation("junit:junit:${Dependencies.junitVersion}")
-    androidTestImplementation("androidx.test.ext:junit:${Dependencies.androidxJunitVersion}")
-    androidTestImplementation("androidx.test.espresso:espresso-core:${Dependencies.espressoVersion}")
-
     implementation(project(":core"))
     implementation(project(":data"))
     implementation(project(":domain"))
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel:${Dependencies.lifecycleVersion}")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Dependencies.lifecycleVersion}")
+    implementation(libs.kotlin)
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${Dependencies.kotlinVersion}")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.material)
 
-    implementation("androidx.core:core-ktx:${Dependencies.coreKtxVersion}")
-    implementation("androidx.constraintlayout:constraintlayout:${Dependencies.constraintLayoutVersion}")
-    implementation("androidx.recyclerview:recyclerview:${Dependencies.recyclerviewVersion}")
-    implementation("com.google.android.material:material:${Dependencies.materialVersion}")
-    implementation("androidx.fragment:fragment-ktx:1.3.6")
+    implementation(libs.androidx.fragment.ktx)
 
     // retrofit
-    implementation("com.squareup.retrofit2:retrofit:${Dependencies.retrofitVersion}")
-    implementation("com.squareup.retrofit2:converter-gson:${Dependencies.retrofitVersion}")
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
 
     // okhttp
-    implementation("com.squareup.okhttp3:okhttp:${Dependencies.okhttpVersion}")
-    implementation("com.squareup.okhttp3:logging-interceptor:${Dependencies.okhttpVersion}")
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 
     // room
-    implementation("androidx.room:room-runtime:${Dependencies.roomVersion}")
-    implementation("androidx.room:room-ktx:${Dependencies.roomVersion}")
-    kapt("androidx.room:room-compiler:${Dependencies.roomVersion}")
+    implementation(libs.room)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
 
     // moxy
-    implementation("com.github.moxy-community:moxy:${Dependencies.moxyVersion}")
-    implementation("com.github.moxy-community:moxy-androidx:${Dependencies.moxyVersion}")
-    implementation("com.github.moxy-community:moxy-ktx:${Dependencies.moxyVersion}")
-    kapt("com.github.moxy-community:moxy-compiler:${Dependencies.moxyVersion}")
+    implementation(libs.moxy)
+    implementation(libs.moxy.androidx)
+    implementation(libs.moxy.ktx)
+    kapt(libs.moxy.compiler)
 
     // Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:${Dependencies.daggerHiltVersion}")
-    kapt("com.google.dagger:hilt-android-compiler:${Dependencies.daggerHiltVersion}")
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
 
     // ViewBindingPropertyDelegate
-    implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:${Dependencies.viewBindingPropertyDelegateVersion}")
+    implementation(libs.viewbindingpropertydelegate)
 
     // coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Dependencies.coroutineVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${Dependencies.coroutineVersion}")
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.android)
 
     // rx binding
-    implementation("com.jakewharton.rxbinding2:rxbinding:${Dependencies.rxBindingVersion}")
+    implementation(libs.rxbinding)
 
     // lottie animation
-    implementation("com.airbnb.android:lottie:${Dependencies.lottieAnimationVersion}")
+    implementation(libs.lottie)
 
     // sdp-android
-    implementation("com.intuit.sdp:sdp-android:${Dependencies.sdpAndroidVersion}")
+    implementation(libs.sdp)
 
     // navigation cicerone
-    implementation("com.github.terrakok:cicerone:${Dependencies.ciceroneVersion}")
+    implementation(libs.cicerone)
 
     // androidx.lifecycle
-    implementation("androidx.lifecycle:lifecycle-extensions:${Dependencies.lifecycleExtensionsVersion}")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Dependencies.lifecycleVersion}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Dependencies.lifecycleVersion}")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:${Dependencies.lifecycleVersion}")
+    implementation(libs.lifecycle.extensions)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
 
-    implementation("com.github.NikCapko:MutableLiveEvent:1.0.1")
+    implementation(libs.mutableLiveEvent)
+
+    testImplementation(libs.test.junit)
+    androidTestImplementation(libs.test.junit.ext)
+    androidTestImplementation(libs.test.espresso)
 }

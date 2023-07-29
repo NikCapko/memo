@@ -1,4 +1,6 @@
-import io.gitlab.arturbosch.detekt.detekt
+plugins {
+    id("io.gitlab.arturbosch.detekt").version("1.22.0")
+}
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
@@ -8,13 +10,9 @@ buildscript {
         google()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:${Dependencies.gradlePluginVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
-        classpath("com.google.dagger:hilt-android-gradle-plugin:${Dependencies.daggerHiltVersion}")
-        classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Dependencies.detektPluginVersion}")
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath(libs.plugin.gradle)
+        classpath(libs.plugin.kotlin)
+        classpath(libs.plugin.hilt)
     }
 }
 
@@ -30,17 +28,19 @@ allprojects {
     }
 }
 
-subprojects {
-    apply(plugin = "io.gitlab.arturbosch.detekt")
-    detekt {
-        input = files("src/main/java")
-        parallel = true
-        autoCorrect = true
-        config = files("$rootDir/config/detekt/config.yml")
-        baseline = file("$rootDir/config/detekt/baseline.xml")
-        reports.html.enabled = true
-        reports.xml.enabled = false
-        reports.txt.enabled = false
+detekt {
+    toolVersion = "1.22.0"
+    config = files("config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        xml.required.set(false)
+        txt.required.set(false)
+        sarif.required.set(false)
+        md.required.set(true)
     }
 }
 

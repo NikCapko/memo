@@ -45,19 +45,19 @@ dependencies {
     implementation(project(":domain"))
 
     // Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:${Dependencies.daggerHiltVersion}")
-    kapt("com.google.dagger:hilt-android-compiler:${Dependencies.daggerHiltVersion}")
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
 
     // retrofit
-    implementation("com.squareup.retrofit2:retrofit:${Dependencies.retrofitVersion}")
-    implementation("com.squareup.retrofit2:converter-gson:${Dependencies.retrofitVersion}")
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
 
     // okhttp
-    implementation("com.squareup.okhttp3:okhttp:${Dependencies.okhttpVersion}")
-    implementation("com.squareup.okhttp3:logging-interceptor:${Dependencies.okhttpVersion}")
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
 
     // room
-    implementation("androidx.room:room-runtime:${Dependencies.roomVersion}")
-    implementation("androidx.room:room-ktx:${Dependencies.roomVersion}")
-    kapt("androidx.room:room-compiler:${Dependencies.roomVersion}")
+    implementation(libs.room)
+    implementation(libs.room.ktx)
+    kapt(libs.room.compiler)
 }

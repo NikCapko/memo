@@ -12,5 +12,5 @@ dependencies {
     implementation(project(":core"))
 
     // coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Dependencies.coroutineVersion}")
+    implementation(libs.coroutines.core)
 }
