@@ -11,7 +11,6 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.nikcapko.memo.R
 import com.nikcapko.memo.ui.Screens
 import com.nikcapko.memo.utils.AppStorage
-import com.nikcapko.memo.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import moxy.MvpAppCompatActivity
 import java.lang.ref.WeakReference
@@ -61,13 +60,7 @@ class MainActivity : MvpAppCompatActivity(), ChainHolder {
     }
 
     private fun openDefaultFragment() {
-        if (appStorage.get(Constants.IS_REGISTER, false) ||
-            appStorage.get(Constants.IS_SKIP_REGISTER, false)
-        ) {
-            navigator.applyCommands(arrayOf<Command>(Replace(Screens.wordListScreen())))
-        } else {
-            navigator.applyCommands(arrayOf<Command>(Replace(Screens.signInScreen())))
-        }
+        navigator.applyCommands(arrayOf<Command>(Replace(Screens.wordListScreen())))
     }
 
     override fun onResumeFragments() {

@@ -88,9 +88,6 @@ class WordListViewModel @Inject constructor(
             if (clearDataBase) {
                 clearDatabaseUseCase.clearDatabase()
             }
-            launch(Dispatchers.Main) {
-                router.replaceScreen(Screens.signInScreen())
-            }
         }
     }
 

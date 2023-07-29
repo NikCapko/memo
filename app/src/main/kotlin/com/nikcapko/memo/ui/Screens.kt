@@ -8,7 +8,6 @@ import com.nikcapko.memo.ui.games.find_pairs.FindPairsFragment
 import com.nikcapko.memo.ui.games.list.GamesFragment
 import com.nikcapko.memo.ui.games.phrases.PhrasesFragment
 import com.nikcapko.memo.ui.games.select_translate.SelectTranslateFragment
-import com.nikcapko.memo.ui.sign_in.SignInFragment
 import com.nikcapko.memo.ui.words.detail.WordDetailFragment
 import com.nikcapko.memo.ui.words.list.WordListFragment
 
@@ -24,10 +23,6 @@ object Screens {
                 WordDetailFragment.WORD to word,
             )
         }
-    }
-
-    fun signInScreen() = FragmentScreen {
-        SignInFragment()
     }
 
     fun dictionaryScreen() = FragmentScreen {
