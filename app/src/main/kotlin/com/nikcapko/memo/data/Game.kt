@@ -18,7 +18,6 @@ data class Game(
             return listOf(
                 Game(Type.SELECT_TRANSLATE, R.string.game_type_select_translate),
                 Game(Type.FIND_PAIRS, R.string.game_type_find_pairs),
-                Game(Type.PHRASES, R.string.game_type_phrases),
             )
         }
     }
@@ -26,6 +25,5 @@ data class Game(
     enum class Type {
         SELECT_TRANSLATE,
         FIND_PAIRS,
-        PHRASES,
     }
 }

@@ -76,8 +76,6 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
         inflater.inflate(R.menu.menu_action, menu)
-        val logoutMenuItem = menu.findItem(R.id.action_logout)
-        logoutMenuItem.isVisible = false // appStorage.get(Constants.IS_REGISTER, false)
         gameMenuItem = menu.findItem(R.id.action_games)
     }
 
@@ -85,14 +83,6 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
         return when (item.itemId) {
             R.id.action_games -> {
                 viewModel.openGamesScreen()
-                true
-            }
-            R.id.action_dictionary -> {
-                viewModel.openDictionaryScreen()
-                true
-            }
-            R.id.action_logout -> {
-                viewModel.logout()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -165,31 +155,11 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
             speakOut.data?.let { speakOut(it) }
             speakOut.handled = true
         }
-        viewModel.showClearDatabaseDialog.observe(viewLifecycleOwner) {
-            showClearDatabaseDialog()
-            it.handled = true
-        }
     }
 
     private fun showWords(wordsList: List<Word>?) {
         gameMenuItem?.isVisible = !wordsList.isNullOrEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
-    }
-
-    private fun showClearDatabaseDialog() {
-        AlertDialog.Builder(activity).apply {
-            setTitle(R.string.attention)
-            setMessage(R.string.clear_database)
-            setCancelable(true)
-            setPositiveButton(R.string.yes) { dialog, _ ->
-                dialog.dismiss()
-                viewModel.logout(true)
-            }
-            setNegativeButton(R.string.no) { dialog, _ ->
-                dialog.dismiss()
-                viewModel.logout(false)
-            }
-        }.create().show()
     }
 
     private fun speakOut(word: String?) {

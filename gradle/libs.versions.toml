@@ -1,6 +1,7 @@
 [versions]
 #region Gradle
 gradle = "7.4.2"
+javaxInject = "1"
 kotlin = "1.8.20"
 hilt = "2.43.2"
 #endregion
@@ -34,6 +35,7 @@ lifecycleExtensions = "2.2.0"
 mutableLiveEvent = "1.0.1"
 
 [libraries]
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
 plugin-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 plugin-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }

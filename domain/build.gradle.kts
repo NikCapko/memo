@@ -10,6 +10,7 @@ java {
 dependencies {
 
     implementation(project(":core"))
+    implementation(libs.javax.inject)
 
     // coroutines
     implementation(libs.coroutines.core)

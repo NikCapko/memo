@@ -5,21 +5,17 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.nikcapko.memo.data.db.base.BaseDao
 import com.nikcapko.memo.data.db.data.WordDBEntity
-import com.nikcapko.memo.data.db.data.WordFormDBEntity
 
 @Dao
-interface WordDao : BaseDao<WordDBEntity> {
+internal interface WordDao : BaseDao<WordDBEntity> {
+
     @Transaction
     @Query("SELECT * FROM words order by frequency asc")
-    suspend fun getAllWords(): List<WordFormDBEntity>
+    suspend fun getAllWords(): List<WordDBEntity>
 
     @Transaction
-    @Query("SELECT * FROM words WHERE primaryLanguage == 1 order by frequency asc")
-    suspend fun getWordsForGame(): List<WordFormDBEntity>
-
-    @Transaction
-    @Query("SELECT * FROM words WHERE primaryLanguage == 1 order by frequency asc LIMIT :limit")
-    suspend fun getWordsForGameByLimit(limit: Int): List<WordFormDBEntity>
+    @Query("SELECT * FROM words order by frequency asc LIMIT :limit")
+    suspend fun getWordsForGameByLimit(limit: Int): List<WordDBEntity>
 
     @Transaction
     @Query("DELETE FROM words")
@@ -27,5 +23,5 @@ interface WordDao : BaseDao<WordDBEntity> {
 
     @Transaction
     @Query("DELETE FROM words WHERE id == :id")
-    suspend fun deleteWordById(id: Long)
+    suspend fun deleteWordById(id: String)
 }

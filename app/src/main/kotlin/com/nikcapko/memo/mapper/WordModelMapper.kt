@@ -6,9 +6,7 @@ import com.nikcapko.domain.model.WordModel
 import com.nikcapko.memo.data.Word
 import javax.inject.Inject
 
-class WordModelMapper @Inject constructor(
-    private var formModelMapper: FormModelMapper,
-) :
+class WordModelMapper @Inject constructor() :
     EntityMapper<WordModel, Word>,
     EntityListMapper<WordModel, Word> {
 
@@ -16,12 +14,8 @@ class WordModelMapper @Inject constructor(
         return Word(
             id = entity.id,
             word = entity.word,
-            type = entity.type,
-            gender = entity.gender,
             translation = entity.translation,
             frequency = entity.frequency,
-            primaryLanguage = entity.primaryLanguage,
-            forms = formModelMapper.mapFromEntityList(entity.forms),
         )
     }
 
@@ -29,12 +23,8 @@ class WordModelMapper @Inject constructor(
         return WordModel(
             id = model.id,
             word = model.word,
-            type = model.type,
-            gender = model.gender,
             translation = model.translation,
             frequency = model.frequency,
-            primaryLanguage = model.primaryLanguage,
-            forms = formModelMapper.mapToEntityList(model.forms),
         )
     }
 

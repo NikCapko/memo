@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
+import com.nikcapko.domain.usecases.ClearDatabaseUseCase
+import com.nikcapko.domain.usecases.WordListUseCase
 import com.nikcapko.memo.data.Word
+import com.nikcapko.memo.mapper.WordModelMapper
 import com.nikcapko.memo.ui.Screens
-import com.nikcapko.memo.usecases.ClearDatabaseUseCase
-import com.nikcapko.memo.usecases.PrimaryWordListUseCase
 import com.nikcapko.memo.utils.AppStorage
 import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.default
 import com.nikcapko.memo.utils.extensions.set
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.ar2code.mutableliveevent.Event
 import ru.ar2code.mutableliveevent.EventArgs
@@ -26,11 +26,13 @@ import javax.inject.Inject
 class WordListViewModel @Inject constructor(
     private val router: Router,
     private val appStorage: AppStorage,
-    private val primaryWordListUseCase: PrimaryWordListUseCase,
+    private val wordListUseCase: WordListUseCase,
     private val clearDatabaseUseCase: ClearDatabaseUseCase,
+    private val wordModelMapper: WordModelMapper,
 ) : ViewModel() {
 
-    private val _state = MutableLiveData<DataLoadingViewModelState>().default(initialValue = DataLoadingViewModelState.LoadingState)
+    private val _state =
+        MutableLiveData<DataLoadingViewModelState>().default(initialValue = DataLoadingViewModelState.LoadingState)
     val dataLoadingViewModelState: LiveData<DataLoadingViewModelState>
         get() = _state
 
@@ -51,7 +53,7 @@ class WordListViewModel @Inject constructor(
     fun loadWords() {
         viewModelScope.launch {
             _state.postValue(DataLoadingViewModelState.LoadingState)
-            wordsList = primaryWordListUseCase.getWordList()
+            wordsList = wordModelMapper.mapFromEntityList(wordListUseCase())
             _state.postValue(DataLoadingViewModelState.LoadedState(wordsList))
         }
     }
@@ -74,19 +76,10 @@ class WordListViewModel @Inject constructor(
         router.navigateTo(Screens.gamesScreen())
     }
 
-    fun openDictionaryScreen() {
-        router.navigateTo(Screens.dictionaryScreen())
-    }
-
-    fun logout() {
-        _showClearDatabaseDialog.set(ShowClearDatabaseDialogEvent)
-    }
-
     fun logout(clearDataBase: Boolean) {
-        appStorage.put(Constants.IS_REGISTER, false)
         viewModelScope.launch {
             if (clearDataBase) {
-                clearDatabaseUseCase.clearDatabase()
+                clearDatabaseUseCase()
             }
         }
     }

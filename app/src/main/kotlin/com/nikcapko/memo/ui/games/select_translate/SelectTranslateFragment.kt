@@ -35,17 +35,12 @@ class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
     private val viewBinding by viewBinding(FragmentSelectTranslateBinding::bind)
 
     private val animationListener = object : Animator.AnimatorListener {
-        override fun onAnimationStart(animation: Animator) {
-        }
+        override fun onAnimationStart(animation: Animator) = Unit
+        override fun onAnimationCancel(animation: Animator) = Unit
+        override fun onAnimationRepeat(animation: Animator) = Unit
 
         override fun onAnimationEnd(animation: Animator) {
             presenter.onAnimationEnd()
-        }
-
-        override fun onAnimationCancel(animation: Animator) {
-        }
-
-        override fun onAnimationRepeat(animation: Animator) {
         }
     }
 

@@ -1,9 +1,10 @@
 package com.nikcapko.memo.ui.words.detail
 
 import com.github.terrakok.cicerone.Router
+import com.nikcapko.domain.usecases.DeleteWordUseCase
+import com.nikcapko.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.data.Word
-import com.nikcapko.memo.usecases.DeleteWordUseCase
-import com.nikcapko.memo.usecases.SaveWordUseCase
+import com.nikcapko.memo.mapper.WordModelMapper
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposables
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +18,7 @@ class WordDetailPresenter @Inject constructor(
     private val router: Router,
     private val saveWordUseCase: SaveWordUseCase,
     private val deleteWordUseCase: DeleteWordUseCase,
+    private val wordModelMapper: WordModelMapper,
 ) : MvpPresenter<WordDetailView>() {
 
     private var word: Word? = null
@@ -48,16 +50,13 @@ class WordDetailPresenter @Inject constructor(
                 }
             } ?: run {
                 Word(
-                    Date().time,
-                    wordArg,
-                    "",
-                    "",
-                    translate,
-                    0f,
-                    true
+                    id = Date().time,
+                    word = wordArg,
+                    translation = translate,
+                    frequency = 0f,
                 )
             }
-            saveWordUseCase.saveWord(word)
+            saveWordUseCase(wordModelMapper.mapToEntity(word))
             launch(Dispatchers.Main) {
                 viewState.sendSuccessResult()
                 viewState.completeProgressDialog()
@@ -71,7 +70,7 @@ class WordDetailPresenter @Inject constructor(
             launch(Dispatchers.Main) {
                 viewState.startProgressDialog()
             }
-            word?.let { deleteWordUseCase.deleteWord(it) }
+            word?.let { deleteWordUseCase(it.id.toString()) }
             launch(Dispatchers.Main) {
                 viewState.sendSuccessResult()
                 viewState.completeProgressDialog()

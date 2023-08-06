@@ -3,10 +3,11 @@
 package com.nikcapko.memo.ui.games.select_translate
 
 import com.github.terrakok.cicerone.Router
+import com.nikcapko.domain.usecases.GameWordsLimitUseCase
+import com.nikcapko.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
-import com.nikcapko.memo.usecases.GameWordsLimitUseCase
-import com.nikcapko.memo.usecases.SaveWordUseCase
+import com.nikcapko.memo.mapper.WordModelMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,6 +18,7 @@ class SelectTranslatePresenter @Inject constructor(
     private val router: Router,
     private val gameWordsLimitUseCase: GameWordsLimitUseCase,
     private val saveWordUseCase: SaveWordUseCase,
+    private val wordModelMapper: WordModelMapper,
 ) : MvpPresenter<SelectTranslateView>() {
 
     private var words: List<Word>? = null
@@ -40,7 +42,8 @@ class SelectTranslatePresenter @Inject constructor(
             launch(Dispatchers.Main) {
                 viewState.startLoading()
             }
-            words = gameWordsLimitUseCase.getWordList(Game.MAX_WORDS_COUNT_SELECT_TRANSLATE)
+            words =
+                wordModelMapper.mapFromEntityList(gameWordsLimitUseCase(Game.MAX_WORDS_COUNT_SELECT_TRANSLATE))
             launch(Dispatchers.Main) {
                 updateWord()
                 viewState.completeLoading()
@@ -81,10 +84,7 @@ class SelectTranslatePresenter @Inject constructor(
     private fun updateWordsDB() {
         CoroutineScope(Dispatchers.IO).launch {
             words?.forEach { word ->
-                saveWordUseCase.saveWord(word)
-                word.forms.forEach { form ->
-                    saveWordUseCase.saveForm(form)
-                }
+                saveWordUseCase(wordModelMapper.mapToEntity(word))
             }
             launch(Dispatchers.Main) {
                 viewState.showEndGame(successCounter, errorCounter)
