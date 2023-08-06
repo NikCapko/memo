@@ -1,5 +1,3 @@
-@file:Suppress("ClassOrdering")
-
 package com.nikcapko.memo.ui.words.detail
 
 import android.app.AlertDialog
@@ -7,14 +5,13 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.jakewharton.rxbinding2.widget.RxTextView
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.data.Word
@@ -25,18 +22,15 @@ import com.nikcapko.memo.utils.extensions.hideKeyboard
 import com.nikcapko.memo.utils.extensions.lazyUnsafe
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
+import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
+import kotlinx.coroutines.flow.receiveAsFlow
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordDetailFragment : BaseFragment(), WordDetailView {
+internal class WordDetailFragment : BaseFragment(), WordDetailView {
 
-    @Inject
-    lateinit var presenterProvider: Provider<WordDetailPresenter>
-    private val presenter: WordDetailPresenter by moxyPresenter { presenterProvider.get() }
+    private val viewModel by viewModels<WordDetailViewModel>()
 
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
 
@@ -52,17 +46,32 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
         getArgs()
     }
 
-    private fun getArgs() {
-        presenter.setArguments(word)
+    private fun initObservers() {
+        observeFlow(viewModel.wordState) { word ->
+            viewBinding.etWord.setText(word.word)
+            viewBinding.etTranslate.setText(word.translation)
+            viewBinding.etFrequency.setText(word.frequency.toString())
+        }
+        observeFlow(viewModel.progressLoadingState) { showProgressDialog ->
+            if (showProgressDialog) {
+                startProgressDialog()
+            } else {
+                completeProgressDialog()
+            }
+        }
+        observeFlow(viewModel.enableSaveButtonState) {
+            enableSaveButton(it)
+        }
+        observeFlow(viewModel.successResultChannel.receiveAsFlow()) {
+            sendSuccessResult()
+        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu.clear()
+    private fun getArgs() {
+        viewModel.setArguments(word)
     }
 
     override fun onCreateView(
@@ -77,6 +86,7 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
         super.onViewCreated(view, savedInstanceState)
         initToolbar()
         setListeners()
+        initObservers()
     }
 
     private fun initToolbar() {
@@ -90,26 +100,29 @@ class WordDetailFragment : BaseFragment(), WordDetailView {
         with(viewBinding) {
             btnAdd.setOnClickListener {
                 hideKeyboard()
-                presenter.onSaveWord(
+                viewModel.onSaveWord(
                     etWord.text.toString(),
                     etTranslate.text.toString()
                 )
             }
             btnSave.setOnClickListener {
                 hideKeyboard()
-                presenter.onSaveWord(
+                viewModel.onSaveWord(
                     etWord.text.toString(),
                     etTranslate.text.toString()
                 )
             }
             btnDelete.setOnClickListener {
                 hideKeyboard()
-                presenter.onDeleteWord()
+                viewModel.onDeleteWord()
             }
-            presenter.setValidationFields(
-                RxTextView.textChanges(etWord),
-                RxTextView.textChanges(etTranslate),
-            )
+
+            etWord.addTextChangedListener {
+                viewModel.changeWordField(it.toString())
+            }
+            etTranslate.addTextChangedListener {
+                viewModel.changeTranslateField(it.toString())
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 package com.nikcapko.memo.ui.words.list
 
-import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -16,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -33,7 +33,9 @@ import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.lazyUnsafe
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
+import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.Locale
 
 @Suppress("TooManyFunctions")
@@ -69,27 +71,13 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
         super.onCreate(savedInstanceState)
         LocalBroadcastManager.getInstance(requireContext())
             .registerReceiver(localBroadcastReceiver, IntentFilter(Constants.LOAD_WORDS_EVENT))
-        setHasOptionsMenu(true)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu.clear()
-        inflater.inflate(R.menu.menu_action, menu)
-        gameMenuItem = menu.findItem(R.id.action_games)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_games -> {
-                viewModel.openGamesScreen()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_word_list, container, false)
     }
 
@@ -107,6 +95,22 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
             setDisplayHomeAsUpEnabled(false)
             setHomeButtonEnabled(false)
         }
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onPrepareMenu(menu: Menu) = Unit
+            override fun onMenuClosed(menu: Menu) = Unit
+            
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_action, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.action_games -> viewModel.openGamesScreen()
+                    R.id.action_clear -> viewModel.openGamesScreen()
+                }
+                return false
+            }
+        }, viewLifecycleOwner)
     }
 
     private fun setListeners() {
@@ -139,7 +143,7 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
     }
 
     private fun observe() {
-        viewModel.dataLoadingViewModelState.observe(viewLifecycleOwner) { state ->
+        observeFlow(viewModel.state) { state ->
             when (state) {
                 DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList())
@@ -148,17 +152,18 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
                     showWords(data)
                     completeLoading()
                 }
+
                 is DataLoadingViewModelState.ErrorState -> TODO()
             }
         }
-        viewModel.speakOut.observe(viewLifecycleOwner) { speakOut ->
-            speakOut.data?.let { speakOut(it) }
-            speakOut.handled = true
+        observeFlow(viewModel.speakOutChannel.receiveAsFlow()) {
+            speakOut(it)
         }
     }
 
     private fun showWords(wordsList: List<Word>?) {
-        gameMenuItem?.isVisible = !wordsList.isNullOrEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
+        gameMenuItem?.isVisible =
+            !wordsList.isNullOrEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
     }
 
