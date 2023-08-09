@@ -41,6 +41,8 @@ android {
 }
 
 dependencies {
+    implementation(kotlin("reflect"))
+
     implementation(project(":core"))
     implementation(project(":domain"))
 
@@ -60,4 +62,17 @@ dependencies {
     implementation(libs.room)
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
+
+    // testing
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.junit.jupiter)
+    testImplementation(libs.test.kotlinx.coroutines)
+}
+
+android.testOptions {
+    unitTests.all {
+        it.useJUnitPlatform()
+    }
+    unitTests.isReturnDefaultValues = true
 }

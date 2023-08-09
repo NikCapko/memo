@@ -98,7 +98,7 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) = Unit
             override fun onMenuClosed(menu: Menu) = Unit
-            
+
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_action, menu)
             }

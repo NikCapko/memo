@@ -47,3 +47,7 @@ tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
+
+tasks.register("test", Test::class) {
+    useJUnitPlatform()
+}

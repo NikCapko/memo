@@ -19,8 +19,8 @@ internal object RepositoryModule {
         wordDBEntityMapper: WordDBEntityMapper,
     ): WordRepository {
         return WordRepositoryImpl(
-            appDatabase,
-            wordDBEntityMapper,
+            appDatabase = appDatabase,
+            wordDBEntityMapper = wordDBEntityMapper,
         )
     }
 }
