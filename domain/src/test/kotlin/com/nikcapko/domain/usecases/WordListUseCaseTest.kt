@@ -9,6 +9,7 @@ import io.mockk.spyk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 /**
@@ -36,6 +37,6 @@ class WordListUseCaseTest {
 
         val result = useCase.invoke()
 
-        assertEquals(expected, result)
+        Assertions.assertEquals(expected, result)
     }
 }

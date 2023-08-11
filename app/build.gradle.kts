@@ -110,7 +110,15 @@ dependencies {
 
     implementation(libs.mutableLiveEvent)
 
+    // testing
+    testImplementation(libs.test.mockk)
     testImplementation(libs.test.junit)
-    androidTestImplementation(libs.test.junit.ext)
-    androidTestImplementation(libs.test.espresso)
+    testImplementation(libs.test.junit.jupiter)
+    testImplementation(libs.test.kotlinx.coroutines)
+}
+android.testOptions {
+    unitTests.all {
+        it.useJUnitPlatform()
+    }
+    unitTests.isReturnDefaultValues = true
 }
