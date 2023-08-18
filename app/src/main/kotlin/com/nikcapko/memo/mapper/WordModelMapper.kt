@@ -6,7 +6,7 @@ import com.nikcapko.domain.model.WordModel
 import com.nikcapko.memo.data.Word
 import javax.inject.Inject
 
-class WordModelMapper @Inject constructor() :
+internal class WordModelMapper @Inject constructor() :
     EntityMapper<WordModel, Word>,
     EntityListMapper<WordModel, Word> {
 

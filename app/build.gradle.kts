@@ -115,6 +115,7 @@ dependencies {
     testImplementation(libs.test.junit)
     testImplementation(libs.test.junit.jupiter)
     testImplementation(libs.test.kotlinx.coroutines)
+    testImplementation(libs.test.kotest)
 }
 android.testOptions {
     unitTests.all {

@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WordListViewModel @Inject constructor(
+internal class WordListViewModel @Inject constructor(
     private val router: Router,
     private val wordListUseCase: WordListUseCase,
     private val wordModelMapper: WordModelMapper,

@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import moxy.MvpPresenter
 import javax.inject.Inject
 
-class SelectTranslatePresenter @Inject constructor(
+internal class SelectTranslatePresenter @Inject constructor(
     private val router: Router,
     private val gameWordsLimitUseCase: GameWordsLimitUseCase,
     private val saveWordUseCase: SaveWordUseCase,

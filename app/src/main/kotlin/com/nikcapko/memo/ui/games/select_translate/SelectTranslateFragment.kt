@@ -26,7 +26,7 @@ import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
+internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
 
     @Inject
     lateinit var presenterProvider: Provider<SelectTranslatePresenter>

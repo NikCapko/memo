@@ -22,7 +22,7 @@ import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
+internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
 
     @Inject
     lateinit var presenterProvider: Provider<FindPairsPresenter>

@@ -3,9 +3,9 @@
 package com.nikcapko.memo.ui.games.find_pairs
 
 import com.github.terrakok.cicerone.Router
+import com.nikcapko.domain.usecases.GameWordsLimitUseCase
 import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
-import com.nikcapko.domain.usecases.GameWordsLimitUseCase
 import com.nikcapko.memo.mapper.WordModelMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import moxy.MvpPresenter
 import javax.inject.Inject
 
-class FindPairsPresenter @Inject constructor(
+internal class FindPairsPresenter @Inject constructor(
     private val router: Router,
     private val gameWordsLimitUseCase: GameWordsLimitUseCase,
     private val wordModelMapper: WordModelMapper,
@@ -37,7 +37,8 @@ class FindPairsPresenter @Inject constructor(
             launch(Dispatchers.Main) {
                 viewState.startLoading()
             }
-            words = wordModelMapper.mapFromEntityList(gameWordsLimitUseCase(Game.MAX_WORDS_COUNT_FIND_PAIRS))
+            words =
+                wordModelMapper.mapFromEntityList(gameWordsLimitUseCase(Game.MAX_WORDS_COUNT_FIND_PAIRS))
 
             val wordList = words.toMutableList()
                 .map { it.word }
