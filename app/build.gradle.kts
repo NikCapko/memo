@@ -66,19 +66,6 @@ dependencies {
 
     implementation(libs.androidx.fragment.ktx)
 
-    // retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.gson)
-
-    // okhttp
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging)
-
-    // room
-    implementation(libs.room)
-    implementation(libs.room.ktx)
-    kapt(libs.room.compiler)
-
     // moxy
     implementation(libs.moxy)
     implementation(libs.moxy.androidx)

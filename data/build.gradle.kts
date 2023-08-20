@@ -26,10 +26,6 @@ android {
             )
         }
     }
-    buildFeatures {
-        viewBinding = true
-        dataBinding = false
-    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -37,6 +33,13 @@ android {
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+        unitTests.isReturnDefaultValues = true
     }
 }
 
@@ -68,11 +71,4 @@ dependencies {
     testImplementation(libs.test.junit)
     testImplementation(libs.test.junit.jupiter)
     testImplementation(libs.test.kotlinx.coroutines)
-}
-
-android.testOptions {
-    unitTests.all {
-        it.useJUnitPlatform()
-    }
-    unitTests.isReturnDefaultValues = true
 }
