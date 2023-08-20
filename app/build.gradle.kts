@@ -42,6 +42,13 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -116,10 +123,4 @@ dependencies {
     testImplementation(libs.test.junit.jupiter)
     testImplementation(libs.test.kotlinx.coroutines)
     testImplementation(libs.test.kotest)
-}
-android.testOptions {
-    unitTests.all {
-        it.useJUnitPlatform()
-    }
-    unitTests.isReturnDefaultValues = true
 }

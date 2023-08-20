@@ -35,7 +35,6 @@ import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.Locale
 
 @Suppress("TooManyFunctions")
@@ -95,22 +94,25 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
             setDisplayHomeAsUpEnabled(false)
             setHomeButtonEnabled(false)
         }
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onPrepareMenu(menu: Menu) = Unit
-            override fun onMenuClosed(menu: Menu) = Unit
+        requireActivity().addMenuProvider(
+            object : MenuProvider {
+                override fun onPrepareMenu(menu: Menu) = Unit
+                override fun onMenuClosed(menu: Menu) = Unit
 
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_action, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.action_games -> viewModel.openGamesScreen()
-                    R.id.action_clear -> viewModel.openGamesScreen()
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.menu_action, menu)
                 }
-                return false
-            }
-        }, viewLifecycleOwner)
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    when (menuItem.itemId) {
+                        R.id.action_games -> viewModel.openGamesScreen()
+                        R.id.action_clear -> viewModel.openGamesScreen()
+                    }
+                    return false
+                }
+            },
+            viewLifecycleOwner
+        )
     }
 
     private fun setListeners() {
@@ -153,10 +155,10 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
                     completeLoading()
                 }
 
-                is DataLoadingViewModelState.ErrorState -> TODO()
+                is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        observeFlow(viewModel.speakOutChannel.receiveAsFlow()) {
+        observeFlow(viewModel.speakOutChannel) {
             speakOut(it)
         }
     }

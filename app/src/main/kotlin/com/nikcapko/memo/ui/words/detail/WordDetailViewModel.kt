@@ -29,26 +29,27 @@ internal class WordDetailViewModel @Inject constructor(
     private val wordModelMapper: WordModelMapper,
 ) : ViewModel() {
 
-    private val mutableState = MutableStateFlow<WordDetailViewState>(createInitialState())
+    private val _state = MutableStateFlow(createInitialState())
 
-    private val state: StateFlow<WordDetailViewState> = mutableState.asStateFlow()
+    private val state: StateFlow<WordDetailViewState>
+        get() = _state.asStateFlow()
 
-    private val wordMutableState = MutableStateFlow("")
-    private val translateMutableState = MutableStateFlow("")
+    private val _wordState = MutableStateFlow("")
+    private val _translateState = MutableStateFlow("")
 
     val wordState: Flow<Word> = state.mapNotNull { it.word }
 
     val progressLoadingState: Flow<Boolean> = state.mapNotNull { it.showProgressDialog }
 
-    val enableSaveButtonState: Flow<Boolean> =
-        combine(wordMutableState, translateMutableState) { word, translate ->
+    val enableSaveButtonState: Flow<Boolean>
+        get() = combine(_wordState, _translateState) { word, translate ->
             return@combine word.isNotEmpty() && translate.isNotEmpty()
         }
 
     val successResultChannel = Channel<Unit>()
 
     fun setArguments(vararg params: Any?) {
-        mutableState.update {
+        _state.update {
             it.copy(
                 word = params[0] as? Word,
             )
@@ -58,7 +59,7 @@ internal class WordDetailViewModel @Inject constructor(
     fun onSaveWord(wordArg: String, translate: String) {
         CoroutineScope(Dispatchers.IO).launch {
             launch(Dispatchers.Main) {
-                mutableState.update {
+                _state.update {
                     it.copy(
                         showProgressDialog = true,
                     )
@@ -80,7 +81,7 @@ internal class WordDetailViewModel @Inject constructor(
             saveWordUseCase(wordModelMapper.mapToEntity(word))
             launch(Dispatchers.Main) {
                 successResultChannel.send(Unit)
-                mutableState.update {
+                _state.update {
                     it.copy(
                         showProgressDialog = false,
                     )
@@ -93,7 +94,7 @@ internal class WordDetailViewModel @Inject constructor(
     fun onDeleteWord() {
         CoroutineScope(Dispatchers.IO).launch {
             launch(Dispatchers.Main) {
-                mutableState.update {
+                _state.update {
                     it.copy(
                         showProgressDialog = true,
                     )
@@ -102,7 +103,7 @@ internal class WordDetailViewModel @Inject constructor(
             state.value.word?.let { deleteWordUseCase(it.id.toString()) }
             launch(Dispatchers.Main) {
                 successResultChannel.send(Unit)
-                mutableState.update {
+                _state.update {
                     it.copy(
                         showProgressDialog = false,
                     )
@@ -121,10 +122,10 @@ internal class WordDetailViewModel @Inject constructor(
     }
 
     fun changeWordField(word: String) {
-        wordMutableState.value = word
+        _wordState.value = word
     }
 
     fun changeTranslateField(translate: String) {
-        translateMutableState.value = translate
+        _translateState.value = translate
     }
 }

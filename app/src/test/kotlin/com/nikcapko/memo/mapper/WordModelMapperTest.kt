@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 /**
  * Tests for [WordModelMapper]
  */
-class WordModelMapperTest {
+internal class WordModelMapperTest {
 
     private val mapper = WordModelMapper()
 

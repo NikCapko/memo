@@ -9,7 +9,7 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
 import com.nikcapko.memo.ui.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,12 +24,14 @@ internal class WordListViewModel @Inject constructor(
     private val wordModelMapper: WordModelMapper,
 ) : ViewModel() {
 
-    private val mutableStateFlow =
+    private val _state =
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
-    val state: StateFlow<DataLoadingViewModelState>
-        get() = mutableStateFlow.asStateFlow()
+    val state: Flow<DataLoadingViewModelState>
+        get() = _state.asStateFlow()
 
-    val speakOutChannel = Channel<String>()
+    private val _speakOutChannel = MutableStateFlow("")
+    val speakOutChannel: StateFlow<String>
+        get() = _speakOutChannel.asStateFlow()
 
     private var wordsList = emptyList<Word>()
 
@@ -39,9 +41,10 @@ internal class WordListViewModel @Inject constructor(
 
     fun loadWords() {
         viewModelScope.launch {
-            mutableStateFlow.update { DataLoadingViewModelState.LoadingState }
-            wordsList = wordModelMapper.mapFromEntityList(wordListUseCase())
-            mutableStateFlow.update { DataLoadingViewModelState.LoadedState(wordsList) }
+            _state.update { DataLoadingViewModelState.LoadingState }
+            val wordModelList = wordListUseCase()
+            wordsList = wordModelMapper.mapFromEntityList(wordModelList)
+            _state.update { DataLoadingViewModelState.LoadedState(wordsList) }
         }
     }
 
@@ -52,9 +55,7 @@ internal class WordListViewModel @Inject constructor(
 
     fun onEnableSound(position: Int) {
         val word = wordsList.getOrNull(position)
-        viewModelScope.launch {
-            speakOutChannel.send(word?.word.orEmpty())
-        }
+        _speakOutChannel.update { word?.word.orEmpty() }
     }
 
     fun onAddWordClick() {

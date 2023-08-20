@@ -1,6 +1,5 @@
 package com.nikcapko.memo.ui.words.detail
 
-import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
@@ -28,7 +27,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordDetailFragment : BaseFragment(), WordDetailView {
+internal class WordDetailFragment : BaseFragment() {
 
     private val viewModel by viewModels<WordDetailViewModel>()
 
@@ -36,7 +35,7 @@ internal class WordDetailFragment : BaseFragment(), WordDetailView {
 
     private val word by argument<Word>(WORD)
 
-    private val proDialog: ProgressDialog by lazyUnsafe {
+    private val progressDialog: ProgressDialog by lazyUnsafe {
         ProgressDialog(context).apply {
             setTitle("Загрузка...")
             setCancelable(false)
@@ -51,9 +50,7 @@ internal class WordDetailFragment : BaseFragment(), WordDetailView {
 
     private fun initObservers() {
         observeFlow(viewModel.wordState) { word ->
-            viewBinding.etWord.setText(word.word)
-            viewBinding.etTranslate.setText(word.translation)
-            viewBinding.etFrequency.setText(word.frequency.toString())
+            initView(word)
         }
         observeFlow(viewModel.progressLoadingState) { showProgressDialog ->
             if (showProgressDialog) {
@@ -126,7 +123,7 @@ internal class WordDetailFragment : BaseFragment(), WordDetailView {
         }
     }
 
-    override fun initView(word: Word?) {
+    private fun initView(word: Word?) {
         with(viewBinding) {
             word?.let {
                 flAddWordContainer.makeGone()
@@ -142,33 +139,22 @@ internal class WordDetailFragment : BaseFragment(), WordDetailView {
         }
     }
 
-    override fun sendSuccessResult() {
+    private fun sendSuccessResult() {
         val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
     }
 
-    override fun enableSaveButton(enable: Boolean) {
+    private fun enableSaveButton(enable: Boolean) {
         viewBinding.btnAdd.isEnabled = enable
         viewBinding.btnSave.isEnabled = enable
     }
 
-    override fun startProgressDialog() {
-        proDialog.show()
+    private fun startProgressDialog() {
+        progressDialog.show()
     }
 
-    override fun errorProgressDialog(errorMessage: String?) {
-        proDialog.dismiss()
-        AlertDialog.Builder(activity).apply {
-            setTitle(R.string.app_name)
-            setMessage(errorMessage)
-            setPositiveButton(R.string.ok) { dialog, _ ->
-                dialog.dismiss()
-            }
-        }.create().show()
-    }
-
-    override fun completeProgressDialog() {
-        proDialog.dismiss()
+    private fun completeProgressDialog() {
+        progressDialog.dismiss()
     }
 
     companion object {
