@@ -46,8 +46,10 @@ sdp = "1.0.6"
 cicerone = "6.6"
 lifecycle = "2.6.2"
 lifecycleExtensions = "2.2.0"
+aspectjrt = "1.9.7"
 
 [libraries]
+aspectjrt = { module = "org.aspectj:aspectjrt", version.ref = "aspectjrt" }
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
 plugin-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

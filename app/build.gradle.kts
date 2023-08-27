@@ -4,6 +4,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("com.ibotta.gradle.aop")
 }
 
 android {
@@ -63,6 +64,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":data"))
     implementation(project(":domain"))
+    debugImplementation(project(":logger"))
 
     implementation(libs.kotlin)
 

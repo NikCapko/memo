@@ -15,6 +15,8 @@ buildscript {
         classpath(libs.plugin.gradle)
         classpath(libs.plugin.kotlin)
         classpath(libs.plugin.hilt)
+        //AOP
+        classpath("com.ibotta:plugin:1.4.1")
     }
 }
 
