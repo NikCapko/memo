@@ -1,9 +1,20 @@
 [versions]
+#region AppConfig
+compileSdkVersion = "33"
+buildToolsVersion = "33.0.1"
+minSdkVersion = "21"
+targetSdkVersion = "32"
+
+applicationId = "com.nikcapko.memo"
+versionCode = "110"
+versionName = "1.1.0"
+#endregion
+
 #region Gradle
-gradle = "7.4.2"
+gradle = "8.1.1"
 javaxInject = "1"
 kotlin = "1.8.20"
-hilt = "2.43.2"
+hilt = "2.47"
 #endregion
 
 #region Tests
@@ -78,7 +89,7 @@ moxy-compiler = { module = "com.github.moxy-community:moxy-compiler", version.re
 moxy-ktx = { module = "com.github.moxy-community:moxy-ktx", version.ref = "moxy" }
 
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 
 viewbindingpropertydelegate = { module = "com.github.kirich1409:viewbindingpropertydelegate-noreflection", version.ref = "viewbindingpropertydelegate" }
 

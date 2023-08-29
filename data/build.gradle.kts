@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk = AppConfig.compileSdkVersion
-    buildToolsVersion = AppConfig.buildToolsVersion
+    compileSdk = libs.versions.compileSdkVersion.get().toInt()
+    buildToolsVersion = libs.versions.buildToolsVersion.get()
+    namespace = "com.nikcapko.memo.data"
 
     defaultConfig {
-        minSdk = AppConfig.minSdkVersion
-        targetSdk = AppConfig.targetSdkVersion
+        minSdk = libs.versions.minSdkVersion.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -28,11 +28,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     testOptions {

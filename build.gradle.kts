@@ -1,5 +1,6 @@
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.22.0")
+    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("com.google.dagger.hilt.android") version "2.47" apply false
 }
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
