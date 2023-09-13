@@ -2,8 +2,8 @@ plugins {
     id("com.android.application")
     id("dagger.hilt.android.plugin")
     id("kotlin-android")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -73,15 +73,9 @@ dependencies {
 
     implementation(libs.androidx.fragment.ktx)
 
-    // moxy
-    implementation(libs.moxy)
-    implementation(libs.moxy.androidx)
-    implementation(libs.moxy.ktx)
-    kapt(libs.moxy.compiler)
-
     // Dagger - Hilt
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // ViewBindingPropertyDelegate
     implementation(libs.viewbindingpropertydelegate)

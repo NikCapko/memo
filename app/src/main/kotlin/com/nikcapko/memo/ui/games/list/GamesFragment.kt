@@ -6,32 +6,28 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.memo.R
-import com.nikcapko.memo.data.Game
+import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.databinding.FragmentGamesBinding
 import com.nikcapko.memo.ui.games.list.adapter.GamesAdapter
-import com.nikcapko.memo.utils.extensions.lazyUnsafe
+import com.nikcapko.memo.utils.extensions.lazyAndroid
+import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
 
 @AndroidEntryPoint
-class GamesFragment : MvpAppCompatFragment(), GamesMvpView {
+class GamesFragment : BaseFragment() {
 
-    @Inject
-    lateinit var presenterProvider: Provider<GamesPresenter>
-    private val presenter: GamesPresenter by moxyPresenter { presenterProvider.get() }
+    private val viewModel by viewModels<GamesViewModel>()
 
     private val viewBinding by viewBinding(FragmentGamesBinding::bind)
 
-    private val adapter: GamesAdapter by lazyUnsafe {
+    private val adapter: GamesAdapter by lazyAndroid {
         GamesAdapter { position ->
-            presenter.onItemClick(position)
+            viewModel.onItemClick(position)
         }
     }
 
@@ -56,6 +52,7 @@ class GamesFragment : MvpAppCompatFragment(), GamesMvpView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapters()
+        observe()
     }
 
     private fun initAdapters() {
@@ -66,7 +63,9 @@ class GamesFragment : MvpAppCompatFragment(), GamesMvpView {
         }
     }
 
-    override fun showGames(games: List<Game>) {
-        adapter.games = games
+    private fun observe() {
+        observeFlow(viewModel.state) {
+            adapter.games = it
+        }
     }
 }

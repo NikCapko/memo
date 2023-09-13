@@ -1,6 +1,7 @@
 package com.nikcapko.memo.ui.words.detail
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.nikcapko.domain.usecases.DeleteWordUseCase
 import com.nikcapko.domain.usecases.SaveWordUseCase
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 import javax.inject.Inject
 
@@ -57,8 +59,8 @@ internal class WordDetailViewModel @Inject constructor(
     }
 
     fun onSaveWord(wordArg: String, translate: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main) {
                 _state.update {
                     it.copy(
                         showProgressDialog = true,
@@ -79,7 +81,7 @@ internal class WordDetailViewModel @Inject constructor(
                 )
             }
             saveWordUseCase(wordModelMapper.mapToEntity(word))
-            launch(Dispatchers.Main) {
+            withContext(Dispatchers.Main) {
                 successResultChannel.send(Unit)
                 _state.update {
                     it.copy(
@@ -92,8 +94,8 @@ internal class WordDetailViewModel @Inject constructor(
     }
 
     fun onDeleteWord() {
-        CoroutineScope(Dispatchers.IO).launch {
-            launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
+            withContext(Dispatchers.Main) {
                 _state.update {
                     it.copy(
                         showProgressDialog = true,
@@ -101,7 +103,7 @@ internal class WordDetailViewModel @Inject constructor(
                 }
             }
             state.value.word?.let { deleteWordUseCase(it.id.toString()) }
-            launch(Dispatchers.Main) {
+            withContext(Dispatchers.Main) {
                 successResultChannel.send(Unit)
                 _state.update {
                     it.copy(

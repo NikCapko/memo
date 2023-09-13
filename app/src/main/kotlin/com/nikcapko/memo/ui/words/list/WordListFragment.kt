@@ -24,24 +24,22 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
-import com.nikcapko.memo.base.view.ProgressMvpView
+import com.nikcapko.memo.base.view.ProgressView
 import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
 import com.nikcapko.memo.ui.words.list.adapter.WordListAdapter
 import com.nikcapko.memo.utils.Constants
-import com.nikcapko.memo.utils.extensions.lazyUnsafe
+import com.nikcapko.memo.utils.extensions.lazyAndroid
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.Locale
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordListFragment : BaseFragment(), ProgressMvpView {
+class WordListFragment : BaseFragment(), ProgressView {
 
     private val viewModel by viewModels<WordListViewModel>()
 
@@ -51,7 +49,7 @@ class WordListFragment : BaseFragment(), ProgressMvpView {
 
     private var tts: TextToSpeech? = null
 
-    private val adapter: WordListAdapter by lazyUnsafe {
+    private val adapter: WordListAdapter by lazyAndroid {
         WordListAdapter(
             onItemClick = { position -> viewModel.onItemClick(position) },
             onEnableSound = { position -> viewModel.onEnableSound(position) }

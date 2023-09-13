@@ -15,7 +15,7 @@ object Screens {
         WordListFragment()
     }
 
-    fun wordDetailScreen(word: Word?) = FragmentScreen {
+    fun wordDetailScreen(word: Word? = null) = FragmentScreen {
         WordDetailFragment().apply {
             arguments = bundleOf(
                 WordDetailFragment.WORD to word,

@@ -2,24 +2,42 @@
 
 package com.nikcapko.memo.ui.games.select_translate
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
+import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.domain.usecases.GameWordsLimitUseCase
 import com.nikcapko.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import moxy.MvpPresenter
 import javax.inject.Inject
 
-internal class SelectTranslatePresenter @Inject constructor(
+@HiltViewModel
+internal class SelectTranslateViewModel @Inject constructor(
     private val router: Router,
     private val gameWordsLimitUseCase: GameWordsLimitUseCase,
     private val saveWordUseCase: SaveWordUseCase,
     private val wordModelMapper: WordModelMapper,
-) : MvpPresenter<SelectTranslateView>() {
+) : ViewModel() {
+
+    private val _state =
+        MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
+    val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
+
+    private val _successAnimationChannel = MutableStateFlow<Boolean?>(null)
+    val successAnimationChannel = _successAnimationChannel.asStateFlow()
+
+    private val _endGameChannel = MutableStateFlow<Pair<Int, Int>?>(null)
+    val endGameChannel = _endGameChannel.asStateFlow()
 
     private var words: List<Word>? = null
     private var word: Word? = null
@@ -28,26 +46,16 @@ internal class SelectTranslatePresenter @Inject constructor(
     private var errorCounter = 0
     private var successCounter = 0
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        initView()
-    }
-
-    private fun initView() {
+    init {
         loadWords()
     }
 
     fun loadWords() {
-        CoroutineScope(Dispatchers.IO).launch {
-            launch(Dispatchers.Main) {
-                viewState.startLoading()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.update { DataLoadingViewModelState.LoadingState }
             words =
                 wordModelMapper.mapFromEntityList(gameWordsLimitUseCase(Game.MAX_WORDS_COUNT_SELECT_TRANSLATE))
-            launch(Dispatchers.Main) {
-                updateWord()
-                viewState.completeLoading()
-            }
+            updateWord()
         }
     }
 
@@ -57,17 +65,19 @@ internal class SelectTranslatePresenter @Inject constructor(
             ?.shuffled()
             ?.map { it.translation }
             .orEmpty()
-        viewState.showWord(word, translates)
+        _state.update { DataLoadingViewModelState.LoadedState(word to translates) }
     }
 
     fun onTranslateClick(translate: String) {
         if (word?.translation.equals(translate)) {
             word?.frequency = word?.frequency?.plus(Word.WORD_GAME_PRICE) ?: Word.WORD_GAME_PRICE
-            viewState.showSuccessAnimation()
+            _successAnimationChannel.update { true }
+            _successAnimationChannel.update { null }
             successCounter++
         } else {
             word?.frequency = word?.frequency?.minus(Word.WORD_GAME_PRICE) ?: -Word.WORD_GAME_PRICE
-            viewState.showErrorAnimation()
+            _successAnimationChannel.update { false }
+            _successAnimationChannel.update { null }
             errorCounter++
         }
     }
@@ -87,7 +97,7 @@ internal class SelectTranslatePresenter @Inject constructor(
                 saveWordUseCase(wordModelMapper.mapToEntity(word))
             }
             launch(Dispatchers.Main) {
-                viewState.showEndGame(successCounter, errorCounter)
+                _endGameChannel.update { successCounter to errorCounter }
             }
         }
     }

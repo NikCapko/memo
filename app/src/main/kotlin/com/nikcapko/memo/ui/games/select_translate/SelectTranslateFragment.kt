@@ -10,27 +10,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.R
+import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentSelectTranslateBinding
 import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
+import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslateView {
+internal class SelectTranslateFragment : BaseFragment() {
 
-    @Inject
-    lateinit var presenterProvider: Provider<SelectTranslatePresenter>
-    private val presenter: SelectTranslatePresenter by moxyPresenter { presenterProvider.get() }
+    private val viewModel by viewModels<SelectTranslateViewModel>()
 
     private val viewBinding by viewBinding(FragmentSelectTranslateBinding::bind)
 
@@ -40,7 +38,7 @@ internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslate
         override fun onAnimationRepeat(animation: Animator) = Unit
 
         override fun onAnimationEnd(animation: Animator) {
-            presenter.onAnimationEnd()
+            viewModel.onAnimationEnd()
         }
     }
 
@@ -56,6 +54,7 @@ internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslate
         super.onViewCreated(view, savedInstanceState)
         initToolbar()
         setListeners()
+        observe()
     }
 
     private fun initToolbar() {
@@ -77,18 +76,48 @@ internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslate
             btnTranslate5.setOnClickListener { onClickTranslate(it as Button) }
 
             btnExit.setOnClickListener {
-                presenter.onBackPressed()
+                viewModel.onBackPressed()
             }
             pvLoad.onRetryClick = { onRetry() }
         }
     }
 
+    private fun observe() {
+        observeFlow(viewModel.state) { state ->
+            when (state) {
+                DataLoadingViewModelState.LoadingState -> startLoading()
+                DataLoadingViewModelState.NoItemsState -> showWord(null, emptyList())
+                is DataLoadingViewModelState.LoadedState<*> -> {
+                    val data = state.data as? Pair<Word, List<String>>
+                    showWord(data?.first, data?.second.orEmpty())
+                    completeLoading()
+                }
+
+                is DataLoadingViewModelState.ErrorState -> {
+                    errorLoading(requireContext().getString(R.string.error_default_message))
+                }
+            }
+        }
+        observeFlow(viewModel.successAnimationChannel) {
+            it?.let {
+                if (it) {
+                    showSuccessAnimation()
+                } else {
+                    showErrorAnimation()
+                }
+            }
+        }
+        observeFlow(viewModel.endGameChannel) { endGameResult ->
+            endGameResult?.let { showEndGame(it.first, it.second) }
+        }
+    }
+
     private fun onClickTranslate(button: Button) {
-        presenter.onTranslateClick(button.text.toString())
+        viewModel.onTranslateClick(button.text.toString())
     }
 
     @Suppress("MagicNumber")
-    override fun showWord(word: Word?, translates: List<String>) {
+    private fun showWord(word: Word?, translates: List<String>) {
         with(viewBinding) {
             lavSuccess.makeGone()
             lavError.makeGone()
@@ -103,7 +132,7 @@ internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslate
         }
     }
 
-    override fun showEndGame(successCounter: Int, errorCounter: Int) {
+    private fun showEndGame(successCounter: Int, errorCounter: Int) {
         val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
         with(viewBinding) {
@@ -114,7 +143,7 @@ internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslate
         }
     }
 
-    override fun showErrorAnimation() {
+    private fun showErrorAnimation() {
         with(viewBinding) {
             tvWord.makeGone()
             llTranslateContainer.makeGone()
@@ -124,7 +153,7 @@ internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslate
         }
     }
 
-    override fun showSuccessAnimation() {
+    private fun showSuccessAnimation() {
         with(viewBinding) {
             tvWord.makeGone()
             llTranslateContainer.makeGone()
@@ -134,28 +163,28 @@ internal class SelectTranslateFragment : MvpAppCompatFragment(), SelectTranslate
         }
     }
 
-    override fun startLoading() {
+    private fun startLoading() {
         with(viewBinding) {
             pvLoad.startLoading()
             llContentContainer.makeGone()
         }
     }
 
-    override fun errorLoading(errorMessage: String?) {
+    private fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
             pvLoad.errorLoading(errorMessage)
             llContentContainer.makeGone()
         }
     }
 
-    override fun completeLoading() {
+    private fun completeLoading() {
         with(viewBinding) {
             pvLoad.completeLoading()
             llContentContainer.makeVisible()
         }
     }
 
-    override fun onRetry() {
-        presenter.loadWords()
+    private fun onRetry() {
+        viewModel.loadWords()
     }
 }

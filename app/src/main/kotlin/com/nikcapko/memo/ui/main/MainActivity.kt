@@ -2,6 +2,7 @@ package com.nikcapko.memo.ui.main
 
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.github.terrakok.cicerone.Command
 import com.github.terrakok.cicerone.Navigator
@@ -12,18 +13,14 @@ import com.nikcapko.memo.R
 import com.nikcapko.memo.ui.Screens
 import com.nikcapko.memo.utils.AppStorage
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatActivity
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : MvpAppCompatActivity(), ChainHolder {
+class MainActivity : AppCompatActivity(), ChainHolder {
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
-
-    @Inject
-    lateinit var appStorage: AppStorage
 
     override val chain = ArrayList<WeakReference<Fragment>>()
 

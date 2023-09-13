@@ -3,10 +3,9 @@ package com.nikcapko.memo.base.ui
 import android.content.Context
 import androidx.fragment.app.Fragment
 import com.nikcapko.memo.ui.main.ChainHolder
-import moxy.MvpAppCompatFragment
 import java.lang.ref.WeakReference
 
-open class BaseFragment : MvpAppCompatFragment() {
+open class BaseFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

@@ -1,8 +1,8 @@
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -51,7 +51,7 @@ dependencies {
 
     // Dagger - Hilt
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // retrofit
     implementation(libs.retrofit)
@@ -64,7 +64,7 @@ dependencies {
     // room
     implementation(libs.room)
     implementation(libs.room.ktx)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     // testing
     testImplementation(libs.test.mockk)

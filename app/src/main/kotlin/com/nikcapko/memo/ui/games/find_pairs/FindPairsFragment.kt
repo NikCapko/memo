@@ -8,25 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.R
+import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.databinding.FragmentFindPairsBinding
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeInvisible
 import com.nikcapko.memo.utils.extensions.makeVisible
+import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
-import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
+internal class FindPairsFragment : BaseFragment() {
 
-    @Inject
-    lateinit var presenterProvider: Provider<FindPairsPresenter>
-    private val presenter: FindPairsPresenter by moxyPresenter { presenterProvider.get() }
+    private val viewModel by viewModels<FindPairsViewModel>()
 
     private val viewBinding by viewBinding(FragmentFindPairsBinding::bind)
 
@@ -45,6 +43,31 @@ internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
         super.onViewCreated(view, savedInstanceState)
         initToolbar()
         setListeners()
+        observe()
+    }
+
+    private fun observe() {
+        observeFlow(viewModel.state) { state ->
+            when (state) {
+                DataLoadingViewModelState.LoadingState -> startLoading()
+                DataLoadingViewModelState.NoItemsState -> showWords(emptyList(), emptyList())
+                is DataLoadingViewModelState.LoadedState<*> -> {
+                    val data = state.data as? Pair<List<String>, List<String>>
+                    showWords(data?.first.orEmpty(), data?.second.orEmpty())
+                    completeLoading()
+                }
+
+                is DataLoadingViewModelState.ErrorState -> {
+                    errorLoading(requireContext().getString(R.string.error_default_message))
+                }
+            }
+        }
+        observeFlow(viewModel.findPairResultChannel) {
+            it?.let { onFindPairResult(it) }
+        }
+        observeFlow(viewModel.endGameChannel) {
+            it?.let { endGame() }
+        }
     }
 
     private fun initToolbar() {
@@ -61,7 +84,7 @@ internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
                     selectedTranslate =
                         rgTranslate.findViewById(rgTranslate.checkedRadioButtonId)
                     selectedWord = group.findViewById(checkedId)
-                    presenter.onFindPair(
+                    viewModel.onFindPair(
                         selectedWord?.text.toString(),
                         selectedTranslate?.text.toString()
                     )
@@ -74,7 +97,7 @@ internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
                     selectedWord =
                         rgWord.findViewById(rgWord.checkedRadioButtonId)
                     selectedTranslate = group.findViewById(checkedId)
-                    presenter.onFindPair(
+                    viewModel.onFindPair(
                         selectedWord?.text.toString(),
                         selectedTranslate?.text.toString()
                     )
@@ -83,7 +106,7 @@ internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
                 }
             }
             btnExit.setOnClickListener {
-                presenter.onBackPressed()
+                viewModel.onBackPressed()
             }
             lavSuccess.setOnClickListener { }
             pvLoad.onRetryClick = { onRetry() }
@@ -91,7 +114,7 @@ internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
     }
 
     @Suppress("MagicNumber")
-    override fun showWords(wordsList: List<String?>, translateList: List<String?>) {
+    private fun showWords(wordsList: List<String?>, translateList: List<String?>) {
         with(viewBinding) {
             btnWord1.text = wordsList[0]
             btnWord2.text = wordsList[1]
@@ -107,7 +130,7 @@ internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
         }
     }
 
-    override fun onFindPairResult(success: Boolean) {
+    private fun onFindPairResult(success: Boolean) {
         if (success) {
             selectedWord?.makeInvisible()
             selectedTranslate?.makeInvisible()
@@ -116,7 +139,7 @@ internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
         selectedTranslate = null
     }
 
-    override fun endGame() {
+    private fun endGame() {
         with(viewBinding) {
             flContentContainer.makeGone()
             rlEnGameContainer.makeVisible()
@@ -124,28 +147,28 @@ internal class FindPairsFragment : MvpAppCompatFragment(), FindPairsView {
         }
     }
 
-    override fun startLoading() {
+    private fun startLoading() {
         with(viewBinding) {
             pvLoad.startLoading()
             flContentContainer.makeGone()
         }
     }
 
-    override fun errorLoading(errorMessage: String?) {
+    private fun errorLoading(errorMessage: String?) {
         with(viewBinding) {
             pvLoad.errorLoading(errorMessage)
             flContentContainer.makeGone()
         }
     }
 
-    override fun completeLoading() {
+    private fun completeLoading() {
         with(viewBinding) {
             pvLoad.completeLoading()
             flContentContainer.makeVisible()
         }
     }
 
-    override fun onRetry() {
-        presenter.loadWords()
+    private fun onRetry() {
+        viewModel.loadWords()
     }
 }

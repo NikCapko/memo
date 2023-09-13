@@ -18,7 +18,7 @@ import com.nikcapko.memo.databinding.FragmentWordDetailBinding
 import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.argument
 import com.nikcapko.memo.utils.extensions.hideKeyboard
-import com.nikcapko.memo.utils.extensions.lazyUnsafe
+import com.nikcapko.memo.utils.extensions.lazyAndroid
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observeFlow
@@ -35,7 +35,7 @@ internal class WordDetailFragment : BaseFragment() {
 
     private val word by argument<Word>(WORD)
 
-    private val progressDialog: ProgressDialog by lazyUnsafe {
+    private val progressDialog: ProgressDialog by lazyAndroid {
         ProgressDialog(context).apply {
             setTitle("Загрузка...")
             setCancelable(false)
