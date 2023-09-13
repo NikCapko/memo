@@ -37,7 +37,6 @@ okhttp = "4.11.0"
 
 room = "2.5.2"
 
-moxy = "2.2.2"
 coroutines = "1.7.0"
 viewbindingpropertydelegate = "1.5.6"
 rxBinding = "2.2.0"
@@ -81,11 +80,6 @@ okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.
 room = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-
-moxy = { module = "com.github.moxy-community:moxy", version.ref = "moxy" }
-moxy-androidx = { module = "com.github.moxy-community:moxy-androidx", version.ref = "moxy" }
-moxy-compiler = { module = "com.github.moxy-community:moxy-compiler", version.ref = "moxy" }
-moxy-ktx = { module = "com.github.moxy-community:moxy-ktx", version.ref = "moxy" }
 
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
