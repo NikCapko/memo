@@ -62,16 +62,16 @@ internal class FindPairsViewModel @Inject constructor(
     fun onFindPair(selectedWord: String, selectedTranslate: String) {
         words.forEach {
             if (it.word == selectedWord && it.translation == selectedTranslate) {
-                _findPairResultChannel.update { true }
                 _findPairResultChannel.update { null }
+                _findPairResultChannel.update { true }
                 wordsCount++
                 if (wordsCount == Game.MAX_WORDS_COUNT_FIND_PAIRS * 2) {
                     _endGameChannel.update { Unit }
                 }
             }
         }
-        _findPairResultChannel.update { false }
         _findPairResultChannel.update { null }
+        _findPairResultChannel.update { false }
     }
 
     fun onBackPressed() {

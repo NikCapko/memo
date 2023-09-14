@@ -53,8 +53,8 @@ internal class WordListViewModel @Inject constructor(
 
     fun onEnableSound(position: Int) {
         val word = wordsList.getOrNull(position)
-        _speakOutChannel.update { word?.word.orEmpty() }
         _speakOutChannel.update { null }
+        _speakOutChannel.update { word?.word.orEmpty() }
     }
 
     fun onAddWordClick() {

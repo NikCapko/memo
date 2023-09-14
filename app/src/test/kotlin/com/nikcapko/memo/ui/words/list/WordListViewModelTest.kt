@@ -43,7 +43,6 @@ internal class WordListViewModelTest {
 
     private lateinit var viewModel: WordListViewModel
 
-    @ExperimentalCoroutinesApi
     val testDispatcher = StandardTestDispatcher()
 
     private var word = Word(

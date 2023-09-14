@@ -12,13 +12,13 @@ import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -71,13 +71,13 @@ internal class SelectTranslateViewModel @Inject constructor(
     fun onTranslateClick(translate: String) {
         if (word?.translation.equals(translate)) {
             word?.frequency = word?.frequency?.plus(Word.WORD_GAME_PRICE) ?: Word.WORD_GAME_PRICE
-            _successAnimationChannel.update { true }
             _successAnimationChannel.update { null }
+            _successAnimationChannel.update { true }
             successCounter++
         } else {
             word?.frequency = word?.frequency?.minus(Word.WORD_GAME_PRICE) ?: -Word.WORD_GAME_PRICE
-            _successAnimationChannel.update { false }
             _successAnimationChannel.update { null }
+            _successAnimationChannel.update { false }
             errorCounter++
         }
     }
@@ -92,11 +92,11 @@ internal class SelectTranslateViewModel @Inject constructor(
     }
 
     private fun updateWordsDB() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             words?.forEach { word ->
                 saveWordUseCase(wordModelMapper.mapToEntity(word))
             }
-            launch(Dispatchers.Main) {
+            withContext(Dispatchers.Main) {
                 _endGameChannel.update { successCounter to errorCounter }
             }
         }

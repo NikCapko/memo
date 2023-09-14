@@ -8,7 +8,6 @@ import com.nikcapko.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -61,11 +60,7 @@ internal class WordDetailViewModel @Inject constructor(
     fun onSaveWord(wordArg: String, translate: String) {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _state.update {
-                    it.copy(
-                        showProgressDialog = true,
-                    )
-                }
+                _state.update { it.copy(showProgressDialog = true) }
             }
             val word: Word = state.value.word?.let {
                 it.apply {
@@ -83,11 +78,7 @@ internal class WordDetailViewModel @Inject constructor(
             saveWordUseCase(wordModelMapper.mapToEntity(word))
             withContext(Dispatchers.Main) {
                 successResultChannel.send(Unit)
-                _state.update {
-                    it.copy(
-                        showProgressDialog = false,
-                    )
-                }
+                _state.update { it.copy(showProgressDialog = false) }
                 router.exit()
             }
         }
@@ -96,20 +87,12 @@ internal class WordDetailViewModel @Inject constructor(
     fun onDeleteWord() {
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _state.update {
-                    it.copy(
-                        showProgressDialog = true,
-                    )
-                }
+                _state.update { it.copy(showProgressDialog = true) }
             }
             state.value.word?.let { deleteWordUseCase(it.id.toString()) }
             withContext(Dispatchers.Main) {
                 successResultChannel.send(Unit)
-                _state.update {
-                    it.copy(
-                        showProgressDialog = false,
-                    )
-                }
+                _state.update { it.copy(showProgressDialog = false) }
                 router.exit()
             }
         }
