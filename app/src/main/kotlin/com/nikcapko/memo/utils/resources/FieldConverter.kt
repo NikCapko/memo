@@ -7,8 +7,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class FieldConverter @Inject constructor(@ApplicationContext var context: Context) : ResourceManager {
+internal class FieldConverter @Inject constructor(@ApplicationContext var context: Context) : ResourceManager {
 
     override fun getString(resId: Int): String {
         return context.getString(resId)
