@@ -3,13 +3,12 @@ package com.nikcapko.memo.ui.words.list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.terrakok.cicerone.Router
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.domain.usecases.WordListUseCase
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
-import com.nikcapko.memo.ui.Screens
+import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class WordListViewModel @Inject constructor(
-    private val router: Router,
+    private val navigator: Navigator,
     private val wordListUseCase: WordListUseCase,
     private val wordModelMapper: WordModelMapper,
     private val dispatcherProvider: DispatcherProvider,
@@ -58,7 +57,7 @@ internal class WordListViewModel @Inject constructor(
 
     fun onItemClick(position: Int) {
         val word = wordsList.getOrNull(position)
-        router.navigateTo(Screens.wordDetailScreen(word))
+        navigator.pushWordDetailScreen(word)
     }
 
     fun onEnableSound(position: Int) {
@@ -67,11 +66,11 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun onAddWordClick() {
-        router.navigateTo(Screens.wordDetailScreen())
+        navigator.pushWordDetailScreen()
     }
 
     fun openGamesScreen() {
-        router.navigateTo(Screens.gamesScreen())
+        navigator.pushGamesScreen()
     }
 
     data class SpeakOutEvent(val word: String) : EventArgs<String>(word)

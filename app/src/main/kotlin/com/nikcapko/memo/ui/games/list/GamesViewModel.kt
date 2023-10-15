@@ -3,7 +3,7 @@ package com.nikcapko.memo.ui.games.list
 import androidx.lifecycle.ViewModel
 import com.github.terrakok.cicerone.Router
 import com.nikcapko.memo.data.Game
-import com.nikcapko.memo.ui.Screens
+import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class GamesViewModel @Inject constructor(
-    private var router: Router,
+    private var navigator: Navigator,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<List<Game>>(emptyList())
@@ -29,8 +29,8 @@ internal class GamesViewModel @Inject constructor(
 
     fun onItemClick(position: Int) {
         when (_state.value.getOrNull(position)?.type) {
-            Game.Type.SELECT_TRANSLATE -> router.navigateTo(Screens.selectTranslateScreen())
-            Game.Type.FIND_PAIRS -> router.navigateTo(Screens.findPairsScreen())
+            Game.Type.SELECT_TRANSLATE -> navigator.pushSelectTranslateScreen()
+            Game.Type.FIND_PAIRS -> navigator.pushFindPairsScreen()
             else -> Unit
         }
     }

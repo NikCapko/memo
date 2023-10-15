@@ -1,4 +1,4 @@
-package com.nikcapko.memo.app
+package com.nikcapko.memo.di
 
 import android.content.Context
 import com.nikcapko.memo.base.coroutines.DefaultDispatcherProvider
