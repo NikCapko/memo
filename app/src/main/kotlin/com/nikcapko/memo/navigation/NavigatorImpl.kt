@@ -7,7 +7,7 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.ui.games.find_pairs.FindPairsFragment
 import com.nikcapko.memo.ui.games.list.GamesFragment
 import com.nikcapko.memo.ui.games.select_translate.SelectTranslateFragment
-import com.nikcapko.memo.ui.words.detail.WordDetailFragment
+import com.nikcapko.memo.ui.words.details.WordDetailsFragment
 import com.nikcapko.memo.ui.words.list.WordListFragment
 import javax.inject.Inject
 
@@ -24,9 +24,9 @@ internal class NavigatorImpl @Inject constructor(
     override fun pushWordDetailScreen(word: Word?) {
         router.navigateTo(
             screen = FragmentScreen {
-                WordDetailFragment().apply {
+                WordDetailsFragment().apply {
                     arguments = bundleOf(
-                        WordDetailFragment.WORD to word,
+                        WordDetailsFragment.WORD to word,
                     )
                 }
             }
@@ -49,5 +49,9 @@ internal class NavigatorImpl @Inject constructor(
         router.navigateTo(
             screen = FragmentScreen { FindPairsFragment() }
         )
+    }
+
+    override fun back() {
+        router.exit()
     }
 }

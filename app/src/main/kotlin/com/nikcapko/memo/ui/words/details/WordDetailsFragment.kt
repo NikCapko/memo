@@ -1,4 +1,4 @@
-package com.nikcapko.memo.ui.words.detail
+package com.nikcapko.memo.ui.words.details
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -23,11 +23,10 @@ import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.receiveAsFlow
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordDetailFragment : BaseFragment() {
+internal class WordDetailsFragment : BaseFragment() {
 
     private val viewModel by viewModels<WordDetailViewModel>()
 
@@ -62,7 +61,7 @@ internal class WordDetailFragment : BaseFragment() {
         observeFlow(viewModel.enableSaveButtonState) {
             enableSaveButton(it)
         }
-        observeFlow(viewModel.successResultChannel.receiveAsFlow()) {
+        viewModel.closeScreenEvent.observe(viewLifecycleOwner) {
             sendSuccessResult()
         }
     }

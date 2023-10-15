@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
@@ -108,7 +109,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     when (menuItem.itemId) {
                         R.id.action_games -> viewModel.openGamesScreen()
-                        R.id.action_clear -> viewModel.openGamesScreen()
+                        R.id.action_clear -> viewModel.onClearDatabaseClick()
                     }
                     return false
                 }
@@ -160,17 +161,27 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        viewModel.speakOut.observe(viewLifecycleOwner) { speakOutEvent ->
-            speakOut(speakOutEvent.data)
+        viewModel.speakOutEvent.observe(viewLifecycleOwner) {
+            speakOut(it.data)
         }
         viewModel.showClearDatabaseDialog.observe(viewLifecycleOwner) {
-            // TODO: add clear database dialog
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.attention)
+                .setMessage(R.string.clear_database)
+                .setPositiveButton(R.string.yes) { dialog, _ ->
+                    dialog.dismiss()
+                    viewModel.clearDatabase()
+                }
+                .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
+                .create()
+                .show()
         }
     }
 
     private fun showWords(wordsList: List<Word>?) {
         gameMenuItem?.isVisible =
-            !wordsList.isNullOrEmpty() && wordsList.size >= MAX_WORDS_COUNT_SELECT_TRANSLATE
+            !wordsList.isNullOrEmpty() &&
+                    wordsList.size >= MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
     }
 

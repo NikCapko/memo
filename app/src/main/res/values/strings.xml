@@ -15,7 +15,7 @@
     <string name="frequency">Изученность</string>
 
     <string name="attention">Внимание</string>
-    <string name="clear_database">Очистить базу данных при выходе из аккаунта ?</string>
+    <string name="clear_database">Очистить базу данных ?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="ok">Ок</string>

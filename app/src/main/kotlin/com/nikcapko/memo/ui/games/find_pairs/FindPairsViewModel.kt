@@ -2,6 +2,8 @@
 
 package com.nikcapko.memo.ui.games.find_pairs
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.ar2code.mutableliveevent.Event
+import ru.ar2code.mutableliveevent.EventArgs
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,11 +38,11 @@ internal class FindPairsViewModel @Inject constructor(
     private var words = emptyList<Word>()
     private var wordsCount = 0
 
-    private val _findPairResultChannel = MutableStateFlow<Boolean?>(null)
-    val findPairResultChannel = _findPairResultChannel.asStateFlow()
+    private val _findPairResultEvent = MutableLiveData<EventArgs<Boolean>>()
+    val findPairResultEvent: LiveData<EventArgs<Boolean>> = _findPairResultEvent
 
-    private val _endGameChannel = MutableStateFlow<Unit?>(null)
-    val endGameChannel = _endGameChannel.asStateFlow()
+    private val _endGameEvent = MutableLiveData<Event>()
+    val endGameEvent: LiveData<Event> = _endGameEvent
 
     init {
         loadWords()
@@ -63,16 +67,14 @@ internal class FindPairsViewModel @Inject constructor(
     fun onFindPair(selectedWord: String, selectedTranslate: String) {
         words.forEach {
             if (it.word == selectedWord && it.translation == selectedTranslate) {
-                _findPairResultChannel.update { null }
-                _findPairResultChannel.update { true }
+                _findPairResultEvent.postValue(EventArgs(true))
                 wordsCount++
                 if (wordsCount == MAX_WORDS_COUNT_FIND_PAIRS * 2) {
-                    _endGameChannel.update { Unit }
+                    _endGameEvent.postValue(Event())
                 }
             }
         }
-        _findPairResultChannel.update { null }
-        _findPairResultChannel.update { false }
+        _findPairResultEvent.postValue(EventArgs(false))
     }
 
     fun onBackPressed() {

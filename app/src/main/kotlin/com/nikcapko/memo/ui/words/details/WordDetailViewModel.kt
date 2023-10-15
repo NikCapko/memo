@@ -1,15 +1,15 @@
-package com.nikcapko.memo.ui.words.detail
+package com.nikcapko.memo.ui.words.details
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.terrakok.cicerone.Router
 import com.nikcapko.domain.usecases.DeleteWordUseCase
 import com.nikcapko.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
+import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,12 +19,14 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.ar2code.mutableliveevent.Event
+import ru.ar2code.mutableliveevent.MutableLiveEvent
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 internal class WordDetailViewModel @Inject constructor(
-    private val router: Router,
+    private val navigator: Navigator,
     private val saveWordUseCase: SaveWordUseCase,
     private val deleteWordUseCase: DeleteWordUseCase,
     private val wordModelMapper: WordModelMapper,
@@ -48,7 +50,9 @@ internal class WordDetailViewModel @Inject constructor(
             return@combine word.isNotEmpty() && translate.isNotEmpty()
         }
 
-    val successResultChannel = Channel<Unit>()
+    private val _closeScreenEvent = MutableLiveEvent<Event>()
+    val closeScreenEvent: LiveData<Event>
+        get() = _closeScreenEvent
 
     fun setArguments(vararg params: Any?) {
         _state.update {
@@ -77,10 +81,10 @@ internal class WordDetailViewModel @Inject constructor(
                 )
             }
             saveWordUseCase(wordModelMapper.mapToEntity(word))
-            successResultChannel.send(Unit)
+            _closeScreenEvent.postValue(Event())
             _state.update { it.copy(showProgressDialog = false) }
             withContext(dispatcherProvider.main) {
-                router.exit()
+                navigator.back()
             }
         }
     }
@@ -89,10 +93,10 @@ internal class WordDetailViewModel @Inject constructor(
         viewModelScope.launch(dispatcherProvider.io) {
             _state.update { it.copy(showProgressDialog = true) }
             state.value.word?.let { deleteWordUseCase(it.id.toString()) }
-            successResultChannel.send(Unit)
+            _closeScreenEvent.postValue(Event())
             _state.update { it.copy(showProgressDialog = false) }
             withContext(dispatcherProvider.main) {
-                router.exit()
+                navigator.back()
             }
         }
     }

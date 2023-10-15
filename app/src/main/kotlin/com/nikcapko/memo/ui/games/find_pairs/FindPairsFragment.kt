@@ -62,10 +62,10 @@ internal class FindPairsFragment : BaseFragment() {
                 }
             }
         }
-        observeFlow(viewModel.findPairResultChannel) {
-            it?.let { onFindPairResult(it) }
+        viewModel.findPairResultEvent.observe(viewLifecycleOwner){
+            it.data?.let { onFindPairResult(it) }
         }
-        observeFlow(viewModel.endGameChannel) {
+        viewModel.endGameEvent.observe(viewLifecycleOwner) {
             it?.let { endGame() }
         }
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
+import com.nikcapko.domain.usecases.ClearDatabaseUseCase
 import com.nikcapko.domain.usecases.WordListUseCase
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
 import com.nikcapko.memo.data.Word
@@ -24,6 +25,7 @@ import javax.inject.Inject
 internal class WordListViewModel @Inject constructor(
     private val navigator: Navigator,
     private val wordListUseCase: WordListUseCase,
+    private val clearDatabaseUseCase: ClearDatabaseUseCase,
     private val wordModelMapper: WordModelMapper,
     private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
@@ -32,12 +34,12 @@ internal class WordListViewModel @Inject constructor(
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
-    private val _speakOut = MutableLiveEvent<SpeakOutEvent>()
-    val speakOut: LiveData<SpeakOutEvent>
-        get() = _speakOut
+    private val _speakOutEvent = MutableLiveEvent<EventArgs<String>>()
+    val speakOutEvent: LiveData<EventArgs<String>>
+        get() = _speakOutEvent
 
-    private val _showClearDatabaseDialog = MutableLiveEvent<ShowClearDatabaseDialogEvent>()
-    val showClearDatabaseDialog: LiveData<ShowClearDatabaseDialogEvent>
+    private val _showClearDatabaseDialog = MutableLiveEvent<Event>()
+    val showClearDatabaseDialog: LiveData<Event>
         get() = _showClearDatabaseDialog
 
     private var wordsList = emptyList<Word>()
@@ -62,7 +64,15 @@ internal class WordListViewModel @Inject constructor(
 
     fun onEnableSound(position: Int) {
         val word = wordsList.getOrNull(position)
-        _speakOut.postValue(SpeakOutEvent(word?.word.orEmpty()))
+        _speakOutEvent.postValue(EventArgs(word?.word.orEmpty()))
+    }
+
+    fun clearDatabase() {
+        viewModelScope.launch(dispatcherProvider.io) {
+            _state.update { DataLoadingViewModelState.LoadingState }
+            clearDatabaseUseCase.invoke()
+            _state.update { DataLoadingViewModelState.LoadedState(emptyList<Word>()) }
+        }
     }
 
     fun onAddWordClick() {
@@ -73,7 +83,7 @@ internal class WordListViewModel @Inject constructor(
         navigator.pushGamesScreen()
     }
 
-    data class SpeakOutEvent(val word: String) : EventArgs<String>(word)
-
-    object ShowClearDatabaseDialogEvent : Event()
+    fun onClearDatabaseClick() {
+        _showClearDatabaseDialog.postValue(Event())
+    }
 }

@@ -1,25 +1,21 @@
 package com.nikcapko.memo.ui.words.list
 
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.domain.model.WordModel
+import com.nikcapko.domain.usecases.ClearDatabaseUseCase
 import com.nikcapko.domain.usecases.WordListUseCase
 import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.TestDispatcherProvider
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
+import com.nikcapko.memo.navigation.Navigator
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -27,6 +23,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.junit.jupiter.api.extension.ExtendWith
+import ru.ar2code.mutableliveevent.EventArgs
 
 /**
  * Test for [WordListViewModel]
@@ -36,8 +33,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(InstantExecutorExtension::class)
 internal class WordListViewModelTest {
 
-    private var router = spyk<Router>()
+    private var navigator = spyk<Navigator>()
     private var wordListUseCase = mockk<WordListUseCase>(relaxed = true)
+    private var clearDatabaseUseCase = mockk<ClearDatabaseUseCase>(relaxed = true)
     private var wordModelMapper = spyk<WordModelMapper>()
 
     private lateinit var viewModel: WordListViewModel
@@ -59,8 +57,9 @@ internal class WordListViewModelTest {
     @BeforeAll
     fun setupDispatcher() {
         viewModel = WordListViewModel(
-            router = router,
+            navigator = navigator,
             wordListUseCase = wordListUseCase,
+            clearDatabaseUseCase = clearDatabaseUseCase,
             wordModelMapper = wordModelMapper,
             dispatcherProvider = TestDispatcherProvider()
         )
@@ -69,7 +68,7 @@ internal class WordListViewModelTest {
     @Test
     fun `check use wordListUseCase on call loadWords`() = runTest {
         viewModel.loadWords()
-        runCurrent()
+
         coVerify { wordListUseCase.invoke() }
     }
 
@@ -77,55 +76,44 @@ internal class WordListViewModelTest {
     fun `check transfer data from wordListUseCase on call loadWords`() = runTest {
         val expected = DataLoadingViewModelState.LoadedState(listOf(word))
         coEvery { wordListUseCase.invoke() } returns listOf(wordModel)
+
         viewModel.loadWords()
+
         Assertions.assertEquals(expected, viewModel.state.first())
     }
 
     @Test
     fun `check open screen word detail on call onItemClick`() = runTest {
-        val mockedWordDetailScreen = mockk<FragmentScreen>()
-        mockkObject(Screens)
-        every { Screens.wordDetailScreen(any()) } returns mockedWordDetailScreen
         coEvery { wordListUseCase.invoke() } returns listOf(wordModel)
 
-        launch {
-            viewModel.loadWords()
-            viewModel.onItemClick(0)
-        }.join()
+        viewModel.loadWords()
+        viewModel.onItemClick(0)
 
-        verify(exactly = 1) { router.navigateTo(mockedWordDetailScreen) }
+        verify(exactly = 1) { navigator.pushWordDetailScreen(word) }
     }
 
     @Test
     fun `check send speakOutChannel on call onEnableSound`() {
-        val expected = WordListViewModel.SpeakOutEvent(word.word)
+        val expected = EventArgs(word.word)
         coEvery { wordListUseCase.invoke() } returns listOf(wordModel)
 
         viewModel.loadWords()
         viewModel.onEnableSound(0)
 
-        Assertions.assertEquals(expected, viewModel.speakOut.value)
+        Assertions.assertEquals(expected.data, viewModel.speakOutEvent.value?.data)
     }
 
     @Test
     fun `check open screen word detail with null on call onAddWordClick`() {
-        val mockedWordDetailScreen = mockk<FragmentScreen>()
-        mockkObject(Screens)
-        every { Screens.wordDetailScreen(null) } returns mockedWordDetailScreen
-
         viewModel.onAddWordClick()
 
-        verify(exactly = 1) { router.navigateTo(mockedWordDetailScreen) }
+        verify(exactly = 1) { navigator.pushWordDetailScreen() }
     }
 
     @Test
     fun `check open screen games on call openGamesScreen`() {
-        val mockedWordDetailScreen = mockk<FragmentScreen>()
-        mockkObject(Screens)
-        every { Screens.gamesScreen() } returns mockedWordDetailScreen
-
         viewModel.openGamesScreen()
 
-        verify(exactly = 1) { router.navigateTo(mockedWordDetailScreen) }
+        verify(exactly = 1) { navigator.pushGamesScreen() }
     }
 }

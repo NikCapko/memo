@@ -8,4 +8,5 @@ internal interface Navigator {
     fun pushGamesScreen()
     fun pushSelectTranslateScreen()
     fun pushFindPairsScreen()
+    fun back()
 }

@@ -98,17 +98,17 @@ internal class SelectTranslateFragment : BaseFragment() {
                 }
             }
         }
-        observeFlow(viewModel.successAnimationChannel) {
-            it?.let {
-                if (it) {
+        viewModel.successAnimationEvent.observe(viewLifecycleOwner) {
+            it.data?.let { successAnimation ->
+                if (successAnimation) {
                     showSuccessAnimation()
                 } else {
                     showErrorAnimation()
                 }
             }
         }
-        observeFlow(viewModel.endGameChannel) { endGameResult ->
-            endGameResult?.let { showEndGame(it.first, it.second) }
+       viewModel.endGameEvent.observe(viewLifecycleOwner) { endGameResult ->
+            endGameResult.data?.let { showEndGame(it.first, it.second) }
         }
     }
 

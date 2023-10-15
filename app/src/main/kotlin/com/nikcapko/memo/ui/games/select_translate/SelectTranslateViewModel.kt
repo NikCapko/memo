@@ -2,6 +2,8 @@
 
 package com.nikcapko.memo.ui.games.select_translate
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.ar2code.mutableliveevent.EventArgs
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,11 +37,11 @@ internal class SelectTranslateViewModel @Inject constructor(
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
-    private val _successAnimationChannel = MutableStateFlow<Boolean?>(null)
-    val successAnimationChannel = _successAnimationChannel.asStateFlow()
+    private val _successAnimationEvent = MutableLiveData<EventArgs<Boolean>>()
+    val successAnimationEvent: LiveData<EventArgs<Boolean>> = _successAnimationEvent
 
-    private val _endGameChannel = MutableStateFlow<Pair<Int, Int>?>(null)
-    val endGameChannel = _endGameChannel.asStateFlow()
+    private val _endGameEvent = MutableLiveData<EventArgs<Pair<Int, Int>>>()
+    val endGameEvent: LiveData<EventArgs<Pair<Int, Int>>> = _endGameEvent
 
     private var words: List<Word>? = null
     private var word: Word? = null
@@ -76,13 +79,11 @@ internal class SelectTranslateViewModel @Inject constructor(
     fun onTranslateClick(translate: String) {
         if (word?.translation.equals(translate)) {
             word?.frequency = word?.frequency?.plus(WORD_GAME_PRICE) ?: WORD_GAME_PRICE
-            _successAnimationChannel.update { null }
-            _successAnimationChannel.update { true }
+            _successAnimationEvent.postValue(EventArgs(true))
             successCounter++
         } else {
             word?.frequency = word?.frequency?.minus(WORD_GAME_PRICE) ?: -WORD_GAME_PRICE
-            _successAnimationChannel.update { null }
-            _successAnimationChannel.update { false }
+            _successAnimationEvent.postValue(EventArgs(false))
             errorCounter++
         }
     }
@@ -101,7 +102,7 @@ internal class SelectTranslateViewModel @Inject constructor(
             words?.forEach { word ->
                 saveWordUseCase(wordModelMapper.mapToEntity(word))
             }
-            _endGameChannel.update { successCounter to errorCounter }
+            _endGameEvent.postValue(EventArgs(successCounter to errorCounter))
         }
     }
 

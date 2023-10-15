@@ -1,4 +1,4 @@
-package com.nikcapko.memo.ui.words.detail
+package com.nikcapko.memo.ui.words.details
 
 import com.nikcapko.memo.data.Word
 
