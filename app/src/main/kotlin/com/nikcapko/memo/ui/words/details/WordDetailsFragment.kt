@@ -24,15 +24,16 @@ import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
 
+internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
+
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
 internal class WordDetailsFragment : BaseFragment() {
 
-    private val viewModel by viewModels<WordDetailViewModel>()
-
+    private val viewModel by viewModels<WordDetailsViewModel>()
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
 
-    private val word by argument<Word>(WORD)
+    private val word by argument<Word>(WORD_ARGUMENT)
 
     private val progressDialog: ProgressDialog by lazyAndroid {
         ProgressDialog(context).apply {
@@ -154,9 +155,5 @@ internal class WordDetailsFragment : BaseFragment() {
 
     private fun completeProgressDialog() {
         progressDialog.dismiss()
-    }
-
-    companion object {
-        const val WORD = "WordDetailFragment.WORD"
     }
 }

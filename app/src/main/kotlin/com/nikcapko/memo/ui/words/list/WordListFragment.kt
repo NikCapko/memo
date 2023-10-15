@@ -38,6 +38,7 @@ import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
+
 private const val SPEECH_RATE = 0.6f
 
 @Suppress("TooManyFunctions")
@@ -45,26 +46,21 @@ private const val SPEECH_RATE = 0.6f
 internal class WordListFragment : BaseFragment(), ProgressView {
 
     private val viewModel by viewModels<WordListViewModel>()
-
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
-
-    private var gameMenuItem: MenuItem? = null
 
     private var tts: TextToSpeech? = null
 
     private val adapter: WordListAdapter by lazyAndroid {
         WordListAdapter(
-            onItemClick = { position -> viewModel.onItemClick(position) },
-            onEnableSound = { position -> viewModel.onEnableSound(position) }
+            onItemClick = viewModel::onItemClick,
+            onEnableSound = viewModel::onEnableSound,
         )
     }
 
     private val localBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                Constants.LOAD_WORDS_EVENT -> {
-                    viewModel.loadWords()
-                }
+            if (intent?.action == Constants.LOAD_WORDS_EVENT) {
+                viewModel.loadWords()
             }
         }
     }
@@ -78,7 +74,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_word_list, container, false)
     }
@@ -98,7 +94,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
             setHomeButtonEnabled(false)
         }
         requireActivity().addMenuProvider(
-            object : MenuProvider {
+            /* provider = */ object : MenuProvider {
                 override fun onPrepareMenu(menu: Menu) = Unit
                 override fun onMenuClosed(menu: Menu) = Unit
 
@@ -114,19 +110,17 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                     return false
                 }
             },
-            viewLifecycleOwner
+            /* owner = */ viewLifecycleOwner
         )
     }
 
-    private fun setListeners() {
-        with(viewBinding) {
-            btnAddWord.setOnClickListener { viewModel.onAddWordClick() }
-            pvLoad.onRetryClick = { onRetry() }
-        }
+    private fun setListeners() = with(viewBinding) {
+        btnAddWord.setOnClickListener { viewModel.onAddWordClick() }
+        pvLoad.onRetryClick = ::onRetry
     }
 
-    private fun initAdapters() {
-        viewBinding.rvWords.apply {
+    private fun initAdapters() = with(viewBinding) {
+        rvWords.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@WordListFragment.adapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
@@ -176,12 +170,19 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 .create()
                 .show()
         }
+        viewModel.showNeedMoreWordsDialog.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.attention)
+                .setMessage(R.string.need_add_words)
+                .setPositiveButton(R.string.ok) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+        }
     }
 
     private fun showWords(wordsList: List<Word>?) {
-        gameMenuItem?.isVisible =
-            !wordsList.isNullOrEmpty() &&
-                    wordsList.size >= MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
     }
 
@@ -192,28 +193,22 @@ internal class WordListFragment : BaseFragment(), ProgressView {
         }
     }
 
-    override fun startLoading() {
-        with(viewBinding) {
-            pvLoad.startLoading()
-            rvWords.makeGone()
-            btnAddWord.makeGone()
-        }
+    override fun startLoading() = with(viewBinding) {
+        pvLoad.startLoading()
+        rvWords.makeGone()
+        btnAddWord.makeGone()
     }
 
-    override fun errorLoading(errorMessage: String?) {
-        with(viewBinding) {
-            pvLoad.errorLoading(errorMessage)
-            rvWords.makeGone()
-            btnAddWord.makeGone()
-        }
+    override fun errorLoading(errorMessage: String?) = with(viewBinding) {
+        pvLoad.errorLoading(errorMessage)
+        rvWords.makeGone()
+        btnAddWord.makeGone()
     }
 
-    override fun completeLoading() {
-        with(viewBinding) {
-            pvLoad.completeLoading()
-            rvWords.makeVisible()
-            btnAddWord.makeVisible()
-        }
+    override fun completeLoading() = with(viewBinding) {
+        pvLoad.completeLoading()
+        rvWords.makeVisible()
+        btnAddWord.makeVisible()
     }
 
     override fun onRetry() {
@@ -226,8 +221,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     override fun onDestroy() {
-        LocalBroadcastManager.getInstance(requireContext())
-            .unregisterReceiver(localBroadcastReceiver)
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(localBroadcastReceiver)
         super.onDestroy()
     }
 }

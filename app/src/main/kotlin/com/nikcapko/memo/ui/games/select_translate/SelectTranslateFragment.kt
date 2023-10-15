@@ -29,17 +29,12 @@ import dagger.hilt.android.AndroidEntryPoint
 internal class SelectTranslateFragment : BaseFragment() {
 
     private val viewModel by viewModels<SelectTranslateViewModel>()
-
     private val viewBinding by viewBinding(FragmentSelectTranslateBinding::bind)
-
     private val animationListener = object : Animator.AnimatorListener {
         override fun onAnimationStart(animation: Animator) = Unit
         override fun onAnimationCancel(animation: Animator) = Unit
         override fun onAnimationRepeat(animation: Animator) = Unit
-
-        override fun onAnimationEnd(animation: Animator) {
-            viewModel.onAnimationEnd()
-        }
+        override fun onAnimationEnd(animation: Animator) = viewModel.onAnimationEnd()
     }
 
     override fun onCreateView(
@@ -75,10 +70,8 @@ internal class SelectTranslateFragment : BaseFragment() {
             btnTranslate4.setOnClickListener { onClickTranslate(it as Button) }
             btnTranslate5.setOnClickListener { onClickTranslate(it as Button) }
 
-            btnExit.setOnClickListener {
-                viewModel.onBackPressed()
-            }
-            pvLoad.onRetryClick = { onRetry() }
+            btnExit.setOnClickListener { viewModel.onBackPressed() }
+            pvLoad.onRetryClick = ::onRetry
         }
     }
 
@@ -107,7 +100,7 @@ internal class SelectTranslateFragment : BaseFragment() {
                 }
             }
         }
-       viewModel.endGameEvent.observe(viewLifecycleOwner) { endGameResult ->
+        viewModel.endGameEvent.observe(viewLifecycleOwner) { endGameResult ->
             endGameResult.data?.let { showEndGame(it.first, it.second) }
         }
     }
@@ -117,71 +110,57 @@ internal class SelectTranslateFragment : BaseFragment() {
     }
 
     @Suppress("MagicNumber")
-    private fun showWord(word: Word?, translates: List<String>) {
-        with(viewBinding) {
-            lavSuccess.makeGone()
-            lavError.makeGone()
-            tvWord.makeVisible()
-            llTranslateContainer.makeVisible()
-            tvWord.text = word?.word
-            btnTranslate1.text = translates[0]
-            btnTranslate2.text = translates[1]
-            btnTranslate3.text = translates[2]
-            btnTranslate4.text = translates[3]
-            btnTranslate5.text = translates[4]
-        }
+    private fun showWord(word: Word?, translates: List<String>) = with(viewBinding) {
+        lavSuccess.makeGone()
+        lavError.makeGone()
+        tvWord.makeVisible()
+        llTranslateContainer.makeVisible()
+        tvWord.text = word?.word
+        btnTranslate1.text = translates[0]
+        btnTranslate2.text = translates[1]
+        btnTranslate3.text = translates[2]
+        btnTranslate4.text = translates[3]
+        btnTranslate5.text = translates[4]
     }
 
-    private fun showEndGame(successCounter: Int, errorCounter: Int) {
+    private fun showEndGame(successCounter: Int, errorCounter: Int) = with(viewBinding) {
         val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
-        with(viewBinding) {
-            llContentContainer.makeGone()
-            rlEnGameContainer.makeVisible()
-            tvGameLevelSuccess.text = successCounter.toString()
-            tvGameLevelError.text = errorCounter.toString()
-        }
+        llContentContainer.makeGone()
+        rlEnGameContainer.makeVisible()
+        tvGameLevelSuccess.text = successCounter.toString()
+        tvGameLevelError.text = errorCounter.toString()
     }
 
-    private fun showErrorAnimation() {
-        with(viewBinding) {
-            tvWord.makeGone()
-            llTranslateContainer.makeGone()
-            lavError.makeVisible()
-            lavError.playAnimation()
-            lavError.speed = 2f
-        }
+    private fun showErrorAnimation() = with(viewBinding) {
+        tvWord.makeGone()
+        llTranslateContainer.makeGone()
+        lavError.makeVisible()
+        lavError.playAnimation()
+        lavError.speed = 2f
     }
 
-    private fun showSuccessAnimation() {
-        with(viewBinding) {
-            tvWord.makeGone()
-            llTranslateContainer.makeGone()
-            lavSuccess.makeVisible()
-            lavSuccess.playAnimation()
-            lavError.speed = 2f
-        }
+    private fun showSuccessAnimation() = with(viewBinding) {
+        tvWord.makeGone()
+        llTranslateContainer.makeGone()
+        lavSuccess.makeVisible()
+        lavSuccess.playAnimation()
+        lavError.speed = 2f
     }
 
-    private fun startLoading() {
-        with(viewBinding) {
-            pvLoad.startLoading()
-            llContentContainer.makeGone()
-        }
+    private fun startLoading() = with(viewBinding) {
+        pvLoad.startLoading()
+        llContentContainer.makeGone()
     }
 
-    private fun errorLoading(errorMessage: String?) {
-        with(viewBinding) {
-            pvLoad.errorLoading(errorMessage)
-            llContentContainer.makeGone()
-        }
+    private fun errorLoading(errorMessage: String?) = with(viewBinding) {
+        pvLoad.errorLoading(errorMessage)
+        llContentContainer.makeGone()
     }
 
-    private fun completeLoading() {
-        with(viewBinding) {
-            pvLoad.completeLoading()
-            llContentContainer.makeVisible()
-        }
+    private fun completeLoading() = with(viewBinding) {
+        pvLoad.completeLoading()
+        llContentContainer.makeVisible()
     }
 
     private fun onRetry() {

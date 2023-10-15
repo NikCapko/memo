@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-internal class WordDetailViewModel @Inject constructor(
+internal class WordDetailsViewModel @Inject constructor(
     private val navigator: Navigator,
     private val saveWordUseCase: SaveWordUseCase,
     private val deleteWordUseCase: DeleteWordUseCase,
@@ -34,25 +35,20 @@ internal class WordDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(createInitialState())
-
-    private val state: StateFlow<WordDetailViewState>
-        get() = _state.asStateFlow()
+    private val state = _state.asStateFlow()
 
     private val _wordState = MutableStateFlow("")
     private val _translateState = MutableStateFlow("")
 
     val wordState: Flow<Word> = state.mapNotNull { it.word }
-
     val progressLoadingState: Flow<Boolean> = state.mapNotNull { it.showProgressDialog }
-
-    val enableSaveButtonState: Flow<Boolean>
-        get() = combine(_wordState, _translateState) { word, translate ->
+    val enableSaveButtonState: Flow<Boolean> =
+        combine(_wordState, _translateState) { word, translate ->
             return@combine word.isNotEmpty() && translate.isNotEmpty()
-        }
+        }.distinctUntilChanged()
 
     private val _closeScreenEvent = MutableLiveEvent<Event>()
-    val closeScreenEvent: LiveData<Event>
-        get() = _closeScreenEvent
+    val closeScreenEvent: LiveData<Event> = _closeScreenEvent
 
     fun setArguments(vararg params: Any?) {
         _state.update {
@@ -101,8 +97,8 @@ internal class WordDetailViewModel @Inject constructor(
         }
     }
 
-    private fun createInitialState(): WordDetailViewState {
-        return WordDetailViewState(
+    private fun createInitialState(): WordDetailsViewState {
+        return WordDetailsViewState(
             word = null,
             showProgressDialog = false,
             enableSaveButton = false,

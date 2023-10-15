@@ -7,6 +7,7 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.ui.games.find_pairs.FindPairsFragment
 import com.nikcapko.memo.ui.games.list.GamesFragment
 import com.nikcapko.memo.ui.games.select_translate.SelectTranslateFragment
+import com.nikcapko.memo.ui.words.details.WORD_ARGUMENT
 import com.nikcapko.memo.ui.words.details.WordDetailsFragment
 import com.nikcapko.memo.ui.words.list.WordListFragment
 import javax.inject.Inject
@@ -26,7 +27,7 @@ internal class NavigatorImpl @Inject constructor(
             screen = FragmentScreen {
                 WordDetailsFragment().apply {
                     arguments = bundleOf(
-                        WordDetailsFragment.WORD to word,
+                        WORD_ARGUMENT to word,
                     )
                 }
             }

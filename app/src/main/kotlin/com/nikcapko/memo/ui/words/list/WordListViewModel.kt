@@ -7,6 +7,7 @@ import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.domain.usecases.ClearDatabaseUseCase
 import com.nikcapko.domain.usecases.WordListUseCase
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.data.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
 import com.nikcapko.memo.navigation.Navigator
@@ -35,12 +36,13 @@ internal class WordListViewModel @Inject constructor(
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
     private val _speakOutEvent = MutableLiveEvent<EventArgs<String>>()
-    val speakOutEvent: LiveData<EventArgs<String>>
-        get() = _speakOutEvent
+    val speakOutEvent: LiveData<EventArgs<String>> = _speakOutEvent
 
     private val _showClearDatabaseDialog = MutableLiveEvent<Event>()
-    val showClearDatabaseDialog: LiveData<Event>
-        get() = _showClearDatabaseDialog
+    val showClearDatabaseDialog: LiveData<Event> = _showClearDatabaseDialog
+
+    private val _showNeedMoreWordsDialog = MutableLiveEvent<Event>()
+    val showNeedMoreWordsDialog: LiveData<Event> = _showNeedMoreWordsDialog
 
     private var wordsList = emptyList<Word>()
 
@@ -80,7 +82,11 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun openGamesScreen() {
-        navigator.pushGamesScreen()
+        if (wordsList.size < MAX_WORDS_COUNT_SELECT_TRANSLATE) {
+            _showNeedMoreWordsDialog.postValue(Event())
+        } else {
+            navigator.pushGamesScreen()
+        }
     }
 
     fun onClearDatabaseClick() {

@@ -16,6 +16,7 @@
 
     <string name="attention">Внимание</string>
     <string name="clear_database">Очистить базу данных ?</string>
+    <string name="need_add_words">Необходимо добавить не менее 5 слов</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="ok">Ок</string>

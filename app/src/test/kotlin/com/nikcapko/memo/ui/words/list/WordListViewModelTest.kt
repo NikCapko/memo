@@ -116,4 +116,11 @@ internal class WordListViewModelTest {
 
         verify(exactly = 1) { navigator.pushGamesScreen() }
     }
+
+    @Test
+    fun `check send showClearDatabaseDialog on call onClearDatabaseClick`() {
+        viewModel.onClearDatabaseClick()
+
+        Assertions.assertNotNull(viewModel.showClearDatabaseDialog.value)
+    }
 }
