@@ -14,19 +14,26 @@ internal class GamesAdapter(
 
     var games: List<Game>? by Delegates.observable(emptyList()) { _, _, _ -> notifyDataSetChanged() }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseItemViewHolder<ItemGameListBinding, Game> {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): BaseItemViewHolder<ItemGameListBinding, Game> {
         val inflater = LayoutInflater.from(parent.context)
         val itemBinding = ItemGameListBinding.inflate(inflater, parent, false)
         return ItemViewHolder(itemBinding)
     }
 
-    override fun onBindViewHolder(holder: BaseItemViewHolder<ItemGameListBinding, Game>, position: Int) {
+    override fun onBindViewHolder(
+        holder: BaseItemViewHolder<ItemGameListBinding, Game>,
+        position: Int
+    ) {
         games?.getOrNull(position)?.let { holder.onBind(it) }
     }
 
     override fun getItemCount(): Int = games?.size ?: 0
 
-    inner class ItemViewHolder(itemBinding: ItemGameListBinding) : BaseItemViewHolder<ItemGameListBinding, Game>(itemBinding) {
+    inner class ItemViewHolder(itemBinding: ItemGameListBinding) :
+        BaseItemViewHolder<ItemGameListBinding, Game>(itemBinding) {
 
         init {
             itemView.setOnClickListener { onItemClick.invoke(absoluteAdapterPosition) }

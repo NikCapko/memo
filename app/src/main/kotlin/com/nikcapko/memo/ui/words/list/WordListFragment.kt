@@ -25,7 +25,6 @@ import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.base.view.ProgressView
-import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
@@ -36,12 +35,13 @@ import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.Locale
+
+private const val SPEECH_RATE = 0.6f
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordListFragment : BaseFragment(), ProgressView {
+internal class WordListFragment : BaseFragment(), ProgressView {
 
     private val viewModel by viewModels<WordListViewModel>()
 
@@ -160,8 +160,11 @@ class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        observeFlow(viewModel.speakOutChannel.receiveAsFlow()) {
-            speakOut(it)
+        viewModel.speakOut.observe(viewLifecycleOwner) { speakOutEvent ->
+            speakOut(speakOutEvent.data)
+        }
+        viewModel.showClearDatabaseDialog.observe(viewLifecycleOwner) {
+            // TODO: add clear database dialog
         }
     }
 
@@ -215,9 +218,5 @@ class WordListFragment : BaseFragment(), ProgressView {
         LocalBroadcastManager.getInstance(requireContext())
             .unregisterReceiver(localBroadcastReceiver)
         super.onDestroy()
-    }
-
-    companion object {
-        const val SPEECH_RATE = 0.6f
     }
 }

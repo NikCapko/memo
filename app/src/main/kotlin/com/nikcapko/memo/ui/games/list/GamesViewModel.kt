@@ -25,7 +25,6 @@ internal class GamesViewModel @Inject constructor(
 
     private fun loadGames() {
         _state.update { Game.getDefaultList() }
-
     }
 
     fun onItemClick(position: Int) {

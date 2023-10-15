@@ -37,7 +37,7 @@ internal class WordDetailFragment : BaseFragment() {
 
     private val progressDialog: ProgressDialog by lazyAndroid {
         ProgressDialog(context).apply {
-            setTitle("Загрузка...")
+            setTitle(getString(R.string.loading))
             setCancelable(false)
             setCanceledOnTouchOutside(false)
         }

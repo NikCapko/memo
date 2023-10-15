@@ -34,6 +34,7 @@
     <string name="game_your_results">Выши результаты:</string>
     <string name="game_finish">Закончить</string>
 
+    <string name="loading">Загрузка...</string>
     <string name="retry">Повторить</string>
     <string name="error_default_message">Упс, что-то пошло не так…</string>
 

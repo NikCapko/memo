@@ -111,4 +111,5 @@ dependencies {
     testImplementation(libs.test.junit.jupiter)
     testImplementation(libs.test.kotlinx.coroutines)
     testImplementation(libs.test.kotest)
+    testImplementation(libs.test.androidx.testing)
 }
