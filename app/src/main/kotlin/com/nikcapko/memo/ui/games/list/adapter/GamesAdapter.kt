@@ -8,7 +8,7 @@ import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.databinding.ItemGameListBinding
 import kotlin.properties.Delegates
 
-class GamesAdapter(
+internal class GamesAdapter(
     val onItemClick: (Int) -> Unit,
 ) : RecyclerView.Adapter<BaseItemViewHolder<ItemGameListBinding, Game>>() {
 

@@ -10,6 +10,8 @@ import com.nikcapko.memo.mapper.WordModelMapper
 import com.nikcapko.memo.ui.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,8 +30,10 @@ internal class WordListViewModel @Inject constructor(
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
-    private val _speakOutChannel = MutableStateFlow<String?>(null)
-    val speakOutChannel = _speakOutChannel.asStateFlow()
+    val speakOutChannel = Channel<String?>(
+        capacity = Channel.RENDEZVOUS,
+        onBufferOverflow = BufferOverflow.SUSPEND,
+    )
 
     private var wordsList = emptyList<Word>()
 
@@ -53,8 +57,9 @@ internal class WordListViewModel @Inject constructor(
 
     fun onEnableSound(position: Int) {
         val word = wordsList.getOrNull(position)
-        _speakOutChannel.update { null }
-        _speakOutChannel.update { word?.word.orEmpty() }
+        viewModelScope.launch {
+            speakOutChannel.send(word?.word.orEmpty())
+        }
     }
 
     fun onAddWordClick() {

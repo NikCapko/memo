@@ -8,17 +8,17 @@ import com.github.terrakok.cicerone.Router
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.domain.usecases.GameWordsLimitUseCase
 import com.nikcapko.domain.usecases.SaveWordUseCase
-import com.nikcapko.memo.data.Game
+import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.data.MAX_WORDS_COUNT_SELECT_TRANSLATE
+import com.nikcapko.memo.data.WORD_GAME_PRICE
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +27,7 @@ internal class SelectTranslateViewModel @Inject constructor(
     private val gameWordsLimitUseCase: GameWordsLimitUseCase,
     private val saveWordUseCase: SaveWordUseCase,
     private val wordModelMapper: WordModelMapper,
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
     private val _state =
@@ -51,10 +52,14 @@ internal class SelectTranslateViewModel @Inject constructor(
     }
 
     fun loadWords() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcherProvider.io) {
             _state.update { DataLoadingViewModelState.LoadingState }
             words =
-                wordModelMapper.mapFromEntityList(gameWordsLimitUseCase(Game.MAX_WORDS_COUNT_SELECT_TRANSLATE))
+                wordModelMapper.mapFromEntityList(
+                    gameWordsLimitUseCase(
+                        MAX_WORDS_COUNT_SELECT_TRANSLATE
+                    )
+                )
             updateWord()
         }
     }
@@ -70,12 +75,12 @@ internal class SelectTranslateViewModel @Inject constructor(
 
     fun onTranslateClick(translate: String) {
         if (word?.translation.equals(translate)) {
-            word?.frequency = word?.frequency?.plus(Word.WORD_GAME_PRICE) ?: Word.WORD_GAME_PRICE
+            word?.frequency = word?.frequency?.plus(WORD_GAME_PRICE) ?: WORD_GAME_PRICE
             _successAnimationChannel.update { null }
             _successAnimationChannel.update { true }
             successCounter++
         } else {
-            word?.frequency = word?.frequency?.minus(Word.WORD_GAME_PRICE) ?: -Word.WORD_GAME_PRICE
+            word?.frequency = word?.frequency?.minus(WORD_GAME_PRICE) ?: -WORD_GAME_PRICE
             _successAnimationChannel.update { null }
             _successAnimationChannel.update { false }
             errorCounter++
@@ -83,7 +88,7 @@ internal class SelectTranslateViewModel @Inject constructor(
     }
 
     fun onAnimationEnd() {
-        if (counter == Game.MAX_WORDS_COUNT_SELECT_TRANSLATE - 1) {
+        if (counter == MAX_WORDS_COUNT_SELECT_TRANSLATE - 1) {
             updateWordsDB()
         } else {
             counter++
@@ -92,13 +97,11 @@ internal class SelectTranslateViewModel @Inject constructor(
     }
 
     private fun updateWordsDB() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcherProvider.io) {
             words?.forEach { word ->
                 saveWordUseCase(wordModelMapper.mapToEntity(word))
             }
-            withContext(Dispatchers.Main) {
-                _endGameChannel.update { successCounter to errorCounter }
-            }
+            _endGameChannel.update { successCounter to errorCounter }
         }
     }
 

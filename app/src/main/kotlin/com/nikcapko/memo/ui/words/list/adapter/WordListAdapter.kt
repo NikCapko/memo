@@ -8,7 +8,7 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.ItemWordListBinding
 import kotlin.properties.Delegates
 
-class WordListAdapter(
+internal class WordListAdapter(
     val onItemClick: (Int) -> Unit,
     val onEnableSound: (Int) -> Unit,
 ) : RecyclerView.Adapter<BaseItemViewHolder<ItemWordListBinding, Word>>() {

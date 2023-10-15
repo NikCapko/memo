@@ -7,11 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.domain.usecases.GameWordsLimitUseCase
-import com.nikcapko.memo.data.Game
+import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.data.MAX_WORDS_COUNT_FIND_PAIRS
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +24,7 @@ internal class FindPairsViewModel @Inject constructor(
     private val router: Router,
     private val gameWordsLimitUseCase: GameWordsLimitUseCase,
     private val wordModelMapper: WordModelMapper,
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
     private val _state =
@@ -44,10 +45,10 @@ internal class FindPairsViewModel @Inject constructor(
     }
 
     fun loadWords() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcherProvider.io) {
             _state.update { DataLoadingViewModelState.LoadingState }
             words = wordModelMapper.mapFromEntityList(
-                gameWordsLimitUseCase(Game.MAX_WORDS_COUNT_FIND_PAIRS)
+                gameWordsLimitUseCase(MAX_WORDS_COUNT_FIND_PAIRS)
             )
             val wordList = words
                 .map { it.word }
@@ -65,7 +66,7 @@ internal class FindPairsViewModel @Inject constructor(
                 _findPairResultChannel.update { null }
                 _findPairResultChannel.update { true }
                 wordsCount++
-                if (wordsCount == Game.MAX_WORDS_COUNT_FIND_PAIRS * 2) {
+                if (wordsCount == MAX_WORDS_COUNT_FIND_PAIRS * 2) {
                     _endGameChannel.update { Unit }
                 }
             }

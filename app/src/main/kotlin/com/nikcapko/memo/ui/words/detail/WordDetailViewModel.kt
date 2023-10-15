@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.nikcapko.domain.usecases.DeleteWordUseCase
 import com.nikcapko.domain.usecases.SaveWordUseCase
+import com.nikcapko.memo.base.coroutines.DispatcherProvider
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +28,7 @@ internal class WordDetailViewModel @Inject constructor(
     private val saveWordUseCase: SaveWordUseCase,
     private val deleteWordUseCase: DeleteWordUseCase,
     private val wordModelMapper: WordModelMapper,
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(createInitialState())
@@ -58,8 +59,8 @@ internal class WordDetailViewModel @Inject constructor(
     }
 
     fun onSaveWord(wordArg: String, translate: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            withContext(dispatcherProvider.main) {
                 _state.update { it.copy(showProgressDialog = true) }
             }
             val word: Word = state.value.word?.let {
@@ -76,23 +77,21 @@ internal class WordDetailViewModel @Inject constructor(
                 )
             }
             saveWordUseCase(wordModelMapper.mapToEntity(word))
-            withContext(Dispatchers.Main) {
-                successResultChannel.send(Unit)
-                _state.update { it.copy(showProgressDialog = false) }
+            successResultChannel.send(Unit)
+            _state.update { it.copy(showProgressDialog = false) }
+            withContext(dispatcherProvider.main) {
                 router.exit()
             }
         }
     }
 
     fun onDeleteWord() {
-        viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                _state.update { it.copy(showProgressDialog = true) }
-            }
+        viewModelScope.launch(dispatcherProvider.io) {
+            _state.update { it.copy(showProgressDialog = true) }
             state.value.word?.let { deleteWordUseCase(it.id.toString()) }
-            withContext(Dispatchers.Main) {
-                successResultChannel.send(Unit)
-                _state.update { it.copy(showProgressDialog = false) }
+            successResultChannel.send(Unit)
+            _state.update { it.copy(showProgressDialog = false) }
+            withContext(dispatcherProvider.main) {
                 router.exit()
             }
         }

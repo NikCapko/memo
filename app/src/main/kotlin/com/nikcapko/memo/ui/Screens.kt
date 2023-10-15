@@ -9,7 +9,7 @@ import com.nikcapko.memo.ui.games.select_translate.SelectTranslateFragment
 import com.nikcapko.memo.ui.words.detail.WordDetailFragment
 import com.nikcapko.memo.ui.words.list.WordListFragment
 
-object Screens {
+internal object Screens {
 
     fun wordListScreen() = FragmentScreen {
         WordListFragment()

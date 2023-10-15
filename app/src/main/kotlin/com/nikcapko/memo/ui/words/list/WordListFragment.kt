@@ -26,6 +26,7 @@ import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.base.view.ProgressView
 import com.nikcapko.memo.data.Game
+import com.nikcapko.memo.data.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
 import com.nikcapko.memo.ui.words.list.adapter.WordListAdapter
@@ -35,6 +36,7 @@ import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observeFlow
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.Locale
 
 @Suppress("TooManyFunctions")
@@ -158,14 +160,14 @@ class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        observeFlow(viewModel.speakOutChannel) {
+        observeFlow(viewModel.speakOutChannel.receiveAsFlow()) {
             speakOut(it)
         }
     }
 
     private fun showWords(wordsList: List<Word>?) {
         gameMenuItem?.isVisible =
-            !wordsList.isNullOrEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
+            !wordsList.isNullOrEmpty() && wordsList.size >= MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
     }
 

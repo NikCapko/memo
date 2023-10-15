@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class GamesViewModel @Inject constructor(
+internal class GamesViewModel @Inject constructor(
     private var router: Router,
 ) : ViewModel() {
 
