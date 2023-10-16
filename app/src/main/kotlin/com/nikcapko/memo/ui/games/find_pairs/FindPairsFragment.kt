@@ -17,7 +17,7 @@ import com.nikcapko.memo.databinding.FragmentFindPairsBinding
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeInvisible
 import com.nikcapko.memo.utils.extensions.makeVisible
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("TooManyFunctions")
@@ -46,7 +46,7 @@ internal class FindPairsFragment : BaseFragment() {
     }
 
     private fun observe() {
-        observeFlow(viewModel.state) { state ->
+        observe(viewModel.state) { state ->
             when (state) {
                 DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList(), emptyList())
@@ -61,12 +61,10 @@ internal class FindPairsFragment : BaseFragment() {
                 }
             }
         }
-        viewModel.findPairResultEvent.observe(viewLifecycleOwner) {
+        observe(viewModel.findPairResultEvent) {
             it.data?.let { onFindPairResult(it) }
         }
-        viewModel.endGameEvent.observe(viewLifecycleOwner) {
-            it?.let { endGame() }
-        }
+        observe(viewModel.endGameEvent) { endGame() }
     }
 
     private fun initToolbar() {

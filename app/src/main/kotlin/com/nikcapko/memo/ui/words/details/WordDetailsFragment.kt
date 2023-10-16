@@ -21,7 +21,7 @@ import com.nikcapko.memo.utils.extensions.hideKeyboard
 import com.nikcapko.memo.utils.extensions.lazyAndroid
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 
 internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
@@ -49,22 +49,16 @@ internal class WordDetailsFragment : BaseFragment() {
     }
 
     private fun initObservers() {
-        observeFlow(viewModel.wordState) { word ->
-            initView(word)
-        }
-        observeFlow(viewModel.progressLoadingState) { showProgressDialog ->
+        observe(viewModel.wordState) { initView(it) }
+        observe(viewModel.progressLoadingState) { showProgressDialog ->
             if (showProgressDialog) {
                 startProgressDialog()
             } else {
                 completeProgressDialog()
             }
         }
-        observeFlow(viewModel.enableSaveButtonState) {
-            enableSaveButton(it)
-        }
-        viewModel.closeScreenEvent.observe(viewLifecycleOwner) {
-            sendSuccessResult()
-        }
+        observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
+        observe(viewModel.closeScreenEvent) { sendSuccessResult() }
     }
 
     private fun getArgs() {

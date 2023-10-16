@@ -26,7 +26,6 @@ import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.base.view.ProgressView
-import com.nikcapko.memo.data.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
 import com.nikcapko.memo.ui.words.list.adapter.WordListAdapter
@@ -34,7 +33,7 @@ import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.lazyAndroid
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
@@ -142,7 +141,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     private fun observe() {
-        observeFlow(viewModel.state) { state ->
+        observe(viewModel.state) { state ->
             when (state) {
                 DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList())
@@ -155,10 +154,8 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        viewModel.speakOutEvent.observe(viewLifecycleOwner) {
-            speakOut(it.data)
-        }
-        viewModel.showClearDatabaseDialog.observe(viewLifecycleOwner) {
+        observe(viewModel.speakOutEvent) { speakOut(it.data) }
+        observe(viewModel.showClearDatabaseDialog) {
             AlertDialog.Builder(requireContext())
                 .setTitle(R.string.attention)
                 .setMessage(R.string.clear_database)
@@ -170,7 +167,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 .create()
                 .show()
         }
-        viewModel.showNeedMoreWordsDialog.observe(viewLifecycleOwner) {
+        observe(viewModel.showNeedMoreWordsDialog) {
             AlertDialog.Builder(requireContext())
                 .setTitle(R.string.attention)
                 .setMessage(R.string.need_add_words)
@@ -221,7 +218,8 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     override fun onDestroy() {
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(localBroadcastReceiver)
+        LocalBroadcastManager.getInstance(requireContext())
+            .unregisterReceiver(localBroadcastReceiver)
         super.onDestroy()
     }
 }

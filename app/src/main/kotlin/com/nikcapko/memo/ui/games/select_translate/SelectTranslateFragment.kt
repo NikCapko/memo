@@ -21,7 +21,7 @@ import com.nikcapko.memo.databinding.FragmentSelectTranslateBinding
 import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("TooManyFunctions")
@@ -76,7 +76,7 @@ internal class SelectTranslateFragment : BaseFragment() {
     }
 
     private fun observe() {
-        observeFlow(viewModel.state) { state ->
+        observe(viewModel.state) { state ->
             when (state) {
                 DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWord(null, emptyList())
@@ -91,7 +91,7 @@ internal class SelectTranslateFragment : BaseFragment() {
                 }
             }
         }
-        viewModel.successAnimationEvent.observe(viewLifecycleOwner) {
+        observe(viewModel.successAnimationEvent) {
             it.data?.let { successAnimation ->
                 if (successAnimation) {
                     showSuccessAnimation()
@@ -100,7 +100,7 @@ internal class SelectTranslateFragment : BaseFragment() {
                 }
             }
         }
-        viewModel.endGameEvent.observe(viewLifecycleOwner) { endGameResult ->
+        observe(viewModel.endGameEvent) { endGameResult ->
             endGameResult.data?.let { showEndGame(it.first, it.second) }
         }
     }

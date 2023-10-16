@@ -16,7 +16,7 @@ import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.databinding.FragmentGamesBinding
 import com.nikcapko.memo.ui.games.list.adapter.GamesAdapter
 import com.nikcapko.memo.utils.extensions.lazyAndroid
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -71,6 +71,6 @@ class GamesFragment : BaseFragment() {
     }
 
     private fun observe() {
-        observeFlow(viewModel.state) { adapter.games = it }
+        observe(viewModel.state) { adapter.games = it }
     }
 }
