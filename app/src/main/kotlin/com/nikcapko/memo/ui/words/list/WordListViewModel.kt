@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
-import com.nikcapko.memo.data.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordListInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -18,10 +17,12 @@ import kotlinx.coroutines.launch
 import ru.ar2code.mutableliveevent.MutableLiveEvent
 import javax.inject.Inject
 
+private const val MIN_WORDS_COUNT = 5
+
 @HiltViewModel
 internal class WordListViewModel @Inject constructor(
-    private val navigator: Navigator,
     private val wordListInteractor: WordListInteractor,
+    private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
@@ -77,7 +78,7 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun openGamesScreen() {
-        if (wordsList.size < MAX_WORDS_COUNT_SELECT_TRANSLATE) {
+        if (wordsList.size < MIN_WORDS_COUNT) {
             _showNeedMoreWordsDialog.postValue(WordListEvent.ShowNeedMoreWordsEvent)
         } else {
             navigator.pushGamesScreen()

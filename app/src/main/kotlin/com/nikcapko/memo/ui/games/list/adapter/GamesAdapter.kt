@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.nikcapko.memo.base.ui.BaseItemViewHolder
-import com.nikcapko.memo.data.Game
+import com.nikcapko.domain.model.Game
 import com.nikcapko.memo.databinding.ItemGameListBinding
 import kotlin.properties.Delegates
 
@@ -41,7 +41,7 @@ internal class GamesAdapter(
 
         override fun onBind(item: Game) {
             itemBinding.apply {
-                tvGameName.text = itemView.context.getString(item.nameStringId)
+                tvGameName.text = item.description
             }
         }
     }

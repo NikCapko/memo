@@ -1,8 +1,8 @@
 package com.nikcapko.memo.ui.games.list
 
 import androidx.lifecycle.ViewModel
-import com.github.terrakok.cicerone.Router
-import com.nikcapko.memo.data.Game
+import com.nikcapko.domain.model.Game
+import com.nikcapko.memo.domain.GamesInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class GamesViewModel @Inject constructor(
+    private var gamesInteractor: GamesInteractor,
     private var navigator: Navigator,
 ) : ViewModel() {
 
@@ -24,7 +25,7 @@ internal class GamesViewModel @Inject constructor(
     }
 
     private fun loadGames() {
-        _state.update { Game.getDefaultList() }
+        _state.update { gamesInteractor.getDefaultGamesList() }
     }
 
     fun onItemClick(position: Int) {

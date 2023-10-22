@@ -23,8 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class WordDetailsViewModel @Inject constructor(
-    private val navigator: Navigator,
     private val wordDetailsInteractor: WordDetailsInteractor,
+    private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 

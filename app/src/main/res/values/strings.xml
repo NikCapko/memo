@@ -24,11 +24,6 @@
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
 
-    <string name="dictionary_load_words">Загрузить слова из данного словаря ?</string>
-
-    <string name="game_type_select_translate">Выбери перевод</string>
-    <string name="game_type_find_pairs">Найди пару</string>
-    <string name="game_type_phrases">Словосочетания</string>
     <string name="game_level_success">Успешно</string>
     <string name="game_level_error">Ошибок</string>
     <string name="game_over">Игра успешно окончена</string>

@@ -1,10 +1,11 @@
 package com.nikcapko.memo.domain
 
 import com.nikcapko.domain.usecases.GameWordsLimitUseCase
-import com.nikcapko.memo.data.MAX_WORDS_COUNT_FIND_PAIRS
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.mapper.WordModelMapper
 import javax.inject.Inject
+
+private const val MAX_WORDS_COUNT_FIND_PAIRS = 5
 
 internal interface FindPairsInteractor {
     suspend fun getWordsForGame(): List<Word>

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.junit.jupiter.api.extension.ExtendWith
 
-private const val MAX_WORDS_COUNT_SELECT_TRANSLATE = 5
+private const val MIN_WORDS_COUNT = 5
 
 /**
  * Test for [WordListViewModel]
@@ -121,7 +121,7 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check open screen games on call openGamesScreen`() {
-        coEvery { wordListInteractor.getWords() } returns List(MAX_WORDS_COUNT_SELECT_TRANSLATE) { word }
+        coEvery { wordListInteractor.getWords() } returns List(MIN_WORDS_COUNT) { word }
 
         viewModel.loadWords()
         viewModel.openGamesScreen()

@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
-import com.nikcapko.memo.data.MAX_WORDS_COUNT_FIND_PAIRS
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.FindPairsInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -20,10 +19,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val MAX_WORDS_COUNT_FIND_PAIRS = 5
+
 @HiltViewModel
 internal class FindPairsViewModel @Inject constructor(
-    private val navigator: Navigator,
     private val findPairsInteractor: FindPairsInteractor,
+    private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 

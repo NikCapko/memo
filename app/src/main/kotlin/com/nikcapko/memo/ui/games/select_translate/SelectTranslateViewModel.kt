@@ -6,30 +6,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.terrakok.cicerone.Router
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
-import com.nikcapko.domain.usecases.GameWordsLimitUseCase
-import com.nikcapko.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
-import com.nikcapko.memo.data.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.data.WORD_GAME_PRICE
 import com.nikcapko.memo.data.Word
-import com.nikcapko.memo.mapper.WordModelMapper
+import com.nikcapko.memo.domain.MAX_WORDS_COUNT_SELECT_TRANSLATE
+import com.nikcapko.memo.domain.SelectTranslateInteractor
+import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.ar2code.mutableliveevent.EventArgs
 import javax.inject.Inject
 
 @HiltViewModel
 internal class SelectTranslateViewModel @Inject constructor(
-    private val router: Router,
-    private val gameWordsLimitUseCase: GameWordsLimitUseCase,
-    private val saveWordUseCase: SaveWordUseCase,
-    private val wordModelMapper: WordModelMapper,
+    private val selectTranslateInteractor: SelectTranslateInteractor,
+    private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
@@ -37,8 +32,10 @@ internal class SelectTranslateViewModel @Inject constructor(
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
-    private val _successAnimationEvent = MutableLiveData<SelectTranslateEvent.SuccessAnimationEvent>()
-    val successAnimationEvent: LiveData<SelectTranslateEvent.SuccessAnimationEvent> = _successAnimationEvent
+    private val _successAnimationEvent =
+        MutableLiveData<SelectTranslateEvent.SuccessAnimationEvent>()
+    val successAnimationEvent: LiveData<SelectTranslateEvent.SuccessAnimationEvent> =
+        _successAnimationEvent
 
     private val _endGameEvent = MutableLiveData<SelectTranslateEvent.EndGameEvent>()
     val endGameEvent: LiveData<SelectTranslateEvent.EndGameEvent> = _endGameEvent
@@ -57,12 +54,7 @@ internal class SelectTranslateViewModel @Inject constructor(
     fun loadWords() {
         viewModelScope.launch(dispatcherProvider.io) {
             _state.update { DataLoadingViewModelState.LoadingState }
-            words =
-                wordModelMapper.mapFromEntityList(
-                    gameWordsLimitUseCase(
-                        MAX_WORDS_COUNT_SELECT_TRANSLATE,
-                    ),
-                )
+            words = selectTranslateInteractor.getWords()
             updateWord()
         }
     }
@@ -100,13 +92,13 @@ internal class SelectTranslateViewModel @Inject constructor(
     private fun updateWordsDB() {
         viewModelScope.launch(dispatcherProvider.io) {
             words?.forEach { word ->
-                saveWordUseCase(wordModelMapper.mapToEntity(word))
+                selectTranslateInteractor.saveWord(word)
             }
             _endGameEvent.postValue(SelectTranslateEvent.EndGameEvent(successCounter, errorCounter))
         }
     }
 
     fun onBackPressed() {
-        router.exit()
+        navigator.back()
     }
 }
