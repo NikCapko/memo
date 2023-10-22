@@ -33,7 +33,7 @@ internal class FindPairsFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_find_pairs, container, false)
     }
@@ -61,8 +61,8 @@ internal class FindPairsFragment : BaseFragment() {
                 }
             }
         }
-        observe(viewModel.findPairResultEvent) {
-            it.data?.let { onFindPairResult(it) }
+        observe(viewModel.findPairResultEvent) { event ->
+            onFindPairResult(event.success)
         }
         observe(viewModel.endGameEvent) { endGame() }
     }
@@ -76,24 +76,24 @@ internal class FindPairsFragment : BaseFragment() {
 
     private fun setListeners() = with(viewBinding) {
         rgWord.setOnCheckedChangeListener { group, checkedId ->
-            if (rgTranslate.checkedRadioButtonId != -1) {
+            if (rgTranslate.checkedRadioButtonId != -1 && checkedId != -1) {
                 selectedTranslate = rgTranslate.findViewById(rgTranslate.checkedRadioButtonId)
                 selectedWord = group.findViewById(checkedId)
                 viewModel.onFindPair(
                     selectedWord = selectedWord?.text.toString(),
-                    selectedTranslate = selectedTranslate?.text.toString()
+                    selectedTranslate = selectedTranslate?.text.toString(),
                 )
                 rgTranslate.clearCheck()
                 rgWord.clearCheck()
             }
         }
         rgTranslate.setOnCheckedChangeListener { group, checkedId ->
-            if (rgWord.checkedRadioButtonId != -1) {
+            if (rgWord.checkedRadioButtonId != -1 && checkedId != -1) {
                 selectedWord = rgWord.findViewById(rgWord.checkedRadioButtonId)
                 selectedTranslate = group.findViewById(checkedId)
                 viewModel.onFindPair(
                     selectedWord = selectedWord?.text.toString(),
-                    selectedTranslate = selectedTranslate?.text.toString()
+                    selectedTranslate = selectedTranslate?.text.toString(),
                 )
                 rgWord.clearCheck()
                 rgTranslate.clearCheck()

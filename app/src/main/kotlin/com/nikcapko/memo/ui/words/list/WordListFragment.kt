@@ -37,7 +37,6 @@ import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
-
 private const val SPEECH_RATE = 0.6f
 
 @Suppress("TooManyFunctions")
@@ -109,7 +108,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                     return false
                 }
             },
-            /* owner = */ viewLifecycleOwner
+            /* owner = */ viewLifecycleOwner,
         )
     }
 
@@ -218,8 +217,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     override fun onDestroy() {
-        LocalBroadcastManager.getInstance(requireContext())
-            .unregisterReceiver(localBroadcastReceiver)
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(localBroadcastReceiver)
         super.onDestroy()
     }
 }

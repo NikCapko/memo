@@ -37,11 +37,11 @@ internal class SelectTranslateViewModel @Inject constructor(
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
-    private val _successAnimationEvent = MutableLiveData<EventArgs<Boolean>>()
-    val successAnimationEvent: LiveData<EventArgs<Boolean>> = _successAnimationEvent
+    private val _successAnimationEvent = MutableLiveData<SelectTranslateEvent.SuccessAnimationEvent>()
+    val successAnimationEvent: LiveData<SelectTranslateEvent.SuccessAnimationEvent> = _successAnimationEvent
 
-    private val _endGameEvent = MutableLiveData<EventArgs<Pair<Int, Int>>>()
-    val endGameEvent: LiveData<EventArgs<Pair<Int, Int>>> = _endGameEvent
+    private val _endGameEvent = MutableLiveData<SelectTranslateEvent.EndGameEvent>()
+    val endGameEvent: LiveData<SelectTranslateEvent.EndGameEvent> = _endGameEvent
 
     private var words: List<Word>? = null
     private var word: Word? = null
@@ -60,8 +60,8 @@ internal class SelectTranslateViewModel @Inject constructor(
             words =
                 wordModelMapper.mapFromEntityList(
                     gameWordsLimitUseCase(
-                        MAX_WORDS_COUNT_SELECT_TRANSLATE
-                    )
+                        MAX_WORDS_COUNT_SELECT_TRANSLATE,
+                    ),
                 )
             updateWord()
         }
@@ -79,11 +79,11 @@ internal class SelectTranslateViewModel @Inject constructor(
     fun onTranslateClick(translate: String) {
         if (word?.translation.equals(translate)) {
             word?.frequency = word?.frequency?.plus(WORD_GAME_PRICE) ?: WORD_GAME_PRICE
-            _successAnimationEvent.postValue(EventArgs(true))
+            _successAnimationEvent.postValue(SelectTranslateEvent.SuccessAnimationEvent(true))
             successCounter++
         } else {
             word?.frequency = word?.frequency?.minus(WORD_GAME_PRICE) ?: -WORD_GAME_PRICE
-            _successAnimationEvent.postValue(EventArgs(false))
+            _successAnimationEvent.postValue(SelectTranslateEvent.SuccessAnimationEvent(false))
             errorCounter++
         }
     }
@@ -102,7 +102,7 @@ internal class SelectTranslateViewModel @Inject constructor(
             words?.forEach { word ->
                 saveWordUseCase(wordModelMapper.mapToEntity(word))
             }
-            _endGameEvent.postValue(EventArgs(successCounter to errorCounter))
+            _endGameEvent.postValue(SelectTranslateEvent.EndGameEvent(successCounter, errorCounter))
         }
     }
 

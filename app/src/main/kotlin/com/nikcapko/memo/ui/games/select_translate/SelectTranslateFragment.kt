@@ -40,7 +40,7 @@ internal class SelectTranslateFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_select_translate, container, false)
     }
@@ -92,12 +92,10 @@ internal class SelectTranslateFragment : BaseFragment() {
             }
         }
         observe(viewModel.successAnimationEvent) {
-            it.data?.let { successAnimation ->
-                if (successAnimation) {
-                    showSuccessAnimation()
-                } else {
-                    showErrorAnimation()
-                }
+            if (it.success) {
+                showSuccessAnimation()
+            } else {
+                showErrorAnimation()
             }
         }
         observe(viewModel.endGameEvent) { endGameResult ->

@@ -21,5 +21,6 @@ internal class AppModule {
 
     @Provides
     @Singleton
-    fun provideResourceManager(@ApplicationContext context: Context): ResourceManager = FieldConverter(context)
+    fun provideResourceManager(@ApplicationContext context: Context): ResourceManager =
+        FieldConverter(context)
 }

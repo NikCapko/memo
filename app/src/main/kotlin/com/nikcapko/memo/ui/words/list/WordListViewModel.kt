@@ -4,12 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
-import com.nikcapko.domain.usecases.ClearDatabaseUseCase
-import com.nikcapko.domain.usecases.WordListUseCase
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
 import com.nikcapko.memo.data.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.data.Word
-import com.nikcapko.memo.mapper.WordModelMapper
+import com.nikcapko.memo.domain.WordListInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -17,17 +15,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.ar2code.mutableliveevent.Event
-import ru.ar2code.mutableliveevent.EventArgs
 import ru.ar2code.mutableliveevent.MutableLiveEvent
 import javax.inject.Inject
 
 @HiltViewModel
 internal class WordListViewModel @Inject constructor(
     private val navigator: Navigator,
-    private val wordListUseCase: WordListUseCase,
-    private val clearDatabaseUseCase: ClearDatabaseUseCase,
-    private val wordModelMapper: WordModelMapper,
+    private val wordListInteractor: WordListInteractor,
     private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
@@ -35,14 +29,16 @@ internal class WordListViewModel @Inject constructor(
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
-    private val _speakOutEvent = MutableLiveEvent<EventArgs<String>>()
-    val speakOutEvent: LiveData<EventArgs<String>> = _speakOutEvent
+    private val _speakOutEvent = MutableLiveEvent<WordListEvent.SpeakOutEvent>()
+    val speakOutEvent: LiveData<WordListEvent.SpeakOutEvent> = _speakOutEvent
 
-    private val _showClearDatabaseDialog = MutableLiveEvent<Event>()
-    val showClearDatabaseDialog: LiveData<Event> = _showClearDatabaseDialog
+    private val _showClearDatabaseDialog = MutableLiveEvent<WordListEvent.ShowClearDatabaseEvent>()
+    val showClearDatabaseDialog: LiveData<WordListEvent.ShowClearDatabaseEvent> =
+        _showClearDatabaseDialog
 
-    private val _showNeedMoreWordsDialog = MutableLiveEvent<Event>()
-    val showNeedMoreWordsDialog: LiveData<Event> = _showNeedMoreWordsDialog
+    private val _showNeedMoreWordsDialog = MutableLiveEvent<WordListEvent.ShowNeedMoreWordsEvent>()
+    val showNeedMoreWordsDialog: LiveData<WordListEvent.ShowNeedMoreWordsEvent> =
+        _showNeedMoreWordsDialog
 
     private var wordsList = emptyList<Word>()
 
@@ -53,8 +49,7 @@ internal class WordListViewModel @Inject constructor(
     fun loadWords() {
         viewModelScope.launch(dispatcherProvider.io) {
             _state.update { DataLoadingViewModelState.LoadingState }
-            val wordModelList = wordListUseCase()
-            wordsList = wordModelMapper.mapFromEntityList(wordModelList)
+            wordsList = wordListInteractor.getWords()
             _state.update { DataLoadingViewModelState.LoadedState(wordsList) }
         }
     }
@@ -66,13 +61,13 @@ internal class WordListViewModel @Inject constructor(
 
     fun onEnableSound(position: Int) {
         val word = wordsList.getOrNull(position)
-        _speakOutEvent.postValue(EventArgs(word?.word.orEmpty()))
+        _speakOutEvent.postValue(WordListEvent.SpeakOutEvent(word?.word.orEmpty()))
     }
 
     fun clearDatabase() {
         viewModelScope.launch(dispatcherProvider.io) {
             _state.update { DataLoadingViewModelState.LoadingState }
-            clearDatabaseUseCase.invoke()
+            wordListInteractor.clearDataBase()
             _state.update { DataLoadingViewModelState.LoadedState(emptyList<Word>()) }
         }
     }
@@ -83,13 +78,13 @@ internal class WordListViewModel @Inject constructor(
 
     fun openGamesScreen() {
         if (wordsList.size < MAX_WORDS_COUNT_SELECT_TRANSLATE) {
-            _showNeedMoreWordsDialog.postValue(Event())
+            _showNeedMoreWordsDialog.postValue(WordListEvent.ShowNeedMoreWordsEvent)
         } else {
             navigator.pushGamesScreen()
         }
     }
 
     fun onClearDatabaseClick() {
-        _showClearDatabaseDialog.postValue(Event())
+        _showClearDatabaseDialog.postValue(WordListEvent.ShowClearDatabaseEvent)
     }
 }

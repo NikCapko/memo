@@ -36,7 +36,7 @@ internal class WordDetailsFragment : BaseFragment() {
     private val word by argument<Word>(WORD_ARGUMENT)
 
     private val progressDialog: ProgressDialog by lazyAndroid {
-        ProgressDialog(context).apply {
+        ProgressDialog(requireContext()).apply {
             setTitle(getString(R.string.loading))
             setCancelable(false)
             setCanceledOnTouchOutside(false)
@@ -68,7 +68,7 @@ internal class WordDetailsFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_word_detail, container, false)
     }
@@ -93,14 +93,14 @@ internal class WordDetailsFragment : BaseFragment() {
                 hideKeyboard()
                 viewModel.onSaveWord(
                     etWord.text.toString(),
-                    etTranslate.text.toString()
+                    etTranslate.text.toString(),
                 )
             }
             btnSave.setOnClickListener {
                 hideKeyboard()
                 viewModel.onSaveWord(
                     etWord.text.toString(),
-                    etTranslate.text.toString()
+                    etTranslate.text.toString(),
                 )
             }
             btnDelete.setOnClickListener {
