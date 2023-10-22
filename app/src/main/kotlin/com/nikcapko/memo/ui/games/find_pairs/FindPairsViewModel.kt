@@ -32,14 +32,14 @@ internal class FindPairsViewModel @Inject constructor(
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
-    private var words = emptyList<Word>()
-    private var wordsCount = 0
-
     private val _findPairResultEvent = MutableLiveData<FindPairsEvent.FindPairResultEvent>()
     val findPairResultEvent: LiveData<FindPairsEvent.FindPairResultEvent> = _findPairResultEvent
 
     private val _endGameEvent = MutableLiveData<FindPairsEvent.EndGameEvent>()
     val endGameEvent: LiveData<FindPairsEvent.EndGameEvent> = _endGameEvent
+
+    private var words = emptyList<Word>()
+    private var wordsCount = 0
 
     init {
         loadWords()

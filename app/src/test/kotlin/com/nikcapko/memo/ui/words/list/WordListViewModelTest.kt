@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
@@ -43,17 +43,17 @@ internal class WordListViewModelTest {
         frequency = 2.3f,
     )
 
-    @BeforeAll
+    @BeforeEach
     fun setupDispatcher() {
         viewModel = WordListViewModel(
-            navigator = navigator,
             wordListInteractor = wordListInteractor,
+            navigator = navigator,
             dispatcherProvider = TestDispatcherProvider(),
         )
     }
 
     @Test
-    fun `check use wordListUseCase on call loadWords`() = runTest {
+    fun `check get words on call loadWords`() = runTest {
         viewModel.loadWords()
 
         coVerify { wordListInteractor.getWords() }
@@ -61,12 +61,14 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check transfer data from wordListUseCase on call loadWords`() = runTest {
-        val expected = DataLoadingViewModelState.LoadedState(listOf(word))
         coEvery { wordListInteractor.getWords() } returns listOf(word)
 
         viewModel.loadWords()
 
-        Assertions.assertEquals(expected, viewModel.state.first())
+        Assertions.assertEquals(
+            DataLoadingViewModelState.LoadedState(listOf(word)),
+            viewModel.state.first(),
+        )
     }
 
     @Test
@@ -81,13 +83,15 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check send speakOutChannel on call onEnableSound`() {
-        val expected = WordListEvent.SpeakOutEvent(word.word)
         coEvery { wordListInteractor.getWords() } returns listOf(word)
 
         viewModel.loadWords()
         viewModel.onEnableSound(0)
 
-        Assertions.assertEquals(expected, viewModel.speakOutEvent.value)
+        Assertions.assertEquals(
+            WordListEvent.SpeakOutEvent(word.word),
+            viewModel.speakOutEvent.value,
+        )
     }
 
     @Test
@@ -110,13 +114,15 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check show need more words dialog on call openGamesScreen`() {
-        val expected = WordListEvent.ShowNeedMoreWordsEvent
         coEvery { wordListInteractor.getWords() } returns emptyList()
 
         viewModel.loadWords()
         viewModel.openGamesScreen()
 
-        Assertions.assertEquals(expected, viewModel.showNeedMoreWordsDialog.value)
+        Assertions.assertEquals(
+            WordListEvent.ShowNeedMoreWordsEvent,
+            viewModel.showNeedMoreWordsDialog.value,
+        )
     }
 
     @Test

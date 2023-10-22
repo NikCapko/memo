@@ -106,10 +106,10 @@ dependencies {
     implementation(libs.mutableLiveEvent)
 
     // testing
+    testImplementation(libs.test.assertj)
     testImplementation(libs.test.mockk)
     testImplementation(libs.test.junit)
     testImplementation(libs.test.junit.jupiter)
     testImplementation(libs.test.kotlinx.coroutines)
-    testImplementation(libs.test.kotest)
     testImplementation(libs.test.androidx.testing)
 }
