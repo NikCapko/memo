@@ -1,8 +1,8 @@
-package com.nikcapko.memo.ui.words.detail
+package com.nikcapko.memo.ui.words.details
 
 import com.nikcapko.memo.data.Word
 
-internal data class WordDetailViewState(
+internal data class WordDetailsViewState(
     val word: Word?,
     val showProgressDialog: Boolean,
     val enableSaveButton: Boolean,

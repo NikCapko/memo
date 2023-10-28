@@ -2,16 +2,16 @@
 
 package com.nikcapko.memo.ui.games.find_pairs
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.terrakok.cicerone.Router
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
-import com.nikcapko.domain.usecases.GameWordsLimitUseCase
-import com.nikcapko.memo.data.Game
+import com.nikcapko.memo.base.coroutines.DispatcherProvider
 import com.nikcapko.memo.data.Word
-import com.nikcapko.memo.mapper.WordModelMapper
+import com.nikcapko.memo.domain.FindPairsInteractor
+import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,36 +19,36 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val MAX_WORDS_COUNT_FIND_PAIRS = 5
+
 @HiltViewModel
 internal class FindPairsViewModel @Inject constructor(
-    private val router: Router,
-    private val gameWordsLimitUseCase: GameWordsLimitUseCase,
-    private val wordModelMapper: WordModelMapper,
+    private val findPairsInteractor: FindPairsInteractor,
+    private val navigator: Navigator,
+    private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel() {
 
     private val _state =
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
+    private val _findPairResultEvent = MutableLiveData<FindPairsEvent.FindPairResultEvent>()
+    val findPairResultEvent: LiveData<FindPairsEvent.FindPairResultEvent> = _findPairResultEvent
+
+    private val _endGameEvent = MutableLiveData<FindPairsEvent.EndGameEvent>()
+    val endGameEvent: LiveData<FindPairsEvent.EndGameEvent> = _endGameEvent
+
     private var words = emptyList<Word>()
     private var wordsCount = 0
-
-    private val _findPairResultChannel = MutableStateFlow<Boolean?>(null)
-    val findPairResultChannel = _findPairResultChannel.asStateFlow()
-
-    private val _endGameChannel = MutableStateFlow<Unit?>(null)
-    val endGameChannel = _endGameChannel.asStateFlow()
 
     init {
         loadWords()
     }
 
     fun loadWords() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcherProvider.io) {
             _state.update { DataLoadingViewModelState.LoadingState }
-            words = wordModelMapper.mapFromEntityList(
-                gameWordsLimitUseCase(Game.MAX_WORDS_COUNT_FIND_PAIRS)
-            )
+            words = findPairsInteractor.getWordsForGame()
             val wordList = words
                 .map { it.word }
                 .shuffled()
@@ -62,19 +62,18 @@ internal class FindPairsViewModel @Inject constructor(
     fun onFindPair(selectedWord: String, selectedTranslate: String) {
         words.forEach {
             if (it.word == selectedWord && it.translation == selectedTranslate) {
-                _findPairResultChannel.update { null }
-                _findPairResultChannel.update { true }
+                _findPairResultEvent.postValue(FindPairsEvent.FindPairResultEvent(true))
                 wordsCount++
-                if (wordsCount == Game.MAX_WORDS_COUNT_FIND_PAIRS * 2) {
-                    _endGameChannel.update { Unit }
+                if (wordsCount == MAX_WORDS_COUNT_FIND_PAIRS * 2) {
+                    _endGameEvent.postValue(FindPairsEvent.EndGameEvent)
                 }
+                return
             }
         }
-        _findPairResultChannel.update { null }
-        _findPairResultChannel.update { false }
+        _findPairResultEvent.postValue(FindPairsEvent.FindPairResultEvent(false))
     }
 
     fun onBackPressed() {
-        router.exit()
+        navigator.back()
     }
 }

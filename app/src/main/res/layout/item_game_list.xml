@@ -11,4 +11,4 @@
     android:textColor="@color/black"
     android:textSize="@dimen/_14sdp"
     android:textStyle="bold"
-    tools:text="Выбрать перевод" />
+    tools:text="[Выбрать перевод]" />

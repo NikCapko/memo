@@ -1,140 +1,144 @@
 package com.nikcapko.memo.ui.words.list
 
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
-import com.nikcapko.domain.model.WordModel
-import com.nikcapko.domain.usecases.WordListUseCase
+import com.nikcapko.memo.InstantExecutorExtension
+import com.nikcapko.memo.TestDispatcherProvider
 import com.nikcapko.memo.data.Word
-import com.nikcapko.memo.mapper.WordModelMapper
-import com.nikcapko.memo.ui.Screens
+import com.nikcapko.memo.domain.WordListInteractor
+import com.nikcapko.memo.navigation.Navigator
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
+import org.junit.jupiter.api.extension.ExtendWith
+
+private const val MIN_WORDS_COUNT = 5
 
 /**
  * Test for [WordListViewModel]
  */
 @TestInstance(Lifecycle.PER_CLASS)
 @ExperimentalCoroutinesApi
+@ExtendWith(InstantExecutorExtension::class)
 internal class WordListViewModelTest {
 
-    private var router = spyk<Router>()
-    private var wordListUseCase = mockk<WordListUseCase>(relaxed = true)
-    private var wordModelMapper = spyk<WordModelMapper>()
+    private var navigator = spyk<Navigator>()
+    private var wordListInteractor = mockk<WordListInteractor>(relaxed = true)
 
     private lateinit var viewModel: WordListViewModel
-
-    val testDispatcher = StandardTestDispatcher()
 
     private var word = Word(
         id = 3929,
         word = "expetenda",
         translation = "vituperatoribus",
-        frequency = 2.3f
+        frequency = 2.3f,
     )
 
-    private var wordModel = WordModel(
-        id = 3929,
-        word = "expetenda",
-        translation = "vituperatoribus",
-        frequency = 2.3f
-    )
-
-    @ExperimentalCoroutinesApi
-    @BeforeAll
+    @BeforeEach
     fun setupDispatcher() {
-        Dispatchers.setMain(testDispatcher)
         viewModel = WordListViewModel(
-            router = router,
-            wordListUseCase = wordListUseCase,
-            wordModelMapper = wordModelMapper,
+            wordListInteractor = wordListInteractor,
+            navigator = navigator,
+            dispatcherProvider = TestDispatcherProvider(),
         )
     }
 
     @Test
-    fun `check use wordListUseCase on call loadWords`() = runTest {
+    fun `check get words on call loadWords`() = runTest {
         viewModel.loadWords()
-        coVerify { wordListUseCase.invoke() }
+
+        coVerify { wordListInteractor.getWords() }
     }
 
     @Test
     fun `check transfer data from wordListUseCase on call loadWords`() = runTest {
-        val expected = DataLoadingViewModelState.LoadedState(listOf(word))
-        coEvery { wordListUseCase.invoke() } returns listOf(wordModel)
+        coEvery { wordListInteractor.getWords() } returns listOf(word)
+
         viewModel.loadWords()
-        Assertions.assertEquals(expected, viewModel.state.first())
+
+        Assertions.assertEquals(
+            DataLoadingViewModelState.LoadedState(listOf(word)),
+            viewModel.state.first(),
+        )
     }
 
     @Test
     fun `check open screen word detail on call onItemClick`() = runTest {
-        val mockedWordDetailScreen = mockk<FragmentScreen>()
-        mockkObject(Screens)
-        every { Screens.wordDetailScreen(any()) } returns mockedWordDetailScreen
-        coEvery { wordListUseCase.invoke() } returns listOf(wordModel)
+        coEvery { wordListInteractor.getWords() } returns listOf(word)
 
-        launch {
-            viewModel.loadWords()
-            viewModel.onItemClick(0)
-        }.join()
+        viewModel.loadWords()
+        viewModel.onItemClick(0)
 
-        verify(exactly = 1) { router.navigateTo(mockedWordDetailScreen) }
+        verify(exactly = 1) { navigator.pushWordDetailScreen(word) }
     }
 
     @Test
-    fun `check send speakOutChannel on call onEnableSound`() = runTest {
-        val expected = word.word
-        coEvery { wordListUseCase.invoke() } returns listOf(wordModel)
-        viewModel.loadWords()
+    fun `check send speakOutChannel on call onEnableSound`() {
+        coEvery { wordListInteractor.getWords() } returns listOf(word)
 
+        viewModel.loadWords()
         viewModel.onEnableSound(0)
 
-        Assertions.assertEquals(expected, viewModel.speakOutChannel.first())
+        Assertions.assertEquals(
+            WordListEvent.SpeakOutEvent(word.word),
+            viewModel.speakOutEvent.value,
+        )
+    }
+
+    @Test
+    fun `check clear database on call clearDatabase`() = runTest {
+        viewModel.clearDatabase()
+
+        coVerify(exactly = 1) { wordListInteractor.clearDataBase() }
+        Assertions.assertEquals(
+            DataLoadingViewModelState.LoadedState(emptyList<Word>()),
+            viewModel.state.first(),
+        )
     }
 
     @Test
     fun `check open screen word detail with null on call onAddWordClick`() {
-        val mockedWordDetailScreen = mockk<FragmentScreen>()
-        mockkObject(Screens)
-        every { Screens.wordDetailScreen(null) } returns mockedWordDetailScreen
-
         viewModel.onAddWordClick()
 
-        verify(exactly = 1) { router.navigateTo(mockedWordDetailScreen) }
+        verify(exactly = 1) { navigator.pushWordDetailScreen() }
+    }
+
+    @Test
+    fun `check show need more words dialog on call openGamesScreen`() {
+        coEvery { wordListInteractor.getWords() } returns emptyList()
+
+        viewModel.loadWords()
+        viewModel.openGamesScreen()
+
+        Assertions.assertEquals(
+            WordListEvent.ShowNeedMoreWordsEvent,
+            viewModel.showNeedMoreWordsDialog.value,
+        )
     }
 
     @Test
     fun `check open screen games on call openGamesScreen`() {
-        val mockedWordDetailScreen = mockk<FragmentScreen>()
-        mockkObject(Screens)
-        every { Screens.gamesScreen() } returns mockedWordDetailScreen
+        coEvery { wordListInteractor.getWords() } returns List(MIN_WORDS_COUNT) { word }
 
+        viewModel.loadWords()
         viewModel.openGamesScreen()
 
-        verify(exactly = 1) { router.navigateTo(mockedWordDetailScreen) }
+        verify(exactly = 1) { navigator.pushGamesScreen() }
     }
 
-    @ExperimentalCoroutinesApi
-    @AfterAll
-    fun tearDownDispatcher() {
-        Dispatchers.resetMain()
+    @Test
+    fun `check send showClearDatabaseDialog on call onClearDatabaseClick`() {
+        viewModel.onClearDatabaseClick()
+
+        Assertions.assertNotNull(viewModel.showClearDatabaseDialog.value)
     }
 }

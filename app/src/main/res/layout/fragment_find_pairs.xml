@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,6 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="horizontal"
             android:baselineAligned="true"
             android:weightSum="2">
 
@@ -41,7 +42,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="яблоко" />
+                    tools:text="[яблоко]" />
 
                 <RadioButton
                     android:id="@+id/btnWord2"
@@ -56,7 +57,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="груша" />
+                    tools:text="[груша]" />
 
                 <RadioButton
                     android:id="@+id/btnWord3"
@@ -71,7 +72,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="тыква" />
+                    tools:text="[тыква]" />
 
                 <RadioButton
                     android:id="@+id/btnWord4"
@@ -86,7 +87,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="слива" />
+                    tools:text="[слива]" />
 
                 <RadioButton
                     android:id="@+id/btnWord5"
@@ -101,7 +102,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="слива" />
+                    tools:text="[слива]" />
 
             </RadioGroup>
 
@@ -128,7 +129,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="тыква" />
+                    tools:text="[тыква]" />
 
                 <RadioButton
                     android:id="@+id/btnTranslate2"
@@ -143,7 +144,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="слива" />
+                    tools:text="[слива]" />
 
                 <RadioButton
                     android:id="@+id/btnTranslate3"
@@ -158,7 +159,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="яблоко" />
+                    tools:text="[яблоко]" />
 
                 <RadioButton
                     android:id="@+id/btnTranslate4"
@@ -173,7 +174,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="груша" />
+                    tools:text="[груша]" />
 
                 <RadioButton
                     android:id="@+id/btnTranslate5"
@@ -187,7 +188,7 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_14sdp"
                     android:textStyle="normal"
-                    tools:text="тыква" />
+                    tools:text="[тыква]" />
 
             </RadioGroup>
 
@@ -247,4 +248,4 @@
 
     </RelativeLayout>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

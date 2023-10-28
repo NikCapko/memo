@@ -17,7 +17,7 @@ import com.nikcapko.memo.databinding.FragmentFindPairsBinding
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeInvisible
 import com.nikcapko.memo.utils.extensions.makeVisible
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("TooManyFunctions")
@@ -25,7 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 internal class FindPairsFragment : BaseFragment() {
 
     private val viewModel by viewModels<FindPairsViewModel>()
-
     private val viewBinding by viewBinding(FragmentFindPairsBinding::bind)
 
     private var selectedTranslate: RadioButton? = null
@@ -34,7 +33,7 @@ internal class FindPairsFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_find_pairs, container, false)
     }
@@ -47,7 +46,7 @@ internal class FindPairsFragment : BaseFragment() {
     }
 
     private fun observe() {
-        observeFlow(viewModel.state) { state ->
+        observe(viewModel.state) { state ->
             when (state) {
                 DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList(), emptyList())
@@ -62,12 +61,10 @@ internal class FindPairsFragment : BaseFragment() {
                 }
             }
         }
-        observeFlow(viewModel.findPairResultChannel) {
-            it?.let { onFindPairResult(it) }
+        observe(viewModel.findPairResultEvent) { event ->
+            onFindPairResult(event.success)
         }
-        observeFlow(viewModel.endGameChannel) {
-            it?.let { endGame() }
-        }
+        observe(viewModel.endGameEvent) { endGame() }
     }
 
     private fun initToolbar() {
@@ -77,57 +74,54 @@ internal class FindPairsFragment : BaseFragment() {
         }
     }
 
-    private fun setListeners() {
-        with(viewBinding) {
-            rgWord.setOnCheckedChangeListener { group, checkedId ->
-                if (rgTranslate.checkedRadioButtonId != -1) {
-                    selectedTranslate =
-                        rgTranslate.findViewById(rgTranslate.checkedRadioButtonId)
-                    selectedWord = group.findViewById(checkedId)
-                    viewModel.onFindPair(
-                        selectedWord?.text.toString(),
-                        selectedTranslate?.text.toString()
-                    )
-                    rgTranslate.clearCheck()
-                    rgWord.clearCheck()
-                }
+    private fun setListeners() = with(viewBinding) {
+        rgWord.setOnCheckedChangeListener { group, checkedId ->
+            if (rgTranslate.checkedRadioButtonId != -1 && checkedId != -1) {
+                selectedTranslate = rgTranslate.findViewById(rgTranslate.checkedRadioButtonId)
+                selectedWord = group.findViewById(checkedId)
+                viewModel.onFindPair(
+                    selectedWord = selectedWord?.text.toString(),
+                    selectedTranslate = selectedTranslate?.text.toString(),
+                )
+                rgTranslate.clearCheck()
+                rgWord.clearCheck()
             }
-            rgTranslate.setOnCheckedChangeListener { group, checkedId ->
-                if (rgWord.checkedRadioButtonId != -1) {
-                    selectedWord =
-                        rgWord.findViewById(rgWord.checkedRadioButtonId)
-                    selectedTranslate = group.findViewById(checkedId)
-                    viewModel.onFindPair(
-                        selectedWord?.text.toString(),
-                        selectedTranslate?.text.toString()
-                    )
-                    rgWord.clearCheck()
-                    rgTranslate.clearCheck()
-                }
-            }
-            btnExit.setOnClickListener {
-                viewModel.onBackPressed()
-            }
-            lavSuccess.setOnClickListener { }
-            pvLoad.onRetryClick = { onRetry() }
         }
+        rgTranslate.setOnCheckedChangeListener { group, checkedId ->
+            if (rgWord.checkedRadioButtonId != -1 && checkedId != -1) {
+                selectedWord = rgWord.findViewById(rgWord.checkedRadioButtonId)
+                selectedTranslate = group.findViewById(checkedId)
+                viewModel.onFindPair(
+                    selectedWord = selectedWord?.text.toString(),
+                    selectedTranslate = selectedTranslate?.text.toString(),
+                )
+                rgWord.clearCheck()
+                rgTranslate.clearCheck()
+            }
+        }
+        btnExit.setOnClickListener {
+            viewModel.onBackPressed()
+        }
+        lavSuccess.setOnClickListener { }
+        pvLoad.onRetryClick = ::onRetry
     }
 
     @Suppress("MagicNumber")
-    private fun showWords(wordsList: List<String?>, translateList: List<String?>) {
-        with(viewBinding) {
-            btnWord1.text = wordsList[0]
-            btnWord2.text = wordsList[1]
-            btnWord3.text = wordsList[2]
-            btnWord4.text = wordsList[3]
-            btnWord5.text = wordsList[4]
+    private fun showWords(
+        wordsList: List<String?>,
+        translateList: List<String?>,
+    ) = with(viewBinding) {
+        btnWord1.text = wordsList[0]
+        btnWord2.text = wordsList[1]
+        btnWord3.text = wordsList[2]
+        btnWord4.text = wordsList[3]
+        btnWord5.text = wordsList[4]
 
-            btnTranslate1.text = translateList[0]
-            btnTranslate2.text = translateList[1]
-            btnTranslate3.text = translateList[2]
-            btnTranslate4.text = translateList[3]
-            btnTranslate5.text = translateList[4]
-        }
+        btnTranslate1.text = translateList[0]
+        btnTranslate2.text = translateList[1]
+        btnTranslate3.text = translateList[2]
+        btnTranslate4.text = translateList[3]
+        btnTranslate5.text = translateList[4]
     }
 
     private fun onFindPairResult(success: Boolean) {
@@ -139,33 +133,25 @@ internal class FindPairsFragment : BaseFragment() {
         selectedTranslate = null
     }
 
-    private fun endGame() {
-        with(viewBinding) {
-            flContentContainer.makeGone()
-            rlEnGameContainer.makeVisible()
-            lavSuccess.playAnimation()
-        }
+    private fun endGame() = with(viewBinding) {
+        flContentContainer.makeGone()
+        rlEnGameContainer.makeVisible()
+        lavSuccess.playAnimation()
     }
 
-    private fun startLoading() {
-        with(viewBinding) {
-            pvLoad.startLoading()
-            flContentContainer.makeGone()
-        }
+    private fun startLoading() = with(viewBinding) {
+        pvLoad.startLoading()
+        flContentContainer.makeGone()
     }
 
-    private fun errorLoading(errorMessage: String?) {
-        with(viewBinding) {
-            pvLoad.errorLoading(errorMessage)
-            flContentContainer.makeGone()
-        }
+    private fun errorLoading(errorMessage: String?) = with(viewBinding) {
+        pvLoad.errorLoading(errorMessage)
+        flContentContainer.makeGone()
     }
 
-    private fun completeLoading() {
-        with(viewBinding) {
-            pvLoad.completeLoading()
-            flContentContainer.makeVisible()
-        }
+    private fun completeLoading() = with(viewBinding) {
+        pvLoad.completeLoading()
+        flContentContainer.makeVisible()
     }
 
     private fun onRetry() {

@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,16 +16,14 @@ import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.databinding.FragmentGamesBinding
 import com.nikcapko.memo.ui.games.list.adapter.GamesAdapter
 import com.nikcapko.memo.utils.extensions.lazyAndroid
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class GamesFragment : BaseFragment() {
 
     private val viewModel by viewModels<GamesViewModel>()
-
     private val viewBinding by viewBinding(FragmentGamesBinding::bind)
-
     private val adapter: GamesAdapter by lazyAndroid {
         GamesAdapter { position ->
             viewModel.onItemClick(position)
@@ -44,15 +43,23 @@ class GamesFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_games, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initToolbar()
         initAdapters()
         observe()
+    }
+
+    private fun initToolbar() {
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+        }
     }
 
     private fun initAdapters() {
@@ -64,8 +71,6 @@ class GamesFragment : BaseFragment() {
     }
 
     private fun observe() {
-        observeFlow(viewModel.state) {
-            adapter.games = it
-        }
+        observe(viewModel.state) { adapter.games = it }
     }
 }

@@ -1,4 +1,4 @@
-package com.nikcapko.memo.ui.words.detail
+package com.nikcapko.memo.ui.words.details
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -21,23 +21,23 @@ import com.nikcapko.memo.utils.extensions.hideKeyboard
 import com.nikcapko.memo.utils.extensions.lazyAndroid
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.receiveAsFlow
+
+internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordDetailFragment : BaseFragment() {
+internal class WordDetailsFragment : BaseFragment() {
 
-    private val viewModel by viewModels<WordDetailViewModel>()
-
+    private val viewModel by viewModels<WordDetailsViewModel>()
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
 
-    private val word by argument<Word>(WORD)
+    private val word by argument<Word>(WORD_ARGUMENT)
 
     private val progressDialog: ProgressDialog by lazyAndroid {
-        ProgressDialog(context).apply {
-            setTitle("Загрузка...")
+        ProgressDialog(requireContext()).apply {
+            setTitle(getString(R.string.loading))
             setCancelable(false)
             setCanceledOnTouchOutside(false)
         }
@@ -49,22 +49,16 @@ internal class WordDetailFragment : BaseFragment() {
     }
 
     private fun initObservers() {
-        observeFlow(viewModel.wordState) { word ->
-            initView(word)
-        }
-        observeFlow(viewModel.progressLoadingState) { showProgressDialog ->
+        observe(viewModel.wordState) { initView(it) }
+        observe(viewModel.progressLoadingState) { showProgressDialog ->
             if (showProgressDialog) {
                 startProgressDialog()
             } else {
                 completeProgressDialog()
             }
         }
-        observeFlow(viewModel.enableSaveButtonState) {
-            enableSaveButton(it)
-        }
-        observeFlow(viewModel.successResultChannel.receiveAsFlow()) {
-            sendSuccessResult()
-        }
+        observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
+        observe(viewModel.closeScreenEvent) { sendSuccessResult() }
     }
 
     private fun getArgs() {
@@ -74,7 +68,7 @@ internal class WordDetailFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_word_detail, container, false)
     }
@@ -99,14 +93,14 @@ internal class WordDetailFragment : BaseFragment() {
                 hideKeyboard()
                 viewModel.onSaveWord(
                     etWord.text.toString(),
-                    etTranslate.text.toString()
+                    etTranslate.text.toString(),
                 )
             }
             btnSave.setOnClickListener {
                 hideKeyboard()
                 viewModel.onSaveWord(
                     etWord.text.toString(),
-                    etTranslate.text.toString()
+                    etTranslate.text.toString(),
                 )
             }
             btnDelete.setOnClickListener {
@@ -155,9 +149,5 @@ internal class WordDetailFragment : BaseFragment() {
 
     private fun completeProgressDialog() {
         progressDialog.dismiss()
-    }
-
-    companion object {
-        const val WORD = "WordDetailFragment.WORD"
     }
 }

@@ -4,6 +4,8 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Cicerone.Companion.create
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
+import com.nikcapko.memo.navigation.Navigator
+import com.nikcapko.memo.navigation.NavigatorImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NavigationModule {
+internal object NavigationModule {
 
     private val cicerone: Cicerone<Router> = create()
 
@@ -27,4 +29,8 @@ object NavigationModule {
     fun provideNavigatorHolder(): NavigatorHolder {
         return cicerone.getNavigatorHolder()
     }
+
+    @Provides
+    @Singleton
+    fun provideNavigator(router: Router): Navigator = NavigatorImpl(router)
 }

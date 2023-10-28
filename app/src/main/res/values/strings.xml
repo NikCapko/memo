@@ -15,7 +15,8 @@
     <string name="frequency">Изученность</string>
 
     <string name="attention">Внимание</string>
-    <string name="clear_database">Очистить базу данных при выходе из аккаунта ?</string>
+    <string name="clear_database">Очистить базу данных ?</string>
+    <string name="need_add_words">Необходимо добавить не менее 5 слов</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="ok">Ок</string>
@@ -23,17 +24,13 @@
     <string name="save">Сохранить</string>
     <string name="delete">Удалить</string>
 
-    <string name="dictionary_load_words">Загрузить слова из данного словаря ?</string>
-
-    <string name="game_type_select_translate">Выбери перевод</string>
-    <string name="game_type_find_pairs">Найди пару</string>
-    <string name="game_type_phrases">Словосочетания</string>
     <string name="game_level_success">Успешно</string>
     <string name="game_level_error">Ошибок</string>
     <string name="game_over">Игра успешно окончена</string>
     <string name="game_your_results">Выши результаты:</string>
     <string name="game_finish">Закончить</string>
 
+    <string name="loading">Загрузка...</string>
     <string name="retry">Повторить</string>
     <string name="error_default_message">Упс, что-то пошло не так…</string>
 

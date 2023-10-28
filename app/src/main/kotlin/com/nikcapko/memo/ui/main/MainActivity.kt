@@ -9,9 +9,9 @@ import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Replace
 import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.nikcapko.memo.R
-import com.nikcapko.memo.ui.Screens
-import com.nikcapko.memo.utils.AppStorage
+import com.nikcapko.memo.ui.words.list.WordListFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.ref.WeakReference
 import javax.inject.Inject
@@ -57,7 +57,11 @@ class MainActivity : AppCompatActivity(), ChainHolder {
     }
 
     private fun openDefaultFragment() {
-        navigator.applyCommands(arrayOf<Command>(Replace(Screens.wordListScreen())))
+        navigator.applyCommands(
+            arrayOf<Command>(
+                Replace(screen = FragmentScreen { WordListFragment() })
+            )
+        )
     }
 
     override fun onResumeFragments() {

@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
@@ -25,7 +26,6 @@ import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.base.view.ProgressView
-import com.nikcapko.memo.data.Game
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
 import com.nikcapko.memo.ui.words.list.adapter.WordListAdapter
@@ -33,35 +33,32 @@ import com.nikcapko.memo.utils.Constants
 import com.nikcapko.memo.utils.extensions.lazyAndroid
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
-import com.nikcapko.memo.utils.extensions.observeFlow
+import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
+private const val SPEECH_RATE = 0.6f
+
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-class WordListFragment : BaseFragment(), ProgressView {
+internal class WordListFragment : BaseFragment(), ProgressView {
 
     private val viewModel by viewModels<WordListViewModel>()
-
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
-
-    private var gameMenuItem: MenuItem? = null
 
     private var tts: TextToSpeech? = null
 
     private val adapter: WordListAdapter by lazyAndroid {
         WordListAdapter(
-            onItemClick = { position -> viewModel.onItemClick(position) },
-            onEnableSound = { position -> viewModel.onEnableSound(position) }
+            onItemClick = viewModel::onItemClick,
+            onEnableSound = viewModel::onEnableSound,
         )
     }
 
     private val localBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                Constants.LOAD_WORDS_EVENT -> {
-                    viewModel.loadWords()
-                }
+            if (intent?.action == Constants.LOAD_WORDS_EVENT) {
+                viewModel.loadWords()
             }
         }
     }
@@ -75,7 +72,7 @@ class WordListFragment : BaseFragment(), ProgressView {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return inflater.inflate(R.layout.fragment_word_list, container, false)
     }
@@ -95,7 +92,7 @@ class WordListFragment : BaseFragment(), ProgressView {
             setHomeButtonEnabled(false)
         }
         requireActivity().addMenuProvider(
-            object : MenuProvider {
+            /* provider = */ object : MenuProvider {
                 override fun onPrepareMenu(menu: Menu) = Unit
                 override fun onMenuClosed(menu: Menu) = Unit
 
@@ -106,24 +103,22 @@ class WordListFragment : BaseFragment(), ProgressView {
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     when (menuItem.itemId) {
                         R.id.action_games -> viewModel.openGamesScreen()
-                        R.id.action_clear -> viewModel.openGamesScreen()
+                        R.id.action_clear -> viewModel.onClearDatabaseClick()
                     }
                     return false
                 }
             },
-            viewLifecycleOwner
+            /* owner = */ viewLifecycleOwner,
         )
     }
 
-    private fun setListeners() {
-        with(viewBinding) {
-            btnAddWord.setOnClickListener { viewModel.onAddWordClick() }
-            pvLoad.onRetryClick = { onRetry() }
-        }
+    private fun setListeners() = with(viewBinding) {
+        btnAddWord.setOnClickListener { viewModel.onAddWordClick() }
+        pvLoad.onRetryClick = ::onRetry
     }
 
-    private fun initAdapters() {
-        viewBinding.rvWords.apply {
+    private fun initAdapters() = with(viewBinding) {
+        rvWords.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@WordListFragment.adapter
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
@@ -145,7 +140,7 @@ class WordListFragment : BaseFragment(), ProgressView {
     }
 
     private fun observe() {
-        observeFlow(viewModel.state) { state ->
+        observe(viewModel.state) { state ->
             when (state) {
                 DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList())
@@ -158,14 +153,32 @@ class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        observeFlow(viewModel.speakOutChannel) {
-            speakOut(it)
+        observe(viewModel.speakOutEvent) { speakOut(it.data) }
+        observe(viewModel.showClearDatabaseDialog) {
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.attention)
+                .setMessage(R.string.clear_database)
+                .setPositiveButton(R.string.yes) { dialog, _ ->
+                    dialog.dismiss()
+                    viewModel.clearDatabase()
+                }
+                .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
+                .create()
+                .show()
+        }
+        observe(viewModel.showNeedMoreWordsDialog) {
+            AlertDialog.Builder(requireContext())
+                .setTitle(R.string.attention)
+                .setMessage(R.string.need_add_words)
+                .setPositiveButton(R.string.ok) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
         }
     }
 
     private fun showWords(wordsList: List<Word>?) {
-        gameMenuItem?.isVisible =
-            !wordsList.isNullOrEmpty() && wordsList.size >= Game.MAX_WORDS_COUNT_SELECT_TRANSLATE
         adapter.words = wordsList
     }
 
@@ -176,28 +189,22 @@ class WordListFragment : BaseFragment(), ProgressView {
         }
     }
 
-    override fun startLoading() {
-        with(viewBinding) {
-            pvLoad.startLoading()
-            rvWords.makeGone()
-            btnAddWord.makeGone()
-        }
+    override fun startLoading() = with(viewBinding) {
+        pvLoad.startLoading()
+        rvWords.makeGone()
+        btnAddWord.makeGone()
     }
 
-    override fun errorLoading(errorMessage: String?) {
-        with(viewBinding) {
-            pvLoad.errorLoading(errorMessage)
-            rvWords.makeGone()
-            btnAddWord.makeGone()
-        }
+    override fun errorLoading(errorMessage: String?) = with(viewBinding) {
+        pvLoad.errorLoading(errorMessage)
+        rvWords.makeGone()
+        btnAddWord.makeGone()
     }
 
-    override fun completeLoading() {
-        with(viewBinding) {
-            pvLoad.completeLoading()
-            rvWords.makeVisible()
-            btnAddWord.makeVisible()
-        }
+    override fun completeLoading() = with(viewBinding) {
+        pvLoad.completeLoading()
+        rvWords.makeVisible()
+        btnAddWord.makeVisible()
     }
 
     override fun onRetry() {
@@ -210,12 +217,7 @@ class WordListFragment : BaseFragment(), ProgressView {
     }
 
     override fun onDestroy() {
-        LocalBroadcastManager.getInstance(requireContext())
-            .unregisterReceiver(localBroadcastReceiver)
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(localBroadcastReceiver)
         super.onDestroy()
-    }
-
-    companion object {
-        const val SPEECH_RATE = 0.6f
     }
 }

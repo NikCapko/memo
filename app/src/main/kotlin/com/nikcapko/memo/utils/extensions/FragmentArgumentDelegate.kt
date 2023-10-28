@@ -7,14 +7,14 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 class FragmentArgumentDelegate<T : Any?>(
-    private var key: String
+    private var key: String,
 ) :
     ReadWriteProperty<Fragment, T?> {
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(
         thisRef: Fragment,
-        property: KProperty<*>
+        property: KProperty<*>,
     ): T? {
         return thisRef.arguments?.get(key) as? T
     }
@@ -22,7 +22,7 @@ class FragmentArgumentDelegate<T : Any?>(
     override fun setValue(
         thisRef: Fragment,
         property: KProperty<*>,
-        value: T?
+        value: T?,
     ) {
         val args = thisRef.arguments
             ?: Bundle().also(thisRef::setArguments)
