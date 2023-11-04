@@ -101,9 +101,6 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.livedata.ktx)
-
-    implementation(libs.mutableLiveEvent)
 
     // testing
     testImplementation(libs.test.assertj)

@@ -91,15 +91,20 @@ internal class SelectTranslateFragment : BaseFragment() {
                 }
             }
         }
-        observe(viewModel.successAnimationEvent) {
-            if (it.success) {
-                showSuccessAnimation()
-            } else {
-                showErrorAnimation()
+        observe(viewModel.eventFlow) { event ->
+            when (event) {
+                is SelectTranslateEvent.SuccessAnimationEvent ->
+                    if (event.success) {
+                        showSuccessAnimation()
+                    } else {
+                        showErrorAnimation()
+                    }
+
+                is SelectTranslateEvent.EndGameEvent -> showEndGame(
+                    successCount = event.successCount,
+                    errorCount = event.errorCount
+                )
             }
-        }
-        observe(viewModel.endGameEvent) { endGameResult ->
-            endGameResult.data?.let { showEndGame(it.first, it.second) }
         }
     }
 
@@ -121,13 +126,13 @@ internal class SelectTranslateFragment : BaseFragment() {
         btnTranslate5.text = translates[4]
     }
 
-    private fun showEndGame(successCounter: Int, errorCounter: Int) = with(viewBinding) {
+    private fun showEndGame(successCount: Int, errorCount: Int) = with(viewBinding) {
         val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
         llContentContainer.makeGone()
         rlEnGameContainer.makeVisible()
-        tvGameLevelSuccess.text = successCounter.toString()
-        tvGameLevelError.text = errorCounter.toString()
+        tvGameLevelSuccess.text = successCount.toString()
+        tvGameLevelError.text = errorCount.toString()
     }
 
     private fun showErrorAnimation() = with(viewBinding) {

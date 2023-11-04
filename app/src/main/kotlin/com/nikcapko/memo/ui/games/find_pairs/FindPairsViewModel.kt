@@ -2,8 +2,6 @@
 
 package com.nikcapko.memo.ui.games.find_pairs
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
@@ -13,7 +11,9 @@ import com.nikcapko.memo.domain.FindPairsInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,11 +32,8 @@ internal class FindPairsViewModel @Inject constructor(
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
     val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
 
-    private val _findPairResultEvent = MutableLiveData<FindPairsEvent.FindPairResultEvent>()
-    val findPairResultEvent: LiveData<FindPairsEvent.FindPairResultEvent> = _findPairResultEvent
-
-    private val _endGameEvent = MutableLiveData<FindPairsEvent.EndGameEvent>()
-    val endGameEvent: LiveData<FindPairsEvent.EndGameEvent> = _endGameEvent
+    private val _eventFlow = MutableSharedFlow<FindPairsEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     private var words = emptyList<Word>()
     private var wordsCount = 0
@@ -62,15 +59,17 @@ internal class FindPairsViewModel @Inject constructor(
     fun onFindPair(selectedWord: String, selectedTranslate: String) {
         words.forEach {
             if (it.word == selectedWord && it.translation == selectedTranslate) {
-                _findPairResultEvent.postValue(FindPairsEvent.FindPairResultEvent(true))
+                viewModelScope.launch {
+                    _eventFlow.emit(FindPairsEvent.FindPairResultEvent(true))
+                }
                 wordsCount++
                 if (wordsCount == MAX_WORDS_COUNT_FIND_PAIRS * 2) {
-                    _endGameEvent.postValue(FindPairsEvent.EndGameEvent)
+                    viewModelScope.launch { _eventFlow.emit(FindPairsEvent.EndGameEvent) }
                 }
                 return
             }
         }
-        _findPairResultEvent.postValue(FindPairsEvent.FindPairResultEvent(false))
+        viewModelScope.launch { _eventFlow.emit(FindPairsEvent.FindPairResultEvent(false)) }
     }
 
     fun onBackPressed() {

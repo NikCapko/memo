@@ -61,10 +61,12 @@ internal class FindPairsFragment : BaseFragment() {
                 }
             }
         }
-        observe(viewModel.findPairResultEvent) { event ->
-            onFindPairResult(event.success)
+        observe(viewModel.eventFlow) { event ->
+            when (event) {
+                is FindPairsEvent.FindPairResultEvent -> event.success
+                is FindPairsEvent.EndGameEvent -> endGame()
+            }
         }
-        observe(viewModel.endGameEvent) { endGame() }
     }
 
     private fun initToolbar() {

@@ -1,6 +1,5 @@
 package com.nikcapko.memo.ui.words.details
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
@@ -9,7 +8,9 @@ import com.nikcapko.memo.domain.WordDetailsInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -17,7 +18,6 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import ru.ar2code.mutableliveevent.MutableLiveEvent
 import java.util.Date
 import javax.inject.Inject
 
@@ -41,8 +41,8 @@ internal class WordDetailsViewModel @Inject constructor(
             return@combine word.isNotEmpty() && translate.isNotEmpty()
         }.distinctUntilChanged()
 
-    private val _closeScreenEvent = MutableLiveEvent<WordDetailsEvent.CloseScreenEvent>()
-    val closeScreenEvent: LiveData<WordDetailsEvent.CloseScreenEvent> = _closeScreenEvent
+    private val _eventFlow = MutableSharedFlow<WordDetailsEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     fun setArguments(vararg params: Any?) {
         _state.update {
@@ -69,7 +69,7 @@ internal class WordDetailsViewModel @Inject constructor(
                 )
             }
             wordDetailsInteractor.saveWord(word)
-            _closeScreenEvent.postValue(WordDetailsEvent.CloseScreenEvent)
+            _eventFlow.emit(WordDetailsEvent.CloseScreenEvent)
             _state.update { it.copy(showProgressDialog = false) }
             withContext(dispatcherProvider.main) {
                 navigator.back()
@@ -83,7 +83,7 @@ internal class WordDetailsViewModel @Inject constructor(
             state.value.word?.let {
                 wordDetailsInteractor.deleteWord(it.id.toString())
             }
-            _closeScreenEvent.postValue(WordDetailsEvent.CloseScreenEvent)
+            _eventFlow.emit(WordDetailsEvent.CloseScreenEvent)
             _state.update { it.copy(showProgressDialog = false) }
             withContext(dispatcherProvider.main) {
                 navigator.back()

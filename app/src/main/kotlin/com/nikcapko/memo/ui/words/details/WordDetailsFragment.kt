@@ -58,7 +58,11 @@ internal class WordDetailsFragment : BaseFragment() {
             }
         }
         observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
-        observe(viewModel.closeScreenEvent) { sendSuccessResult() }
+        observe(viewModel.eventFlow) { event ->
+            when (event) {
+                is WordDetailsEvent.CloseScreenEvent -> sendSuccessResult()
+            }
+        }
     }
 
     private fun getArgs() {

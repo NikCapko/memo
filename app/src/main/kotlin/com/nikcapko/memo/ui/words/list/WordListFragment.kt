@@ -92,7 +92,8 @@ internal class WordListFragment : BaseFragment(), ProgressView {
             setHomeButtonEnabled(false)
         }
         requireActivity().addMenuProvider(
-            /* provider = */ object : MenuProvider {
+            /* provider = */
+            object : MenuProvider {
                 override fun onPrepareMenu(menu: Menu) = Unit
                 override fun onMenuClosed(menu: Menu) = Unit
 
@@ -153,29 +154,37 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        observe(viewModel.speakOutEvent) { speakOut(it.data) }
-        observe(viewModel.showClearDatabaseDialog) {
-            AlertDialog.Builder(requireContext())
-                .setTitle(R.string.attention)
-                .setMessage(R.string.clear_database)
-                .setPositiveButton(R.string.yes) { dialog, _ ->
-                    dialog.dismiss()
-                    viewModel.clearDatabase()
-                }
-                .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
-                .create()
-                .show()
+        observe(viewModel.eventFlow) { event ->
+            when (event) {
+                is WordListEvent.SpeakOutEvent -> speakOut(event.word)
+                is WordListEvent.ShowClearDatabaseEvent -> showClearDatabaseDialog()
+                is WordListEvent.ShowNeedMoreWordsEvent -> showNeedMoreWordsDialog()
+            }
         }
-        observe(viewModel.showNeedMoreWordsDialog) {
-            AlertDialog.Builder(requireContext())
-                .setTitle(R.string.attention)
-                .setMessage(R.string.need_add_words)
-                .setPositiveButton(R.string.ok) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .create()
-                .show()
-        }
+    }
+
+    private fun showNeedMoreWordsDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.attention)
+            .setMessage(R.string.need_add_words)
+            .setPositiveButton(R.string.ok) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    private fun showClearDatabaseDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.attention)
+            .setMessage(R.string.clear_database)
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                dialog.dismiss()
+                viewModel.clearDatabase()
+            }
+            .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
     }
 
     private fun showWords(wordsList: List<Word>?) {
@@ -217,7 +226,8 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     override fun onDestroy() {
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(localBroadcastReceiver)
+        LocalBroadcastManager.getInstance(requireContext())
+            .unregisterReceiver(localBroadcastReceiver)
         super.onDestroy()
     }
 }
