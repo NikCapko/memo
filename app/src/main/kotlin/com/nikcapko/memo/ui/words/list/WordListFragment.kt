@@ -30,7 +30,7 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
 import com.nikcapko.memo.ui.words.list.adapter.WordListAdapter
 import com.nikcapko.memo.utils.Constants
-import com.nikcapko.memo.utils.extensions.lazyAndroid
+import com.nikcapko.memo.utils.extensions.androidLazy
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observe
@@ -43,22 +43,25 @@ private const val SPEECH_RATE = 0.6f
 @AndroidEntryPoint
 internal class WordListFragment : BaseFragment(), ProgressView {
 
-    private val viewModel by viewModels<WordListViewModel>()
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
+    private val viewModel by viewModels<WordListViewModel>()
+
+    private val stateWrapper: WordListFlowWrapper by androidLazy { viewModel }
+    private val viewController: WordListViewController by androidLazy { viewModel }
 
     private var tts: TextToSpeech? = null
 
-    private val adapter: WordListAdapter by lazyAndroid {
+    private val adapter: WordListAdapter by androidLazy {
         WordListAdapter(
-            onItemClick = viewModel::onItemClick,
-            onEnableSound = viewModel::onEnableSound,
+            onItemClick = viewController::onItemClick,
+            onEnableSound = viewController::onEnableSound,
         )
     }
 
     private val localBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == Constants.LOAD_WORDS_EVENT) {
-                viewModel.loadWords()
+                viewController.loadWords()
             }
         }
     }
@@ -103,8 +106,8 @@ internal class WordListFragment : BaseFragment(), ProgressView {
 
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     when (menuItem.itemId) {
-                        R.id.action_games -> viewModel.openGamesScreen()
-                        R.id.action_clear -> viewModel.onClearDatabaseClick()
+                        R.id.action_games -> viewController.openGamesScreen()
+                        R.id.action_clear -> viewController.onClearDatabaseClick()
                     }
                     return false
                 }
@@ -114,7 +117,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     private fun setListeners() = with(viewBinding) {
-        btnAddWord.setOnClickListener { viewModel.onAddWordClick() }
+        btnAddWord.setOnClickListener { viewController.onAddWordClick() }
         pvLoad.onRetryClick = ::onRetry
     }
 
@@ -141,7 +144,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     private fun observe() {
-        observe(viewModel.state) { state ->
+        observe(stateWrapper.state) { state ->
             when (state) {
                 DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList())
@@ -154,7 +157,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        observe(viewModel.eventFlow) { event ->
+        observe(stateWrapper.event) { event ->
             when (event) {
                 is WordListEvent.SpeakOutEvent -> speakOut(event.word)
                 is WordListEvent.ShowClearDatabaseEvent -> showClearDatabaseDialog()
@@ -180,7 +183,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
             .setMessage(R.string.clear_database)
             .setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
-                viewModel.clearDatabase()
+                viewController.clearDatabase()
             }
             .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
             .create()
@@ -217,7 +220,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     override fun onRetry() {
-        viewModel.loadWords()
+        viewController.loadWords()
     }
 
     override fun onPause() {

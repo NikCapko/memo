@@ -16,9 +16,9 @@ import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordDetailBinding
 import com.nikcapko.memo.utils.Constants
+import com.nikcapko.memo.utils.extensions.androidLazy
 import com.nikcapko.memo.utils.extensions.argument
 import com.nikcapko.memo.utils.extensions.hideKeyboard
-import com.nikcapko.memo.utils.extensions.lazyAndroid
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observe
@@ -30,12 +30,15 @@ internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
 @AndroidEntryPoint
 internal class WordDetailsFragment : BaseFragment() {
 
-    private val viewModel by viewModels<WordDetailsViewModel>()
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
+    private val viewModel by viewModels<WordDetailsViewModel>()
+
+    private val stateWrapper: WordDetailsFlowWrapper by androidLazy { viewModel }
+    private val viewController: WordDetailsViewController by androidLazy { viewModel }
 
     private val word by argument<Word>(WORD_ARGUMENT)
 
-    private val progressDialog: ProgressDialog by lazyAndroid {
+    private val progressDialog: ProgressDialog by androidLazy {
         ProgressDialog(requireContext()).apply {
             setTitle(getString(R.string.loading))
             setCancelable(false)
@@ -49,16 +52,16 @@ internal class WordDetailsFragment : BaseFragment() {
     }
 
     private fun initObservers() {
-        observe(viewModel.wordState) { initView(it) }
-        observe(viewModel.progressLoadingState) { showProgressDialog ->
+        observe(stateWrapper.wordState) { initView(it) }
+        observe(stateWrapper.progressLoadingState) { showProgressDialog ->
             if (showProgressDialog) {
                 startProgressDialog()
             } else {
                 completeProgressDialog()
             }
         }
-        observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
-        observe(viewModel.eventFlow) { event ->
+        observe(stateWrapper.enableSaveButtonState) { enableSaveButton(it) }
+        observe(stateWrapper.eventFlow) { event ->
             when (event) {
                 is WordDetailsEvent.CloseScreenEvent -> sendSuccessResult()
             }
@@ -66,7 +69,7 @@ internal class WordDetailsFragment : BaseFragment() {
     }
 
     private fun getArgs() {
-        viewModel.setArguments(word)
+        viewController.setArguments(word)
     }
 
     override fun onCreateView(
@@ -95,28 +98,28 @@ internal class WordDetailsFragment : BaseFragment() {
         with(viewBinding) {
             btnAdd.setOnClickListener {
                 hideKeyboard()
-                viewModel.onSaveWord(
+                viewController.onSaveWord(
                     etWord.text.toString(),
                     etTranslate.text.toString(),
                 )
             }
             btnSave.setOnClickListener {
                 hideKeyboard()
-                viewModel.onSaveWord(
+                viewController.onSaveWord(
                     etWord.text.toString(),
                     etTranslate.text.toString(),
                 )
             }
             btnDelete.setOnClickListener {
                 hideKeyboard()
-                viewModel.onDeleteWord()
+                viewController.onDeleteWord()
             }
 
             etWord.addTextChangedListener {
-                viewModel.changeWordField(it.toString())
+                viewController.changeWordField(it.toString())
             }
             etTranslate.addTextChangedListener {
-                viewModel.changeTranslateField(it.toString())
+                viewController.changeTranslateField(it.toString())
             }
         }
     }
@@ -142,9 +145,9 @@ internal class WordDetailsFragment : BaseFragment() {
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
     }
 
-    private fun enableSaveButton(enable: Boolean) {
-        viewBinding.btnAdd.isEnabled = enable
-        viewBinding.btnSave.isEnabled = enable
+    private fun enableSaveButton(enable: Boolean) = with(viewBinding) {
+        btnAdd.isEnabled = enable
+        btnSave.isEnabled = enable
     }
 
     private fun startProgressDialog() {

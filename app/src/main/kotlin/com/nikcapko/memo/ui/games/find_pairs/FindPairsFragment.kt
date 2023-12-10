@@ -14,6 +14,7 @@ import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.databinding.FragmentFindPairsBinding
+import com.nikcapko.memo.utils.extensions.androidLazy
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeInvisible
 import com.nikcapko.memo.utils.extensions.makeVisible
@@ -24,8 +25,11 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 internal class FindPairsFragment : BaseFragment() {
 
-    private val viewModel by viewModels<FindPairsViewModel>()
     private val viewBinding by viewBinding(FragmentFindPairsBinding::bind)
+    private val viewModel by viewModels<FindPairsViewModel>()
+
+    private val stateWrapper by androidLazy { viewModel }
+    private val viewController by androidLazy { viewModel }
 
     private var selectedTranslate: RadioButton? = null
     private var selectedWord: RadioButton? = null
@@ -46,7 +50,7 @@ internal class FindPairsFragment : BaseFragment() {
     }
 
     private fun observe() {
-        observe(viewModel.state) { state ->
+        observe(stateWrapper.state) { state ->
             when (state) {
                 DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList(), emptyList())
@@ -61,9 +65,9 @@ internal class FindPairsFragment : BaseFragment() {
                 }
             }
         }
-        observe(viewModel.eventFlow) { event ->
+        observe(stateWrapper.eventFlow) { event ->
             when (event) {
-                is FindPairsEvent.FindPairResultEvent -> event.success
+                is FindPairsEvent.FindPairResultEvent -> onFindPairResult(event.success)
                 is FindPairsEvent.EndGameEvent -> endGame()
             }
         }
@@ -81,7 +85,7 @@ internal class FindPairsFragment : BaseFragment() {
             if (rgTranslate.checkedRadioButtonId != -1 && checkedId != -1) {
                 selectedTranslate = rgTranslate.findViewById(rgTranslate.checkedRadioButtonId)
                 selectedWord = group.findViewById(checkedId)
-                viewModel.onFindPair(
+                viewController.onFindPair(
                     selectedWord = selectedWord?.text.toString(),
                     selectedTranslate = selectedTranslate?.text.toString(),
                 )
@@ -93,7 +97,7 @@ internal class FindPairsFragment : BaseFragment() {
             if (rgWord.checkedRadioButtonId != -1 && checkedId != -1) {
                 selectedWord = rgWord.findViewById(rgWord.checkedRadioButtonId)
                 selectedTranslate = group.findViewById(checkedId)
-                viewModel.onFindPair(
+                viewController.onFindPair(
                     selectedWord = selectedWord?.text.toString(),
                     selectedTranslate = selectedTranslate?.text.toString(),
                 )
@@ -102,7 +106,7 @@ internal class FindPairsFragment : BaseFragment() {
             }
         }
         btnExit.setOnClickListener {
-            viewModel.onBackPressed()
+            viewController.onBackPressed()
         }
         lavSuccess.setOnClickListener { }
         pvLoad.onRetryClick = ::onRetry
@@ -157,6 +161,6 @@ internal class FindPairsFragment : BaseFragment() {
     }
 
     private fun onRetry() {
-        viewModel.loadWords()
+        viewController.loadWords()
     }
 }

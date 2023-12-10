@@ -10,11 +10,8 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.FindPairsInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,14 +23,11 @@ internal class FindPairsViewModel @Inject constructor(
     private val findPairsInteractor: FindPairsInteractor,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
-) : ViewModel() {
+) : ViewModel(), FindPairsFlowWrapper, FindPairsViewController {
 
-    private val _state =
+    override val state =
         MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
-    val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
-
-    private val _eventFlow = MutableSharedFlow<FindPairsEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    override val eventFlow = MutableSharedFlow<FindPairsEvent>()
 
     private var words = emptyList<Word>()
     private var wordsCount = 0
@@ -42,9 +36,9 @@ internal class FindPairsViewModel @Inject constructor(
         loadWords()
     }
 
-    fun loadWords() {
+    override fun loadWords() {
         viewModelScope.launch(dispatcherProvider.io) {
-            _state.update { DataLoadingViewModelState.LoadingState }
+            state.update { DataLoadingViewModelState.LoadingState }
             words = findPairsInteractor.getWordsForGame()
             val wordList = words
                 .map { it.word }
@@ -52,27 +46,27 @@ internal class FindPairsViewModel @Inject constructor(
             val translateList = words
                 .map { it.translation }
                 .shuffled()
-            _state.update { DataLoadingViewModelState.LoadedState(wordList to translateList) }
+            state.update { DataLoadingViewModelState.LoadedState(wordList to translateList) }
         }
     }
 
-    fun onFindPair(selectedWord: String, selectedTranslate: String) {
+    override fun onFindPair(selectedWord: String, selectedTranslate: String) {
         words.forEach {
             if (it.word == selectedWord && it.translation == selectedTranslate) {
                 viewModelScope.launch {
-                    _eventFlow.emit(FindPairsEvent.FindPairResultEvent(true))
+                    eventFlow.emit(FindPairsEvent.FindPairResultEvent(true))
                 }
                 wordsCount++
                 if (wordsCount == MAX_WORDS_COUNT_FIND_PAIRS * 2) {
-                    viewModelScope.launch { _eventFlow.emit(FindPairsEvent.EndGameEvent) }
+                    viewModelScope.launch { eventFlow.emit(FindPairsEvent.EndGameEvent) }
                 }
                 return
             }
         }
-        viewModelScope.launch { _eventFlow.emit(FindPairsEvent.FindPairResultEvent(false)) }
+        viewModelScope.launch { eventFlow.emit(FindPairsEvent.FindPairResultEvent(false)) }
     }
 
-    fun onBackPressed() {
+    override fun onBackPressed() {
         navigator.back()
     }
 }
