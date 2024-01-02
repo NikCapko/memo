@@ -7,6 +7,11 @@ plugins {
 }
 
 android {
+    packagingOptions {
+        pickFirst("META-INF/LICENSE.md")
+        pickFirst("META-INF/LICENSE-notice.md")
+    }
+
     compileSdk = libs.versions.compileSdkVersion.get().toInt()
     buildToolsVersion = libs.versions.buildToolsVersion.get()
     namespace = "com.nikcapko.memo"
@@ -18,7 +23,7 @@ android {
         versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.versionName.get()
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.nikcapko.memo.ui.HiltAndroidTestRunner"
     }
 
     buildTypes {
@@ -27,7 +32,7 @@ android {
             isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -104,9 +109,22 @@ dependencies {
 
     // testing
     testImplementation(libs.test.assertj)
-    testImplementation(libs.test.mockk)
     testImplementation(libs.test.junit)
     testImplementation(libs.test.junit.jupiter)
     testImplementation(libs.test.kotlinx.coroutines)
     testImplementation(libs.test.androidx.testing)
+    testImplementation(libs.test.turbine)
+
+    androidTestImplementation(libs.test.junit.androidx)
+    androidTestImplementation(libs.test.espresso.core)
+    androidTestImplementation(libs.test.espresso.contrib)
+    androidTestImplementation("org.hamcrest:hamcrest:2.2")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation(libs.test.kotlinx.coroutines)
+    androidTestImplementation(libs.test.androidx.testing)
+    androidTestImplementation(libs.hilt.testing)
+    kspAndroidTest(libs.hilt.compiler)
+
+    debugImplementation(libs.test.mockk.android)
 }
