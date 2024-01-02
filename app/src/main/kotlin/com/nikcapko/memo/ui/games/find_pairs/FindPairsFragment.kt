@@ -47,15 +47,14 @@ internal class FindPairsFragment : BaseFragment() {
 
     private fun observe() {
         observe(viewModel.state) { state ->
-            when (state) {
+            when (state.dataLoadingViewModelState) {
                 DataLoadingViewModelState.NoneState,
                 DataLoadingViewModelState.LoadingState,
                 -> startLoading()
 
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList(), emptyList())
                 is DataLoadingViewModelState.LoadedState<*> -> {
-                    val data = state.data as? Pair<List<String>, List<String>>
-                    showWords(data?.first.orEmpty(), data?.second.orEmpty())
+                    showWords(state.wordList, state.translateList)
                     completeLoading()
                 }
 

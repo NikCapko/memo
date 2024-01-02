@@ -14,7 +14,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -39,19 +38,9 @@ internal class WordDetailsViewModelTest {
         frequency = 2.3f,
     )
 
-    @BeforeEach
-    fun setupDispatcher() {
-        viewModel = WordDetailsViewModel(
-            wordDetailsInteractor = wordDetailsInteractor,
-            stateFlowWrapper = stateFlowWrapper,
-            eventFlowWrapper = eventFlowWrapper,
-            navigator = navigator,
-            dispatcherProvider = TestDispatcherProvider(),
-        )
-    }
-
     @Test
     fun `check save word with correct params`() = runTest {
+        viewModel = createViewModel()
         viewModel.onSaveWord("word", "слово")
 
         coVerify {
@@ -69,6 +58,7 @@ internal class WordDetailsViewModelTest {
             enableSaveButton = false,
         )
 
+        viewModel = createViewModel()
         viewModel.onDeleteWord()
 
         coVerify {
@@ -80,6 +70,7 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check not enable save button on empty word and empty translate`() = runTest {
+        viewModel = createViewModel()
         viewModel.changeWordField("")
         viewModel.changeTranslateField("")
 
@@ -91,6 +82,7 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check not enable save button on empty word and non empty translate`() = runTest {
+        viewModel = createViewModel()
         viewModel.changeWordField("")
         viewModel.changeTranslateField("translate")
 
@@ -102,6 +94,7 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check not enable save button on non empty word and empty translate`() = runTest {
+        viewModel = createViewModel()
         viewModel.changeWordField("word")
         viewModel.changeTranslateField("")
 
@@ -113,6 +106,7 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check enable save button on non empty word and non empty translate`() = runTest {
+        viewModel = createViewModel()
         viewModel.changeWordField("word")
         viewModel.changeTranslateField("translate")
 
@@ -121,4 +115,12 @@ internal class WordDetailsViewModelTest {
             viewModel.enableSaveButtonState.first(),
         )
     }
+
+    private fun createViewModel() = WordDetailsViewModel(
+        wordDetailsInteractor = wordDetailsInteractor,
+        stateFlowWrapper = stateFlowWrapper,
+        eventFlowWrapper = eventFlowWrapper,
+        navigator = navigator,
+        dispatcherProvider = TestDispatcherProvider(),
+    )
 }

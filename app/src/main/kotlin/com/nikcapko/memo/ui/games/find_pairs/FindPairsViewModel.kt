@@ -10,7 +10,6 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.FindPairsInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +24,7 @@ internal class FindPairsViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
 ) : ViewModel(), FindPairsViewController {
 
-    val state = stateFlowWrapper.liveValue().map { it.dataLoadingViewModelState }
+    val state = stateFlowWrapper.liveValue()
     val eventFlow = eventFlowWrapper.liveValue()
 
     init {

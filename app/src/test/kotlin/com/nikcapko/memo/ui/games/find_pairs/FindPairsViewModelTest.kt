@@ -49,24 +49,13 @@ internal class FindPairsViewModelTest {
         frequency = 2.3f,
     )
 
-    @BeforeEach
-    fun setUp() {
-        viewModel = FindPairsViewModel(
-            findPairsInteractor = findPairsInteractor,
-            stateFlowWrapper = stateFlowWrapper,
-            eventFlowWrapper = eventFlowWrapper,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
-        )
-    }
-
     @Test
     fun `check load words for game`() = runTest {
         val stateSlot = mutableListOf<(FindPairsState) -> FindPairsState>()
         every { stateFlowWrapper.update(capture(stateSlot)) } returns Unit
         coEvery { findPairsInteractor.getWordsForGame() } returns listOf(word1, word2)
 
-        viewModel.loadWords()
+        viewModel = createViewModel()
 
         val noneState = FindPairsState(
             dataLoadingViewModelState = DataLoadingViewModelState.NoneState,
@@ -118,6 +107,7 @@ internal class FindPairsViewModelTest {
                 wordsCount = 0,
             )
 
+        viewModel = createViewModel()
         viewModel.onFindPair(word1.word, word2.translation)
 
         coVerify { eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(false)) }
@@ -125,8 +115,16 @@ internal class FindPairsViewModelTest {
 
     @Test
     fun `check find incorrect pair second word - first translate`() = runTest {
-        coEvery { findPairsInteractor.getWordsForGame() } returns listOf(word1, word2)
+        coEvery { stateFlowWrapper.value() } returns FindPairsState(
+            dataLoadingViewModelState = DataLoadingViewModelState.LoadedState(
+                listOf(word1, word2),
+            ),
+            wordList = emptyList(),
+            translateList = emptyList(),
+            wordsCount = 0,
+        )
 
+        viewModel = createViewModel()
         viewModel.onFindPair(word2.word, word1.translation)
 
         coVerify { eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(false)) }
@@ -138,11 +136,12 @@ internal class FindPairsViewModelTest {
             dataLoadingViewModelState = DataLoadingViewModelState.LoadedState(
                 listOf(word1, word2),
             ),
-            wordList = listOf(),
-            translateList = listOf(),
+            wordList = emptyList(),
+            translateList = emptyList(),
             wordsCount = 0,
         )
 
+        viewModel = createViewModel()
         viewModel.onFindPair(word1.word, word1.translation)
 
         stateFlowWrapper.update { it.copy(wordsCount = 1) }
@@ -151,8 +150,19 @@ internal class FindPairsViewModelTest {
 
     @Test
     fun `check call onBackPressed`() {
+        viewModel = createViewModel()
         viewModel.onBackPressed()
 
         verify { navigator.back() }
+    }
+
+    private fun createViewModel(): FindPairsViewModel {
+        return FindPairsViewModel(
+            findPairsInteractor = findPairsInteractor,
+            stateFlowWrapper = stateFlowWrapper,
+            eventFlowWrapper = eventFlowWrapper,
+            navigator = navigator,
+            dispatcherProvider = dispatcherProvider,
+        )
     }
 }
