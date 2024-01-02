@@ -5,26 +5,24 @@ import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.domain.GamesInteractor
 import com.nikcapko.memo.navigation.Navigator
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
  * Test for [GamesViewModel]
  */
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
 internal class GamesViewModelTest {
 
     private val gamesInteractor = mockk<GamesInteractor>(relaxed = true)
+    private val gamesFlowWrapper = mockk<GamesFlowWrapper>(relaxed = true)
     private val navigator = spyk<Navigator>()
 
     private lateinit var viewModel: GamesViewModel
@@ -38,23 +36,15 @@ internal class GamesViewModelTest {
     fun `check load games list`() = runTest {
         coEvery { gamesInteractor.getDefaultGamesList() } returns gameList
 
-        viewModel = GamesViewModel(
-            gamesInteractor = gamesInteractor,
-            navigator = navigator,
-        )
-
-        Assertions.assertEquals(gameList, viewModel.state.first())
+        viewModel = createViewModel()
+        verify { gamesFlowWrapper.update(gameList) }
     }
 
     @Test
     fun `check click on SELECT_TRANSLATE games item`() = runTest {
-        coEvery { gamesInteractor.getDefaultGamesList() } returns gameList
+        every { gamesFlowWrapper.value() } returns gameList
 
-        viewModel = GamesViewModel(
-            gamesInteractor = gamesInteractor,
-            navigator = navigator,
-        )
-
+        viewModel = createViewModel()
         viewModel.onItemClick(0)
 
         verify { navigator.pushSelectTranslateScreen() }
@@ -62,15 +52,17 @@ internal class GamesViewModelTest {
 
     @Test
     fun `check click on FIND_PAIRS games item`() = runTest {
-        coEvery { gamesInteractor.getDefaultGamesList() } returns gameList
+        every { gamesFlowWrapper.value() } returns gameList
 
-        viewModel = GamesViewModel(
-            gamesInteractor = gamesInteractor,
-            navigator = navigator,
-        )
-
+        viewModel = createViewModel()
         viewModel.onItemClick(1)
 
         verify { navigator.pushFindPairsScreen() }
     }
+
+    private fun createViewModel() = GamesViewModel(
+        gamesInteractor = gamesInteractor,
+        gamesFlowWrapper = gamesFlowWrapper,
+        navigator = navigator,
+    )
 }

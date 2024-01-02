@@ -76,9 +76,9 @@ internal class SelectTranslateFragment : BaseFragment() {
     }
 
     private fun observe() {
-        observe(viewModel.state) { state ->
+        observe(viewModel.stateFlow) { state ->
             when (state) {
-                DataLoadingViewModelState.LoadingState -> startLoading()
+                DataLoadingViewModelState.NoneState, DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWord(null, emptyList())
                 is DataLoadingViewModelState.LoadedState<*> -> {
                     val data = state.data as? Pair<Word, List<String>>
@@ -102,7 +102,7 @@ internal class SelectTranslateFragment : BaseFragment() {
 
                 is SelectTranslateEvent.EndGameEvent -> showEndGame(
                     successCount = event.successCount,
-                    errorCount = event.errorCount
+                    errorCount = event.errorCount,
                 )
             }
         }

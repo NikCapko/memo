@@ -12,22 +12,20 @@ import com.nikcapko.memo.domain.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.domain.SelectTranslateInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class SelectTranslateViewModel @Inject constructor(
     private val selectTranslateInteractor: SelectTranslateInteractor,
+    private val stateFlowWrapper: SelectTranslateStateFlowWrapper,
+    private val eventFlowWrapper: SelectTranslateEventFlowWrapper,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
-) : ViewModel(), SelectTranslateFlowWrapper, SelectTranslateViewController {
+) : ViewModel(), SelectTranslateViewController {
 
-    override val state =
-        MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
-    override val eventFlow = MutableSharedFlow<SelectTranslateEvent>()
+    val stateFlow = stateFlowWrapper.liveValue()
+    val eventFlow = eventFlowWrapper.liveValue()
 
     private var words: List<Word>? = null
     private var word: Word? = null
@@ -42,7 +40,7 @@ internal class SelectTranslateViewModel @Inject constructor(
 
     override fun loadWords() {
         viewModelScope.launch(dispatcherProvider.io) {
-            state.update { DataLoadingViewModelState.LoadingState }
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
             words = selectTranslateInteractor.getWords()
             updateWord()
         }
@@ -54,20 +52,20 @@ internal class SelectTranslateViewModel @Inject constructor(
             ?.shuffled()
             ?.map { it.translation }
             .orEmpty()
-        state.update { DataLoadingViewModelState.LoadedState(word to translates) }
+        stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(word to translates))
     }
 
     override fun onTranslateClick(translate: String) {
         if (word?.translation.equals(translate)) {
             word?.frequency = word?.frequency?.plus(WORD_GAME_PRICE) ?: WORD_GAME_PRICE
-            viewModelScope.launch {
-                eventFlow.emit(SelectTranslateEvent.SuccessAnimationEvent(true))
+            viewModelScope.launch(dispatcherProvider.main) {
+                eventFlowWrapper.update(SelectTranslateEvent.SuccessAnimationEvent(true))
             }
             successCounter++
         } else {
             word?.frequency = word?.frequency?.minus(WORD_GAME_PRICE) ?: -WORD_GAME_PRICE
-            viewModelScope.launch {
-                eventFlow.emit(SelectTranslateEvent.SuccessAnimationEvent(false))
+            viewModelScope.launch(dispatcherProvider.main) {
+                eventFlowWrapper.update(SelectTranslateEvent.SuccessAnimationEvent(false))
             }
             errorCounter++
         }
@@ -87,9 +85,7 @@ internal class SelectTranslateViewModel @Inject constructor(
             words?.forEach { word ->
                 selectTranslateInteractor.saveWord(word)
             }
-            viewModelScope.launch {
-                eventFlow.emit(SelectTranslateEvent.EndGameEvent(successCounter, errorCounter))
-            }
+            eventFlowWrapper.update(SelectTranslateEvent.EndGameEvent(successCounter, errorCounter))
         }
     }
 

@@ -33,9 +33,6 @@ internal class WordDetailsFragment : BaseFragment() {
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
     private val viewModel by viewModels<WordDetailsViewModel>()
 
-    private val stateWrapper: WordDetailsFlowWrapper by androidLazy { viewModel }
-    private val viewController: WordDetailsViewController by androidLazy { viewModel }
-
     private val word by argument<Word>(WORD_ARGUMENT)
 
     private val progressDialog: ProgressDialog by androidLazy {
@@ -52,16 +49,16 @@ internal class WordDetailsFragment : BaseFragment() {
     }
 
     private fun initObservers() {
-        observe(stateWrapper.wordState) { initView(it) }
-        observe(stateWrapper.progressLoadingState) { showProgressDialog ->
+        observe(viewModel.wordState) { initView(it) }
+        observe(viewModel.progressLoadingState) { showProgressDialog ->
             if (showProgressDialog) {
                 startProgressDialog()
             } else {
                 completeProgressDialog()
             }
         }
-        observe(stateWrapper.enableSaveButtonState) { enableSaveButton(it) }
-        observe(stateWrapper.eventFlow) { event ->
+        observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
+        observe(viewModel.eventFlow) { event ->
             when (event) {
                 is WordDetailsEvent.CloseScreenEvent -> sendSuccessResult()
             }
@@ -69,7 +66,7 @@ internal class WordDetailsFragment : BaseFragment() {
     }
 
     private fun getArgs() {
-        viewController.setArguments(word)
+        viewModel.setArguments(word)
     }
 
     override fun onCreateView(
@@ -98,28 +95,28 @@ internal class WordDetailsFragment : BaseFragment() {
         with(viewBinding) {
             btnAdd.setOnClickListener {
                 hideKeyboard()
-                viewController.onSaveWord(
+                viewModel.onSaveWord(
                     etWord.text.toString(),
                     etTranslate.text.toString(),
                 )
             }
             btnSave.setOnClickListener {
                 hideKeyboard()
-                viewController.onSaveWord(
+                viewModel.onSaveWord(
                     etWord.text.toString(),
                     etTranslate.text.toString(),
                 )
             }
             btnDelete.setOnClickListener {
                 hideKeyboard()
-                viewController.onDeleteWord()
+                viewModel.onDeleteWord()
             }
 
             etWord.addTextChangedListener {
-                viewController.changeWordField(it.toString())
+                viewModel.changeWordField(it.toString())
             }
             etTranslate.addTextChangedListener {
-                viewController.changeTranslateField(it.toString())
+                viewModel.changeTranslateField(it.toString())
             }
         }
     }

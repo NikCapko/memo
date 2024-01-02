@@ -8,9 +8,6 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordListInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,15 +16,14 @@ private const val MIN_WORDS_COUNT = 5
 @HiltViewModel
 internal class WordListViewModel @Inject constructor(
     private val wordListInteractor: WordListInteractor,
+    private val stateFlowWrapper: WordListStateFlowWrapper,
+    private val eventFlowWrapper: WordListEventFlowWrapper,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
-) : ViewModel(), WordListFlowWrapper, WordListViewController {
+) : ViewModel(), WordListViewController {
 
-    override val state =
-        MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
-    override val event = MutableSharedFlow<WordListEvent>()
-
-    private var wordsList = emptyList<Word>()
+    val state = stateFlowWrapper.liveValue()
+    val eventFlow = eventFlowWrapper.liveValue()
 
     init {
         loadWords()
@@ -35,27 +31,31 @@ internal class WordListViewModel @Inject constructor(
 
     override fun loadWords() {
         viewModelScope.launch(dispatcherProvider.io) {
-            state.update { DataLoadingViewModelState.LoadingState }
-            wordsList = wordListInteractor.getWords()
-            state.update { DataLoadingViewModelState.LoadedState(wordsList) }
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
+            val wordsList = wordListInteractor.getWords()
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(wordsList))
         }
     }
 
     override fun onItemClick(position: Int) {
-        val word = wordsList.getOrNull(position)
-        navigator.pushWordDetailScreen(word)
+        val wordList =
+            (stateFlowWrapper.value() as? DataLoadingViewModelState.LoadedState<List<Word>>)?.data
+        navigator.pushWordDetailScreen(wordList?.getOrNull(position))
     }
 
     override fun onEnableSound(position: Int) {
-        val word = wordsList.getOrNull(position)
-        viewModelScope.launch { event.emit(WordListEvent.SpeakOutEvent(word?.word.orEmpty())) }
+        val wordList =
+            (stateFlowWrapper.value() as? DataLoadingViewModelState.LoadedState<List<Word>>)?.data
+        viewModelScope.launch(dispatcherProvider.main) {
+            eventFlowWrapper.update(WordListEvent.SpeakOutEvent(wordList?.getOrNull(position)?.word.orEmpty()))
+        }
     }
 
     override fun clearDatabase() {
         viewModelScope.launch(dispatcherProvider.io) {
-            state.update { DataLoadingViewModelState.LoadingState }
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
             wordListInteractor.clearDataBase()
-            state.update { DataLoadingViewModelState.LoadedState(emptyList<Word>()) }
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(emptyList<Word>()))
         }
     }
 
@@ -64,14 +64,20 @@ internal class WordListViewModel @Inject constructor(
     }
 
     override fun openGamesScreen() {
-        if (wordsList.size < MIN_WORDS_COUNT) {
-            viewModelScope.launch { event.tryEmit(WordListEvent.ShowNeedMoreWordsEvent) }
+        val wordsList =
+            (stateFlowWrapper.value() as? DataLoadingViewModelState.LoadedState<List<Word>>)?.data
+        if ((wordsList?.size ?: 0) < MIN_WORDS_COUNT) {
+            viewModelScope.launch(dispatcherProvider.main) {
+                eventFlowWrapper.update(WordListEvent.ShowNeedMoreWordsEvent)
+            }
         } else {
             navigator.pushGamesScreen()
         }
     }
 
     override fun onClearDatabaseClick() {
-        viewModelScope.launch { event.tryEmit(WordListEvent.ShowClearDatabaseEvent) }
+        viewModelScope.launch(dispatcherProvider.main) {
+            eventFlowWrapper.update(WordListEvent.ShowClearDatabaseEvent)
+        }
     }
 }

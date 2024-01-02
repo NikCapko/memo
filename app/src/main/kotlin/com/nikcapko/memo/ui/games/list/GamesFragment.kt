@@ -25,12 +25,9 @@ class GamesFragment : BaseFragment() {
     private val viewBinding by viewBinding(FragmentGamesBinding::bind)
     private val viewModel by viewModels<GamesViewModel>()
 
-    private val stateWrapper: GamesFlowWrapper by androidLazy { viewModel }
-    private val viewController: GamesViewController by androidLazy { viewModel }
-
     private val adapter: GamesAdapter by androidLazy {
         GamesAdapter { position ->
-            viewController.onItemClick(position)
+            viewModel.onItemClick(position)
         }
     }
 
@@ -75,6 +72,6 @@ class GamesFragment : BaseFragment() {
     }
 
     private fun observe() {
-        observe(stateWrapper.state) { adapter.games = it }
+        observe(viewModel.state) { adapter.games = it }
     }
 }

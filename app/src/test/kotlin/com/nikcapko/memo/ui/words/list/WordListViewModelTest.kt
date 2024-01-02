@@ -8,17 +8,15 @@ import com.nikcapko.memo.domain.WordListInteractor
 import com.nikcapko.memo.navigation.Navigator
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.junit.jupiter.api.extension.ExtendWith
 
 private const val MIN_WORDS_COUNT = 5
@@ -26,17 +24,18 @@ private const val MIN_WORDS_COUNT = 5
 /**
  * Test for [WordListViewModel]
  */
-@TestInstance(Lifecycle.PER_CLASS)
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
 internal class WordListViewModelTest {
 
-    private var navigator = spyk<Navigator>()
     private var wordListInteractor = mockk<WordListInteractor>(relaxed = true)
+    private val stateFlowWrapper = mockk<WordListStateFlowWrapper>(relaxed = true)
+    private val eventFlowWrapper = mockk<WordListEventFlowWrapper>(relaxed = true)
+    private var navigator = spyk<Navigator>()
 
     private lateinit var viewModel: WordListViewModel
 
-    private var word = Word(
+    private val word = Word(
         id = 3929,
         word = "expetenda",
         translation = "vituperatoribus",
@@ -44,19 +43,14 @@ internal class WordListViewModelTest {
     )
 
     @BeforeEach
-    fun setupDispatcher() {
+    fun setUp() {
         viewModel = WordListViewModel(
             wordListInteractor = wordListInteractor,
+            stateFlowWrapper = stateFlowWrapper,
+            eventFlowWrapper = eventFlowWrapper,
             navigator = navigator,
             dispatcherProvider = TestDispatcherProvider(),
         )
-    }
-
-    @Test
-    fun `check get words on call loadWords`() = runTest {
-        viewModel.loadWords()
-
-        coVerify { wordListInteractor.getWords() }
     }
 
     @Test
@@ -65,80 +59,77 @@ internal class WordListViewModelTest {
 
         viewModel.loadWords()
 
-        Assertions.assertEquals(
-            DataLoadingViewModelState.LoadedState(listOf(word)),
-            viewModel.state.first(),
-        )
+        verify {
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(listOf(word)))
+        }
     }
 
     @Test
     fun `check open screen word detail on call onItemClick`() = runTest {
-        coEvery { wordListInteractor.getWords() } returns listOf(word)
+        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(listOf(word))
 
-        viewModel.loadWords()
         viewModel.onItemClick(0)
 
-        verify(exactly = 1) { navigator.pushWordDetailScreen(word) }
+        verify { navigator.pushWordDetailScreen(word) }
     }
 
     @Test
-    fun `check send speakOutChannel on call onEnableSound`() {
-        coEvery { wordListInteractor.getWords() } returns listOf(word)
+    fun `check send speakOutChannel on call onEnableSound`() = runTest {
+        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(listOf(word))
 
-        viewModel.loadWords()
         viewModel.onEnableSound(0)
 
-        Assertions.assertEquals(
-            WordListEvent.SpeakOutEvent(word.word),
-            viewModel.speakOutEvent.value,
-        )
+        coVerify {
+            eventFlowWrapper.update(WordListEvent.SpeakOutEvent(word.word))
+        }
     }
 
     @Test
     fun `check clear database on call clearDatabase`() = runTest {
         viewModel.clearDatabase()
 
-        coVerify(exactly = 1) { wordListInteractor.clearDataBase() }
-        Assertions.assertEquals(
-            DataLoadingViewModelState.LoadedState(emptyList<Word>()),
-            viewModel.state.first(),
-        )
+        coVerify { wordListInteractor.clearDataBase() }
+
+        verifyOrder {
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(emptyList<Word>()))
+        }
     }
 
     @Test
     fun `check open screen word detail with null on call onAddWordClick`() {
         viewModel.onAddWordClick()
 
-        verify(exactly = 1) { navigator.pushWordDetailScreen() }
+        verify { navigator.pushWordDetailScreen() }
     }
 
     @Test
-    fun `check show need more words dialog on call openGamesScreen`() {
-        coEvery { wordListInteractor.getWords() } returns emptyList()
+    fun `check show need more words dialog on call openGamesScreen`() = runTest {
+        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(listOf(word))
 
-        viewModel.loadWords()
         viewModel.openGamesScreen()
 
-        Assertions.assertEquals(
-            WordListEvent.ShowNeedMoreWordsEvent,
-            viewModel.showNeedMoreWordsDialog.value,
-        )
+        coVerify {
+            eventFlowWrapper.update(WordListEvent.ShowNeedMoreWordsEvent)
+        }
     }
 
     @Test
     fun `check open screen games on call openGamesScreen`() {
-        coEvery { wordListInteractor.getWords() } returns List(MIN_WORDS_COUNT) { word }
+        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(List(MIN_WORDS_COUNT) { word })
 
-        viewModel.loadWords()
         viewModel.openGamesScreen()
 
-        verify(exactly = 1) { navigator.pushGamesScreen() }
+        verify { navigator.pushGamesScreen() }
     }
 
     @Test
-    fun `check send showClearDatabaseDialog on call onClearDatabaseClick`() {
+    fun `check send showClearDatabaseDialog on call onClearDatabaseClick`() = runTest {
         viewModel.onClearDatabaseClick()
 
-        Assertions.assertNotNull(viewModel.showClearDatabaseDialog.value)
+        coVerify {
+            eventFlowWrapper.update(WordListEvent.ShowClearDatabaseEvent)
+        }
     }
 }

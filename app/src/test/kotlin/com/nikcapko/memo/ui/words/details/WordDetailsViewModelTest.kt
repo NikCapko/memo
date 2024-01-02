@@ -6,6 +6,7 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordDetailsInteractor
 import com.nikcapko.memo.navigation.Navigator
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
@@ -15,20 +16,19 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
  * Test for [WordDetailsViewModel]
  */
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
 internal class WordDetailsViewModelTest {
 
     private val wordDetailsInteractor = mockk<WordDetailsInteractor>(relaxed = true)
+    private val stateFlowWrapper = mockk<WordDetailsStateFlowWrapper>(relaxed = true)
+    private val eventFlowWrapper = mockk<WordDetailsEventFlowWrapper>(relaxed = true)
     private val navigator = spyk<Navigator>()
-    private val dispatcherProvider = TestDispatcherProvider()
 
     private lateinit var viewModel: WordDetailsViewModel
 
@@ -43,8 +43,10 @@ internal class WordDetailsViewModelTest {
     fun setupDispatcher() {
         viewModel = WordDetailsViewModel(
             wordDetailsInteractor = wordDetailsInteractor,
+            stateFlowWrapper = stateFlowWrapper,
+            eventFlowWrapper = eventFlowWrapper,
             navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
+            dispatcherProvider = TestDispatcherProvider(),
         )
     }
 
@@ -52,19 +54,28 @@ internal class WordDetailsViewModelTest {
     fun `check save word with correct params`() = runTest {
         viewModel.onSaveWord("word", "слово")
 
-        coVerify(exactly = 1) { wordDetailsInteractor.saveWord(any()) }
-        Assertions.assertEquals(WordDetailsEvent.CloseScreenEvent, viewModel.closeScreenEvent.value)
-        verify(exactly = 1) { navigator.back() }
+        coVerify {
+            wordDetailsInteractor.saveWord(any())
+            eventFlowWrapper.update(WordDetailsEvent.CloseScreenEvent)
+        }
+        verify { navigator.back() }
     }
 
     @Test
-    fun `check delete word`() {
-        viewModel.setArguments(word)
+    fun `check delete word`() = runTest {
+        every { stateFlowWrapper.value() } returns WordDetailsViewState(
+            word = word,
+            showProgressDialog = false,
+            enableSaveButton = false,
+        )
+
         viewModel.onDeleteWord()
 
-        coVerify(exactly = 1) { wordDetailsInteractor.deleteWord(word.id.toString()) }
-        Assertions.assertEquals(WordDetailsEvent.CloseScreenEvent, viewModel.closeScreenEvent.value)
-        verify(exactly = 1) { navigator.back() }
+        coVerify {
+            wordDetailsInteractor.deleteWord(word.id.toString())
+            eventFlowWrapper.update(WordDetailsEvent.CloseScreenEvent)
+        }
+        verify { navigator.back() }
     }
 
     @Test
