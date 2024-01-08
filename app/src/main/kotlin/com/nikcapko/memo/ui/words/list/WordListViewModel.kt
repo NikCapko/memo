@@ -1,9 +1,10 @@
 package com.nikcapko.memo.ui.words.list
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.base.ui.BaseEventViewModel
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordListInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -17,13 +18,13 @@ private const val MIN_WORDS_COUNT = 5
 internal class WordListViewModel @Inject constructor(
     private val wordListInteractor: WordListInteractor,
     private val stateFlowWrapper: WordListStateFlowWrapper,
-    private val eventFlowWrapper: WordListEventFlowWrapper,
+    eventFlowWrapper: EventFlowWrapper<WordListEvent>,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
-) : ViewModel(), WordListViewController {
+) : BaseEventViewModel<WordListEvent>(eventFlowWrapper, dispatcherProvider),
+    WordListViewController {
 
     val state = stateFlowWrapper.liveValue()
-    val eventFlow = eventFlowWrapper.liveValue()
 
     init {
         loadWords()
@@ -46,9 +47,7 @@ internal class WordListViewModel @Inject constructor(
     override fun onEnableSound(position: Int) {
         val wordList =
             (stateFlowWrapper.value() as? DataLoadingViewModelState.LoadedState<List<Word>>)?.data
-        viewModelScope.launch(dispatcherProvider.main) {
-            eventFlowWrapper.update(WordListEvent.SpeakOutEvent(wordList?.getOrNull(position)?.word.orEmpty()))
-        }
+        sendEvent(WordListEvent.SpeakOutEvent(wordList?.getOrNull(position)?.word.orEmpty()))
     }
 
     override fun clearDatabase() {
@@ -67,17 +66,13 @@ internal class WordListViewModel @Inject constructor(
         val wordsList =
             (stateFlowWrapper.value() as? DataLoadingViewModelState.LoadedState<List<Word>>)?.data
         if ((wordsList?.size ?: 0) < MIN_WORDS_COUNT) {
-            viewModelScope.launch(dispatcherProvider.main) {
-                eventFlowWrapper.update(WordListEvent.ShowNeedMoreWordsEvent)
-            }
+            sendEvent(WordListEvent.ShowNeedMoreWordsEvent)
         } else {
             navigator.pushGamesScreen()
         }
     }
 
     override fun onClearDatabaseClick() {
-        viewModelScope.launch(dispatcherProvider.main) {
-            eventFlowWrapper.update(WordListEvent.ShowClearDatabaseEvent)
-        }
+        sendEvent(WordListEvent.ShowClearDatabaseEvent)
     }
 }

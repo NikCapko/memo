@@ -3,6 +3,7 @@ package com.nikcapko.memo.ui.games.select_translate
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.TestDispatcherProvider
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.SelectTranslateInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -25,7 +26,7 @@ internal class SelectTranslateViewModelTest {
 
     private val selectTranslateInteractor = mockk<SelectTranslateInteractor>(relaxed = true)
     private val stateFlowWrapper = mockk<SelectTranslateStateFlowWrapper>(relaxed = true)
-    private val eventFlowWrapper = mockk<SelectTranslateEventFlowWrapper>(relaxed = true)
+    private val eventFlowWrapper = mockk<EventFlowWrapper<SelectTranslateEvent>>(relaxed = true)
     private val navigator = spyk<Navigator>()
 
     private val dispatcherProvider = TestDispatcherProvider()
@@ -73,7 +74,7 @@ internal class SelectTranslateViewModelTest {
         viewModel.onTranslateClick(word1.translation)
 
         coVerify {
-            eventFlowWrapper.update(SelectTranslateEvent.SuccessAnimationEvent(true))
+            eventFlowWrapper.update(SelectTranslateEvent.SuccessAnimationEvent)
         }
     }
 
@@ -85,7 +86,7 @@ internal class SelectTranslateViewModelTest {
         viewModel.onTranslateClick(word2.translation)
 
         coVerify {
-            eventFlowWrapper.update(SelectTranslateEvent.SuccessAnimationEvent(false))
+            eventFlowWrapper.update(SelectTranslateEvent.ErrorAnimationEvent)
         }
     }
 

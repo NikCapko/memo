@@ -26,10 +26,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class SelectTranslateFragment : BaseFragment() {
+internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventController {
 
     private val viewModel by viewModels<SelectTranslateViewModel>()
     private val viewBinding by viewBinding(FragmentSelectTranslateBinding::bind)
+
     private val animationListener = object : Animator.AnimatorListener {
         override fun onAnimationStart(animation: Animator) = Unit
         override fun onAnimationCancel(animation: Animator) = Unit
@@ -91,21 +92,7 @@ internal class SelectTranslateFragment : BaseFragment() {
                 }
             }
         }
-        observe(viewModel.eventFlow) { event ->
-            when (event) {
-                is SelectTranslateEvent.SuccessAnimationEvent ->
-                    if (event.success) {
-                        showSuccessAnimation()
-                    } else {
-                        showErrorAnimation()
-                    }
-
-                is SelectTranslateEvent.EndGameEvent -> showEndGame(
-                    successCount = event.successCount,
-                    errorCount = event.errorCount,
-                )
-            }
-        }
+        observe(viewModel.eventFlow) { it.apply(this) }
     }
 
     private fun onClickTranslate(button: Button) {
@@ -126,16 +113,15 @@ internal class SelectTranslateFragment : BaseFragment() {
         btnTranslate5.text = translates[4]
     }
 
-    private fun showEndGame(successCount: Int, errorCount: Int) = with(viewBinding) {
-        val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
-        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
-        llContentContainer.makeGone()
-        rlEnGameContainer.makeVisible()
-        tvGameLevelSuccess.text = successCount.toString()
-        tvGameLevelError.text = errorCount.toString()
+    override fun showSuccessAnimation() = with(viewBinding) {
+        tvWord.makeGone()
+        llTranslateContainer.makeGone()
+        lavSuccess.makeVisible()
+        lavSuccess.playAnimation()
+        lavError.speed = 2f
     }
 
-    private fun showErrorAnimation() = with(viewBinding) {
+    override fun showErrorAnimation() = with(viewBinding) {
         tvWord.makeGone()
         llTranslateContainer.makeGone()
         lavError.makeVisible()
@@ -143,12 +129,13 @@ internal class SelectTranslateFragment : BaseFragment() {
         lavError.speed = 2f
     }
 
-    private fun showSuccessAnimation() = with(viewBinding) {
-        tvWord.makeGone()
-        llTranslateContainer.makeGone()
-        lavSuccess.makeVisible()
-        lavSuccess.playAnimation()
-        lavError.speed = 2f
+    override fun showEndGame(successCount: Int, errorCount: Int) = with(viewBinding) {
+        val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
+        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
+        llContentContainer.makeGone()
+        rlEnGameContainer.makeVisible()
+        tvGameLevelSuccess.text = successCount.toString()
+        tvGameLevelError.text = errorCount.toString()
     }
 
     private fun startLoading() = with(viewBinding) {

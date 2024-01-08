@@ -1,10 +1,7 @@
 package com.nikcapko.memo.ui.words.details
 
-import com.nikcapko.memo.base.ui.SharedFlowWrapper
 import com.nikcapko.memo.base.ui.StateFlowWrapper
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
@@ -21,17 +18,5 @@ internal class WordDetailsStateFlowWrapper @Inject constructor() :
 
     override fun update(value: WordDetailsViewState) {
         stateFlow.update { value }
-    }
-}
-
-internal class WordDetailsEventFlowWrapper @Inject constructor() :
-    SharedFlowWrapper<WordDetailsEvent> {
-
-    private val eventFlow = MutableSharedFlow<WordDetailsEvent>()
-
-    override fun liveValue() = eventFlow.asSharedFlow()
-
-    override suspend fun update(value: WordDetailsEvent) {
-        eventFlow.emit(value)
     }
 }

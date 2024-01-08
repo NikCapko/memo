@@ -28,7 +28,7 @@ internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordDetailsFragment : BaseFragment() {
+internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController {
 
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
     private val viewModel by viewModels<WordDetailsViewModel>()
@@ -59,9 +59,7 @@ internal class WordDetailsFragment : BaseFragment() {
         }
         observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
         observe(viewModel.eventFlow) { event ->
-            when (event) {
-                is WordDetailsEvent.CloseScreenEvent -> sendSuccessResult()
-            }
+            event.apply(this)
         }
     }
 
@@ -82,6 +80,11 @@ internal class WordDetailsFragment : BaseFragment() {
         initToolbar()
         setListeners()
         initObservers()
+    }
+
+    override fun sendSuccessResult() {
+        val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
+        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
     }
 
     private fun initToolbar() {
@@ -135,11 +138,6 @@ internal class WordDetailsFragment : BaseFragment() {
                 tilFrequency.makeGone()
             }
         }
-    }
-
-    private fun sendSuccessResult() {
-        val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
-        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
     }
 
     private fun enableSaveButton(enable: Boolean) = with(viewBinding) {

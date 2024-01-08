@@ -22,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class FindPairsFragment : BaseFragment() {
+internal class FindPairsFragment : BaseFragment(), FindPairsEventController {
 
     private val viewBinding by viewBinding(FragmentFindPairsBinding::bind)
     private val viewModel by viewModels<FindPairsViewModel>()
@@ -64,10 +64,7 @@ internal class FindPairsFragment : BaseFragment() {
             }
         }
         observe(viewModel.eventFlow) { event ->
-            when (event) {
-                is FindPairsEvent.FindPairResultEvent -> onFindPairResult(event.success)
-                is FindPairsEvent.EndGameEvent -> endGame()
-            }
+            event.apply(this)
         }
     }
 
@@ -128,7 +125,7 @@ internal class FindPairsFragment : BaseFragment() {
         btnTranslate5.text = translateList[4]
     }
 
-    private fun onFindPairResult(success: Boolean) {
+    override fun findPairResult(success: Boolean) {
         if (success) {
             selectedWord?.makeInvisible()
             selectedTranslate?.makeInvisible()
@@ -137,7 +134,7 @@ internal class FindPairsFragment : BaseFragment() {
         selectedTranslate = null
     }
 
-    private fun endGame() = with(viewBinding) {
+    override fun endGame() = with(viewBinding) {
         flContentContainer.makeGone()
         rlEnGameContainer.makeVisible()
         lavSuccess.playAnimation()

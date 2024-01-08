@@ -3,6 +3,7 @@ package com.nikcapko.memo.ui.games.find_pairs
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.TestDispatcherProvider
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.FindPairsInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -16,7 +17,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.SoftAssertions
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -30,7 +30,7 @@ internal class FindPairsViewModelTest {
     private val findPairsInteractor = mockk<FindPairsInteractor>(relaxed = true)
     private val navigator = spyk<Navigator>()
     private val stateFlowWrapper = mockk<FindPairsStateFlowWrapper>(relaxed = true)
-    private val eventFlowWrapper = mockk<FindPairsEventFlowWrapper>(relaxed = true)
+    private val eventFlowWrapper = mockk<EventFlowWrapper<FindPairsEvent>>(relaxed = true)
     private val dispatcherProvider = TestDispatcherProvider()
 
     private lateinit var viewModel: FindPairsViewModel
@@ -100,12 +100,12 @@ internal class FindPairsViewModelTest {
     @Test
     fun `check find incorrect pair first word - second translate`() = runTest {
         every { stateFlowWrapper.value() } returns
-            FindPairsState(
-                DataLoadingViewModelState.LoadedState(listOf(word1, word2)),
-                wordList = listOf(word1.word),
-                translateList = listOf(word1.translation),
-                wordsCount = 0,
-            )
+                FindPairsState(
+                    DataLoadingViewModelState.LoadedState(listOf(word1, word2)),
+                    wordList = listOf(word1.word),
+                    translateList = listOf(word1.translation),
+                    wordsCount = 0,
+                )
 
         viewModel = createViewModel()
         viewModel.onFindPair(word1.word, word2.translation)

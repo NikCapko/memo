@@ -2,10 +2,11 @@
 
 package com.nikcapko.memo.ui.games.find_pairs
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.base.ui.BaseEventViewModel
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.FindPairsInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -19,13 +20,12 @@ private const val MAX_WORDS_COUNT_FIND_PAIRS = 5
 internal class FindPairsViewModel @Inject constructor(
     private val findPairsInteractor: FindPairsInteractor,
     private val stateFlowWrapper: FindPairsStateFlowWrapper,
-    private val eventFlowWrapper: FindPairsEventFlowWrapper,
+    eventFlowWrapper: EventFlowWrapper<FindPairsEvent>,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
-) : ViewModel(), FindPairsViewController {
+) : BaseEventViewModel<FindPairsEvent>(eventFlowWrapper, dispatcherProvider), FindPairsViewController {
 
     val state = stateFlowWrapper.liveValue()
-    val eventFlow = eventFlowWrapper.liveValue()
 
     init {
         stateFlowWrapper.update(createInitialState())
@@ -60,21 +60,15 @@ internal class FindPairsViewModel @Inject constructor(
             if (it.word == selectedWord && it.translation == selectedTranslate) {
                 wordsCount++
                 if (wordsCount == MAX_WORDS_COUNT_FIND_PAIRS * 2) {
-                    viewModelScope.launch(dispatcherProvider.main) {
-                        eventFlowWrapper.update(FindPairsEvent.EndGameEvent)
-                    }
+                    sendEvent(FindPairsEvent.EndGameEvent)
                 } else {
-                    viewModelScope.launch(dispatcherProvider.main) {
-                        eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(true))
-                    }
+                    sendEvent(FindPairsEvent.FindPairResultEvent(true))
                 }
                 stateFlowWrapper.update { it.copy(wordsCount = wordsCount) }
                 return
             }
         }
-        viewModelScope.launch(dispatcherProvider.main) {
-            eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(false))
-        }
+        sendEvent(FindPairsEvent.FindPairResultEvent(false))
     }
 
     override fun onBackPressed() {

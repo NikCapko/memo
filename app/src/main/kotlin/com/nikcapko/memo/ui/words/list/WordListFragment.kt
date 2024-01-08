@@ -41,7 +41,7 @@ private const val SPEECH_RATE = 0.6f
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordListFragment : BaseFragment(), ProgressView {
+internal class WordListFragment : BaseFragment(), ProgressView, WordListEventController {
 
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
     private val viewModel by viewModels<WordListViewModel>()
@@ -155,16 +155,14 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        observe(viewModel.eventFlow) { event ->
-            when (event) {
-                is WordListEvent.SpeakOutEvent -> speakOut(event.word)
-                is WordListEvent.ShowClearDatabaseEvent -> showClearDatabaseDialog()
-                is WordListEvent.ShowNeedMoreWordsEvent -> showNeedMoreWordsDialog()
-            }
-        }
+        observe(viewModel.eventFlow) { it.apply(this) }
     }
 
-    private fun showNeedMoreWordsDialog() {
+    private fun showWords(wordsList: List<Word>?) {
+        adapter.words = wordsList
+    }
+
+    override fun showNeedMoreWordsDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.attention)
             .setMessage(R.string.need_add_words)
@@ -175,7 +173,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
             .show()
     }
 
-    private fun showClearDatabaseDialog() {
+    override fun showClearDatabaseDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.attention)
             .setMessage(R.string.clear_database)
@@ -188,11 +186,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
             .show()
     }
 
-    private fun showWords(wordsList: List<Word>?) {
-        adapter.words = wordsList
-    }
-
-    private fun speakOut(word: String?) {
+    override fun speakOut(word: String?) {
         if (!word.isNullOrEmpty()) {
             tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null, null)
             Toast.makeText(context, word, Toast.LENGTH_SHORT).show()

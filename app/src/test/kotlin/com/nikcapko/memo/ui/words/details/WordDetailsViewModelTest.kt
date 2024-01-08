@@ -2,6 +2,7 @@ package com.nikcapko.memo.ui.words.details
 
 import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.TestDispatcherProvider
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordDetailsInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -26,7 +27,7 @@ internal class WordDetailsViewModelTest {
 
     private val wordDetailsInteractor = mockk<WordDetailsInteractor>(relaxed = true)
     private val stateFlowWrapper = mockk<WordDetailsStateFlowWrapper>(relaxed = true)
-    private val eventFlowWrapper = mockk<WordDetailsEventFlowWrapper>(relaxed = true)
+    private val eventFlowWrapper = mockk<EventFlowWrapper<WordDetailsEvent>>(relaxed = true)
     private val navigator = spyk<Navigator>()
 
     private lateinit var viewModel: WordDetailsViewModel

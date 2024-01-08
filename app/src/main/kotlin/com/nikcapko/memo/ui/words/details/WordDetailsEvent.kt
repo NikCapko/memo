@@ -1,5 +1,14 @@
 package com.nikcapko.memo.ui.words.details
 
-sealed interface WordDetailsEvent {
-    data object CloseScreenEvent : WordDetailsEvent
+import com.nikcapko.memo.base.ui.BaseEvent
+
+internal interface WordDetailsEvent : BaseEvent {
+
+    fun apply(eventController: WordDetailsEventController)
+
+    data object CloseScreenEvent : WordDetailsEvent {
+        override fun apply(eventController: WordDetailsEventController) {
+            eventController.sendSuccessResult()
+        }
+    }
 }

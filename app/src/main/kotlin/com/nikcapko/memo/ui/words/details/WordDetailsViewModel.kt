@@ -1,8 +1,9 @@
 package com.nikcapko.memo.ui.words.details
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.base.ui.BaseEventViewModel
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordDetailsInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -20,10 +21,11 @@ import javax.inject.Inject
 internal class WordDetailsViewModel @Inject constructor(
     private val wordDetailsInteractor: WordDetailsInteractor,
     private val stateFlowWrapper: WordDetailsStateFlowWrapper,
-    private val eventFlowWrapper: WordDetailsEventFlowWrapper,
+    eventFlowWrapper: EventFlowWrapper<WordDetailsEvent>,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
-) : ViewModel(), WordDetailsViewController {
+) : BaseEventViewModel<WordDetailsEvent>(eventFlowWrapper, dispatcherProvider),
+    WordDetailsViewController {
 
     private val fieldWordState = MutableStateFlow("")
     private val fieldTranslateState = MutableStateFlow("")
@@ -33,8 +35,6 @@ internal class WordDetailsViewModel @Inject constructor(
     val enableSaveButtonState = combine(fieldWordState, fieldTranslateState) { word, translate ->
         return@combine word.isNotEmpty() && translate.isNotEmpty()
     }.distinctUntilChanged()
-
-    val eventFlow = eventFlowWrapper.liveValue()
 
     init {
         stateFlowWrapper.update(createInitialState())
@@ -65,7 +65,7 @@ internal class WordDetailsViewModel @Inject constructor(
                 )
             }
             wordDetailsInteractor.saveWord(word)
-            eventFlowWrapper.update(WordDetailsEvent.CloseScreenEvent)
+            sendEvent(WordDetailsEvent.CloseScreenEvent)
             stateFlowWrapper.update { it.copy(showProgressDialog = false) }
             withContext(dispatcherProvider.main) {
                 navigator.back()
@@ -79,7 +79,7 @@ internal class WordDetailsViewModel @Inject constructor(
             stateFlowWrapper.value().word?.let {
                 wordDetailsInteractor.deleteWord(it.id.toString())
             }
-            eventFlowWrapper.update(WordDetailsEvent.CloseScreenEvent)
+            sendEvent(WordDetailsEvent.CloseScreenEvent)
             stateFlowWrapper.update { it.copy(showProgressDialog = false) }
             withContext(dispatcherProvider.main) {
                 navigator.back()

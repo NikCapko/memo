@@ -1,11 +1,8 @@
 package com.nikcapko.memo.ui.games.select_translate
 
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
-import com.nikcapko.memo.base.ui.SharedFlowWrapper
 import com.nikcapko.memo.base.ui.StateFlowWrapper
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
@@ -22,17 +19,5 @@ internal class SelectTranslateStateFlowWrapper @Inject constructor() :
 
     override fun update(value: DataLoadingViewModelState) {
         stateFlow.update { value }
-    }
-}
-
-internal class SelectTranslateEventFlowWrapper @Inject constructor() :
-    SharedFlowWrapper<SelectTranslateEvent> {
-
-    private val eventFlow = MutableSharedFlow<SelectTranslateEvent>()
-
-    override fun liveValue() = eventFlow.asSharedFlow()
-
-    override suspend fun update(value: SelectTranslateEvent) {
-        eventFlow.emit(value)
     }
 }

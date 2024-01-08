@@ -3,6 +3,7 @@ package com.nikcapko.memo.ui.words.list
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.TestDispatcherProvider
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordListInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -29,7 +30,7 @@ internal class WordListViewModelTest {
 
     private var wordListInteractor = mockk<WordListInteractor>(relaxed = true)
     private val stateFlowWrapper = mockk<WordListStateFlowWrapper>(relaxed = true)
-    private val eventFlowWrapper = mockk<WordListEventFlowWrapper>(relaxed = true)
+    private val eventFlowWrapper = mockk<EventFlowWrapper<WordListEvent>>(relaxed = true)
     private var navigator = spyk<Navigator>()
 
     private lateinit var viewModel: WordListViewModel
@@ -111,7 +112,10 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check open screen games on call openGamesScreen`() {
-        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(List(MIN_WORDS_COUNT) { word })
+        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(
+            List(
+                MIN_WORDS_COUNT
+            ) { word })
 
         viewModel = createViewModel()
         viewModel.openGamesScreen()
