@@ -2,43 +2,31 @@
 
 package com.nikcapko.memo.ui.games.select_translate
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.base.ui.BaseEventViewModel
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.WORD_GAME_PRICE
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.domain.SelectTranslateInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 internal class SelectTranslateViewModel @Inject constructor(
     private val selectTranslateInteractor: SelectTranslateInteractor,
+    private val stateFlowWrapper: SelectTranslateStateFlowWrapper,
+    eventFlowWrapper: EventFlowWrapper<SelectTranslateEvent>,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
-) : ViewModel() {
+) : BaseEventViewModel<SelectTranslateEvent>(eventFlowWrapper, dispatcherProvider),
+    SelectTranslateViewController {
 
-    private val _state =
-        MutableStateFlow<DataLoadingViewModelState>(DataLoadingViewModelState.LoadingState)
-    val state: Flow<DataLoadingViewModelState> = _state.asStateFlow()
-
-    private val _successAnimationEvent =
-        MutableLiveData<SelectTranslateEvent.SuccessAnimationEvent>()
-    val successAnimationEvent: LiveData<SelectTranslateEvent.SuccessAnimationEvent> =
-        _successAnimationEvent
-
-    private val _endGameEvent = MutableLiveData<SelectTranslateEvent.EndGameEvent>()
-    val endGameEvent: LiveData<SelectTranslateEvent.EndGameEvent> = _endGameEvent
+    val stateFlow = stateFlowWrapper.liveValue()
 
     private var words: List<Word>? = null
     private var word: Word? = null
@@ -51,9 +39,9 @@ internal class SelectTranslateViewModel @Inject constructor(
         loadWords()
     }
 
-    fun loadWords() {
+    override fun loadWords() {
         viewModelScope.launch(dispatcherProvider.io) {
-            _state.update { DataLoadingViewModelState.LoadingState }
+            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
             words = selectTranslateInteractor.getWords()
             updateWord()
         }
@@ -65,22 +53,22 @@ internal class SelectTranslateViewModel @Inject constructor(
             ?.shuffled()
             ?.map { it.translation }
             .orEmpty()
-        _state.update { DataLoadingViewModelState.LoadedState(word to translates) }
+        stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(word to translates))
     }
 
-    fun onTranslateClick(translate: String) {
+    override fun onTranslateClick(translate: String) {
         if (word?.translation.equals(translate)) {
             word?.frequency = word?.frequency?.plus(WORD_GAME_PRICE) ?: WORD_GAME_PRICE
-            _successAnimationEvent.postValue(SelectTranslateEvent.SuccessAnimationEvent(true))
+            sendEvent(SelectTranslateEvent.SuccessAnimationEvent)
             successCounter++
         } else {
             word?.frequency = word?.frequency?.minus(WORD_GAME_PRICE) ?: -WORD_GAME_PRICE
-            _successAnimationEvent.postValue(SelectTranslateEvent.SuccessAnimationEvent(false))
+            sendEvent(SelectTranslateEvent.ErrorAnimationEvent)
             errorCounter++
         }
     }
 
-    fun onAnimationEnd() {
+    override fun onAnimationEnd() {
         if (counter == MAX_WORDS_COUNT_SELECT_TRANSLATE - 1) {
             updateWordsDB()
         } else {
@@ -94,11 +82,11 @@ internal class SelectTranslateViewModel @Inject constructor(
             words?.forEach { word ->
                 selectTranslateInteractor.saveWord(word)
             }
-            _endGameEvent.postValue(SelectTranslateEvent.EndGameEvent(successCounter, errorCounter))
+            sendEvent(SelectTranslateEvent.EndGameEvent(successCounter, errorCounter))
         }
     }
 
-    fun onBackPressed() {
+    override fun onBackPressed() {
         navigator.back()
     }
 }

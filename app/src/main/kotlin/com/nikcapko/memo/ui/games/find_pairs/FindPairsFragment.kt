@@ -22,10 +22,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class FindPairsFragment : BaseFragment() {
+internal class FindPairsFragment : BaseFragment(), FindPairsEventController {
 
-    private val viewModel by viewModels<FindPairsViewModel>()
     private val viewBinding by viewBinding(FragmentFindPairsBinding::bind)
+    private val viewModel by viewModels<FindPairsViewModel>()
 
     private var selectedTranslate: RadioButton? = null
     private var selectedWord: RadioButton? = null
@@ -47,12 +47,14 @@ internal class FindPairsFragment : BaseFragment() {
 
     private fun observe() {
         observe(viewModel.state) { state ->
-            when (state) {
-                DataLoadingViewModelState.LoadingState -> startLoading()
+            when (state.dataLoadingViewModelState) {
+                DataLoadingViewModelState.NoneState,
+                DataLoadingViewModelState.LoadingState,
+                -> startLoading()
+
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList(), emptyList())
                 is DataLoadingViewModelState.LoadedState<*> -> {
-                    val data = state.data as? Pair<List<String>, List<String>>
-                    showWords(data?.first.orEmpty(), data?.second.orEmpty())
+                    showWords(state.wordList, state.translateList)
                     completeLoading()
                 }
 
@@ -61,10 +63,9 @@ internal class FindPairsFragment : BaseFragment() {
                 }
             }
         }
-        observe(viewModel.findPairResultEvent) { event ->
-            onFindPairResult(event.success)
+        observe(viewModel.eventFlow) { event ->
+            event.apply(this)
         }
-        observe(viewModel.endGameEvent) { endGame() }
     }
 
     private fun initToolbar() {
@@ -124,7 +125,7 @@ internal class FindPairsFragment : BaseFragment() {
         btnTranslate5.text = translateList[4]
     }
 
-    private fun onFindPairResult(success: Boolean) {
+    override fun findPairResult(success: Boolean) {
         if (success) {
             selectedWord?.makeInvisible()
             selectedTranslate?.makeInvisible()
@@ -133,7 +134,7 @@ internal class FindPairsFragment : BaseFragment() {
         selectedTranslate = null
     }
 
-    private fun endGame() = with(viewBinding) {
+    override fun endGame() = with(viewBinding) {
         flContentContainer.makeGone()
         rlEnGameContainer.makeVisible()
         lavSuccess.playAnimation()

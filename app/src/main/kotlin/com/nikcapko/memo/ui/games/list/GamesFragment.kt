@@ -15,16 +15,17 @@ import com.nikcapko.memo.R
 import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.databinding.FragmentGamesBinding
 import com.nikcapko.memo.ui.games.list.adapter.GamesAdapter
-import com.nikcapko.memo.utils.extensions.lazyAndroid
+import com.nikcapko.memo.utils.extensions.androidLazy
 import com.nikcapko.memo.utils.extensions.observe
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class GamesFragment : BaseFragment() {
 
-    private val viewModel by viewModels<GamesViewModel>()
     private val viewBinding by viewBinding(FragmentGamesBinding::bind)
-    private val adapter: GamesAdapter by lazyAndroid {
+    private val viewModel by viewModels<GamesViewModel>()
+
+    private val adapter: GamesAdapter by androidLazy {
         GamesAdapter { position ->
             viewModel.onItemClick(position)
         }

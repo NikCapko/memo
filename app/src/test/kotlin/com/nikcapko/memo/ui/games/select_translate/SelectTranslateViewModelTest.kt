@@ -3,30 +3,32 @@ package com.nikcapko.memo.ui.games.select_translate
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.TestDispatcherProvider
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.SelectTranslateInteractor
 import com.nikcapko.memo.navigation.Navigator
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
  * Test for [SelectTranslateViewModel]
  */
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
 internal class SelectTranslateViewModelTest {
+
     private val selectTranslateInteractor = mockk<SelectTranslateInteractor>(relaxed = true)
+    private val stateFlowWrapper = mockk<SelectTranslateStateFlowWrapper>(relaxed = true)
+    private val eventFlowWrapper = mockk<EventFlowWrapper<SelectTranslateEvent>>(relaxed = true)
     private val navigator = spyk<Navigator>()
+
     private val dispatcherProvider = TestDispatcherProvider()
 
     private lateinit var viewModel: SelectTranslateViewModel
@@ -49,70 +51,60 @@ internal class SelectTranslateViewModelTest {
     fun `check load words for game`() = runTest {
         coEvery { selectTranslateInteractor.getWords() } returns listOf(word1, word2)
 
-        viewModel = SelectTranslateViewModel(
-            selectTranslateInteractor = selectTranslateInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
-        )
+        viewModel = createViewModel()
 
-        Assertions.assertThat(viewModel.state.first())
-            .isInstanceOf(
-                DataLoadingViewModelState.LoadedState::class.java,
+        verify { stateFlowWrapper.update(DataLoadingViewModelState.LoadingState) }
+        verify {
+            stateFlowWrapper.update(
+                DataLoadingViewModelState.LoadedState(
+                    word1 to listOf(
+                        word1.translation,
+                        word2.translation,
+                    ),
+                ),
             )
-
-        val data =
-            (viewModel.state.first() as DataLoadingViewModelState.LoadedState<Pair<Word, List<String>>>).data
-
-        Assertions.assertThat(data?.first).isEqualTo(word1)
-        Assertions.assertThat(data?.second)
-            .containsAll(listOf(word1.translation, word2.translation))
+        }
     }
 
     @Test
     fun `check correct select translate word`() = runTest {
         coEvery { selectTranslateInteractor.getWords() } returns listOf(word1, word2)
 
-        viewModel = SelectTranslateViewModel(
-            selectTranslateInteractor = selectTranslateInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
-        )
-
+        viewModel = createViewModel()
         viewModel.onTranslateClick(word1.translation)
 
-        org.junit.jupiter.api.Assertions.assertEquals(
-            SelectTranslateEvent.SuccessAnimationEvent(true),
-            viewModel.successAnimationEvent.value,
-        )
+        coVerify {
+            eventFlowWrapper.update(SelectTranslateEvent.SuccessAnimationEvent)
+        }
     }
 
     @Test
     fun `check select translate word`() = runTest {
         coEvery { selectTranslateInteractor.getWords() } returns listOf(word1, word2)
 
-        viewModel = SelectTranslateViewModel(
-            selectTranslateInteractor = selectTranslateInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
-        )
-
+        viewModel = createViewModel()
         viewModel.onTranslateClick(word2.translation)
 
-        org.junit.jupiter.api.Assertions.assertEquals(
-            SelectTranslateEvent.SuccessAnimationEvent(false),
-            viewModel.successAnimationEvent.value,
-        )
+        coVerify {
+            eventFlowWrapper.update(SelectTranslateEvent.ErrorAnimationEvent)
+        }
     }
 
     @Test
     fun `check call onBackPressed`() {
-        viewModel = SelectTranslateViewModel(
-            selectTranslateInteractor = selectTranslateInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
-        )
+        viewModel = createViewModel()
         viewModel.onBackPressed()
 
         verify { navigator.back() }
+    }
+
+    private fun createViewModel(): SelectTranslateViewModel {
+        return SelectTranslateViewModel(
+            selectTranslateInteractor = selectTranslateInteractor,
+            stateFlowWrapper = stateFlowWrapper,
+            eventFlowWrapper = eventFlowWrapper,
+            navigator = navigator,
+            dispatcherProvider = dispatcherProvider,
+        )
     }
 }

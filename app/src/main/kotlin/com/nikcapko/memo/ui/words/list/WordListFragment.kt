@@ -30,7 +30,7 @@ import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordListBinding
 import com.nikcapko.memo.ui.words.list.adapter.WordListAdapter
 import com.nikcapko.memo.utils.Constants
-import com.nikcapko.memo.utils.extensions.lazyAndroid
+import com.nikcapko.memo.utils.extensions.androidLazy
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observe
@@ -41,14 +41,14 @@ private const val SPEECH_RATE = 0.6f
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordListFragment : BaseFragment(), ProgressView {
+internal class WordListFragment : BaseFragment(), ProgressView, WordListEventController {
 
-    private val viewModel by viewModels<WordListViewModel>()
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
+    private val viewModel by viewModels<WordListViewModel>()
 
     private var tts: TextToSpeech? = null
 
-    private val adapter: WordListAdapter by lazyAndroid {
+    private val adapter: WordListAdapter by androidLazy {
         WordListAdapter(
             onItemClick = viewModel::onItemClick,
             onEnableSound = viewModel::onEnableSound,
@@ -65,7 +65,8 @@ internal class WordListFragment : BaseFragment(), ProgressView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        LocalBroadcastManager.getInstance(requireContext())
+        LocalBroadcastManager
+            .getInstance(requireContext())
             .registerReceiver(localBroadcastReceiver, IntentFilter(Constants.LOAD_WORDS_EVENT))
     }
 
@@ -92,7 +93,8 @@ internal class WordListFragment : BaseFragment(), ProgressView {
             setHomeButtonEnabled(false)
         }
         requireActivity().addMenuProvider(
-            /* provider = */ object : MenuProvider {
+            /* provider = */
+            object : MenuProvider {
                 override fun onPrepareMenu(menu: Menu) = Unit
                 override fun onMenuClosed(menu: Menu) = Unit
 
@@ -142,7 +144,7 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     private fun observe() {
         observe(viewModel.state) { state ->
             when (state) {
-                DataLoadingViewModelState.LoadingState -> startLoading()
+                DataLoadingViewModelState.NoneState, DataLoadingViewModelState.LoadingState -> startLoading()
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList())
                 is DataLoadingViewModelState.LoadedState<*> -> {
                     val data = (state.data as? List<*>)?.filterIsInstance<Word>()
@@ -153,36 +155,38 @@ internal class WordListFragment : BaseFragment(), ProgressView {
                 is DataLoadingViewModelState.ErrorState -> Unit
             }
         }
-        observe(viewModel.speakOutEvent) { speakOut(it.data) }
-        observe(viewModel.showClearDatabaseDialog) {
-            AlertDialog.Builder(requireContext())
-                .setTitle(R.string.attention)
-                .setMessage(R.string.clear_database)
-                .setPositiveButton(R.string.yes) { dialog, _ ->
-                    dialog.dismiss()
-                    viewModel.clearDatabase()
-                }
-                .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
-                .create()
-                .show()
-        }
-        observe(viewModel.showNeedMoreWordsDialog) {
-            AlertDialog.Builder(requireContext())
-                .setTitle(R.string.attention)
-                .setMessage(R.string.need_add_words)
-                .setPositiveButton(R.string.ok) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .create()
-                .show()
-        }
+        observe(viewModel.eventFlow) { it.apply(this) }
     }
 
     private fun showWords(wordsList: List<Word>?) {
         adapter.words = wordsList
     }
 
-    private fun speakOut(word: String?) {
+    override fun showNeedMoreWordsDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.attention)
+            .setMessage(R.string.need_add_words)
+            .setPositiveButton(R.string.ok) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
+
+    override fun showClearDatabaseDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.attention)
+            .setMessage(R.string.clear_database)
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                dialog.dismiss()
+                viewModel.clearDatabase()
+            }
+            .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
+    }
+
+    override fun speakOut(word: String?) {
         if (!word.isNullOrEmpty()) {
             tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null, null)
             Toast.makeText(context, word, Toast.LENGTH_SHORT).show()
@@ -217,7 +221,8 @@ internal class WordListFragment : BaseFragment(), ProgressView {
     }
 
     override fun onDestroy() {
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(localBroadcastReceiver)
+        LocalBroadcastManager.getInstance(requireContext())
+            .unregisterReceiver(localBroadcastReceiver)
         super.onDestroy()
     }
 }

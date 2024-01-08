@@ -1,15 +1,29 @@
 package com.nikcapko.memo.ui.games.select_translate
 
-import ru.ar2code.mutableliveevent.EventArgs
+import com.nikcapko.memo.base.ui.BaseEvent
 
-internal sealed interface SelectTranslateEvent {
+internal interface SelectTranslateEvent : BaseEvent {
 
-    data class SuccessAnimationEvent(val success: Boolean) :
-        EventArgs<Boolean>(success),
-        SelectTranslateEvent
+    fun apply(eventController: SelectTranslateEventController)
+
+    data object SuccessAnimationEvent : SelectTranslateEvent {
+        override fun apply(eventController: SelectTranslateEventController) {
+            eventController.showSuccessAnimation()
+        }
+    }
+
+    data object ErrorAnimationEvent : SelectTranslateEvent {
+        override fun apply(eventController: SelectTranslateEventController) {
+            eventController.showErrorAnimation()
+        }
+    }
 
     data class EndGameEvent(
-        val successCount: Int,
-        val errorCount: Int,
-    ) : EventArgs<Pair<Int, Int>>(successCount to errorCount), SelectTranslateEvent
+        private val successCount: Int,
+        private val errorCount: Int,
+    ) : SelectTranslateEvent {
+        override fun apply(eventController: SelectTranslateEventController) {
+            eventController.showEndGame(successCount, errorCount)
+        }
+    }
 }

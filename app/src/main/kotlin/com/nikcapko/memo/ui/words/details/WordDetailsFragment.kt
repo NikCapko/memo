@@ -16,9 +16,9 @@ import com.nikcapko.memo.base.ui.BaseFragment
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.FragmentWordDetailBinding
 import com.nikcapko.memo.utils.Constants
+import com.nikcapko.memo.utils.extensions.androidLazy
 import com.nikcapko.memo.utils.extensions.argument
 import com.nikcapko.memo.utils.extensions.hideKeyboard
-import com.nikcapko.memo.utils.extensions.lazyAndroid
 import com.nikcapko.memo.utils.extensions.makeGone
 import com.nikcapko.memo.utils.extensions.makeVisible
 import com.nikcapko.memo.utils.extensions.observe
@@ -28,14 +28,14 @@ internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordDetailsFragment : BaseFragment() {
+internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController {
 
-    private val viewModel by viewModels<WordDetailsViewModel>()
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
+    private val viewModel by viewModels<WordDetailsViewModel>()
 
     private val word by argument<Word>(WORD_ARGUMENT)
 
-    private val progressDialog: ProgressDialog by lazyAndroid {
+    private val progressDialog: ProgressDialog by androidLazy {
         ProgressDialog(requireContext()).apply {
             setTitle(getString(R.string.loading))
             setCancelable(false)
@@ -58,7 +58,9 @@ internal class WordDetailsFragment : BaseFragment() {
             }
         }
         observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
-        observe(viewModel.closeScreenEvent) { sendSuccessResult() }
+        observe(viewModel.eventFlow) { event ->
+            event.apply(this)
+        }
     }
 
     private fun getArgs() {
@@ -78,6 +80,11 @@ internal class WordDetailsFragment : BaseFragment() {
         initToolbar()
         setListeners()
         initObservers()
+    }
+
+    override fun sendSuccessResult() {
+        val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
+        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
     }
 
     private fun initToolbar() {
@@ -133,14 +140,9 @@ internal class WordDetailsFragment : BaseFragment() {
         }
     }
 
-    private fun sendSuccessResult() {
-        val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
-        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
-    }
-
-    private fun enableSaveButton(enable: Boolean) {
-        viewBinding.btnAdd.isEnabled = enable
-        viewBinding.btnSave.isEnabled = enable
+    private fun enableSaveButton(enable: Boolean) = with(viewBinding) {
+        btnAdd.isEnabled = enable
+        btnSave.isEnabled = enable
     }
 
     private fun startProgressDialog() {

@@ -10,7 +10,6 @@ class FragmentArgumentDelegate<T : Any?>(
     private var key: String,
 ) :
     ReadWriteProperty<Fragment, T?> {
-
     @Suppress("UNCHECKED_CAST")
     override fun getValue(
         thisRef: Fragment,

@@ -3,32 +3,34 @@ package com.nikcapko.memo.ui.games.find_pairs
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.TestDispatcherProvider
+import com.nikcapko.memo.base.ui.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.FindPairsInteractor
 import com.nikcapko.memo.navigation.Navigator
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.SoftAssertions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
  * Test for [FindPairsViewModel]
  */
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
 internal class FindPairsViewModelTest {
 
     private val findPairsInteractor = mockk<FindPairsInteractor>(relaxed = true)
     private val navigator = spyk<Navigator>()
+    private val stateFlowWrapper = mockk<FindPairsStateFlowWrapper>(relaxed = true)
+    private val eventFlowWrapper = mockk<EventFlowWrapper<FindPairsEvent>>(relaxed = true)
     private val dispatcherProvider = TestDispatcherProvider()
 
     private lateinit var viewModel: FindPairsViewModel
@@ -49,86 +51,118 @@ internal class FindPairsViewModelTest {
 
     @Test
     fun `check load words for game`() = runTest {
+        val stateSlot = mutableListOf<(FindPairsState) -> FindPairsState>()
+        every { stateFlowWrapper.update(capture(stateSlot)) } returns Unit
         coEvery { findPairsInteractor.getWordsForGame() } returns listOf(word1, word2)
 
-        viewModel = FindPairsViewModel(
-            findPairsInteractor = findPairsInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
+        viewModel = createViewModel()
+
+        val noneState = FindPairsState(
+            dataLoadingViewModelState = DataLoadingViewModelState.NoneState,
+            wordList = emptyList(),
+            translateList = emptyList(),
+            wordsCount = 0,
+        )
+        val loadingState = FindPairsState(
+            dataLoadingViewModelState = DataLoadingViewModelState.LoadingState,
+            wordList = emptyList(),
+            translateList = emptyList(),
+            wordsCount = 0,
+        )
+        val loadedState = FindPairsState(
+            dataLoadingViewModelState = DataLoadingViewModelState.LoadedState(
+                listOf(
+                    word1,
+                    word2,
+                ),
+            ),
+            wordList = listOf(word1.word, word2.word),
+            translateList = listOf(word1.translation, word2.translation),
+            wordsCount = 0,
         )
 
-        assertThat(viewModel.state.first())
-            .isInstanceOf(
-                DataLoadingViewModelState.LoadedState::class.java,
-            )
+        coVerify { findPairsInteractor.getWordsForGame() }
+        verify { stateFlowWrapper.update(noneState) }
+        Assertions.assertEquals(stateSlot.size, 2)
+        assertFindPairsState(stateSlot[0].invoke(noneState), loadingState)
+        assertFindPairsState(stateSlot[1].invoke(loadingState), loadedState)
+    }
 
-        val data =
-            (viewModel.state.first() as DataLoadingViewModelState.LoadedState<Pair<List<String>, List<String>>>).data
-
-        assertThat(data?.first).containsAll(listOf(word1.word, word2.word))
-        assertThat(data?.second).containsAll(listOf(word1.translation, word2.translation))
+    private fun assertFindPairsState(expected: FindPairsState, actual: FindPairsState) {
+        SoftAssertions().apply {
+            assertThat(expected.dataLoadingViewModelState).isEqualTo(actual.dataLoadingViewModelState)
+            assertThat(expected.wordList).containsExactlyInAnyOrderElementsOf(actual.wordList)
+            assertThat(expected.translateList).containsExactlyInAnyOrderElementsOf(actual.translateList)
+            assertThat(expected.wordsCount).isEqualTo(actual.wordsCount)
+        }.assertAll()
     }
 
     @Test
-    fun `check find incorrect pair first word - second translate`() {
-        coEvery { findPairsInteractor.getWordsForGame() } returns listOf(word1, word2)
+    fun `check find incorrect pair first word - second translate`() = runTest {
+        every { stateFlowWrapper.value() } returns
+                FindPairsState(
+                    DataLoadingViewModelState.LoadedState(listOf(word1, word2)),
+                    wordList = listOf(word1.word),
+                    translateList = listOf(word1.translation),
+                    wordsCount = 0,
+                )
 
-        viewModel = FindPairsViewModel(
-            findPairsInteractor = findPairsInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
-        )
+        viewModel = createViewModel()
         viewModel.onFindPair(word1.word, word2.translation)
 
-        Assertions.assertEquals(
-            FindPairsEvent.FindPairResultEvent(false),
-            viewModel.findPairResultEvent.value,
-        )
+        coVerify { eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(false)) }
     }
 
     @Test
-    fun `check find incorrect pair second word - first translate`() {
-        coEvery { findPairsInteractor.getWordsForGame() } returns listOf(word1, word2)
-
-        viewModel = FindPairsViewModel(
-            findPairsInteractor = findPairsInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
+    fun `check find incorrect pair second word - first translate`() = runTest {
+        coEvery { stateFlowWrapper.value() } returns FindPairsState(
+            dataLoadingViewModelState = DataLoadingViewModelState.LoadedState(
+                listOf(word1, word2),
+            ),
+            wordList = emptyList(),
+            translateList = emptyList(),
+            wordsCount = 0,
         )
+
+        viewModel = createViewModel()
         viewModel.onFindPair(word2.word, word1.translation)
 
-        Assertions.assertEquals(
-            FindPairsEvent.FindPairResultEvent(false),
-            viewModel.findPairResultEvent.value,
-        )
+        coVerify { eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(false)) }
     }
 
     @Test
-    fun `check find correct pair first word - first translate`() {
-        coEvery { findPairsInteractor.getWordsForGame() } returns listOf(word1, word2)
-
-        viewModel = FindPairsViewModel(
-            findPairsInteractor = findPairsInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
+    fun `check find correct pair first word - first translate`() = runTest {
+        coEvery { stateFlowWrapper.value() } returns FindPairsState(
+            dataLoadingViewModelState = DataLoadingViewModelState.LoadedState(
+                listOf(word1, word2),
+            ),
+            wordList = emptyList(),
+            translateList = emptyList(),
+            wordsCount = 0,
         )
+
+        viewModel = createViewModel()
         viewModel.onFindPair(word1.word, word1.translation)
 
-        Assertions.assertEquals(
-            FindPairsEvent.FindPairResultEvent(true),
-            viewModel.findPairResultEvent.value,
-        )
+        stateFlowWrapper.update { it.copy(wordsCount = 1) }
+        coVerify { eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(true)) }
     }
 
     @Test
     fun `check call onBackPressed`() {
-        viewModel = FindPairsViewModel(
-            findPairsInteractor = findPairsInteractor,
-            navigator = navigator,
-            dispatcherProvider = dispatcherProvider,
-        )
+        viewModel = createViewModel()
         viewModel.onBackPressed()
 
         verify { navigator.back() }
+    }
+
+    private fun createViewModel(): FindPairsViewModel {
+        return FindPairsViewModel(
+            findPairsInteractor = findPairsInteractor,
+            stateFlowWrapper = stateFlowWrapper,
+            eventFlowWrapper = eventFlowWrapper,
+            navigator = navigator,
+            dispatcherProvider = dispatcherProvider,
+        )
     }
 }
