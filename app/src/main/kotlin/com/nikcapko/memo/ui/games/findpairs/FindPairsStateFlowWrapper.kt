@@ -1,4 +1,4 @@
-package com.nikcapko.memo.ui.games.find_pairs
+package com.nikcapko.memo.ui.games.findpairs
 
 import com.nikcapko.memo.base.ui.flow.StateFlowWrapper
 import kotlinx.coroutines.flow.MutableStateFlow

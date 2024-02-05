@@ -1,6 +1,6 @@
 @file:Suppress("PackageName", "PackageNaming")
 
-package com.nikcapko.memo.ui.games.find_pairs
+package com.nikcapko.memo.ui.games.findpairs
 
 import android.os.Bundle
 import android.view.LayoutInflater

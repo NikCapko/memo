@@ -1,4 +1,4 @@
-package com.nikcapko.memo.ui.games.select_translate
+package com.nikcapko.memo.ui.games.selecttranslate
 
 interface SelectTranslateViewController {
     fun loadWords()

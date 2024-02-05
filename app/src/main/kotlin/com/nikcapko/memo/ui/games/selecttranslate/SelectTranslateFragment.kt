@@ -1,6 +1,6 @@
 @file:Suppress("PackageName", "PackageNaming")
 
-package com.nikcapko.memo.ui.games.select_translate
+package com.nikcapko.memo.ui.games.selecttranslate
 
 import android.animation.Animator
 import android.content.Intent

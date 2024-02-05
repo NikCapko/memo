@@ -1,4 +1,4 @@
-package com.nikcapko.memo.ui.games.find_pairs
+package com.nikcapko.memo.ui.games.findpairs
 
 internal interface FindPairsEventController {
     fun findPairResult(success: Boolean)

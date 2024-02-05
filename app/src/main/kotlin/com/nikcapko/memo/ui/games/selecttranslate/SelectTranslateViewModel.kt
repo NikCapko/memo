@@ -1,6 +1,6 @@
 @file:Suppress("PackageName", "PackageNaming")
 
-package com.nikcapko.memo.ui.games.select_translate
+package com.nikcapko.memo.ui.games.selecttranslate
 
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState

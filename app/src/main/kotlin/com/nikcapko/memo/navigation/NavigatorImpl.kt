@@ -4,9 +4,9 @@ import androidx.core.os.bundleOf
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.nikcapko.memo.data.Word
-import com.nikcapko.memo.ui.games.find_pairs.FindPairsFragment
+import com.nikcapko.memo.ui.games.findpairs.FindPairsFragment
 import com.nikcapko.memo.ui.games.list.GamesFragment
-import com.nikcapko.memo.ui.games.select_translate.SelectTranslateFragment
+import com.nikcapko.memo.ui.games.selecttranslate.SelectTranslateFragment
 import com.nikcapko.memo.ui.words.details.WORD_ARGUMENT
 import com.nikcapko.memo.ui.words.details.WordDetailsFragment
 import com.nikcapko.memo.ui.words.list.WordListFragment

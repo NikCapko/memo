@@ -1,4 +1,4 @@
-package com.nikcapko.memo.ui.games.select_translate
+package com.nikcapko.memo.ui.games.selecttranslate
 
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.InstantExecutorExtension
