@@ -1,7 +1,7 @@
 package com.nikcapko.memo.ui.words.list
 
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
-import com.nikcapko.memo.base.ui.StateFlowWrapper
+import com.nikcapko.memo.base.ui.flow.StateFlowWrapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull

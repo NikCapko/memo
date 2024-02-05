@@ -1,7 +1,9 @@
-package com.nikcapko.memo.base.ui
+package com.nikcapko.memo.base.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.base.ui.BaseEvent
+import com.nikcapko.memo.base.ui.flow.EventFlowWrapper
 import kotlinx.coroutines.launch
 
 internal abstract class BaseEventViewModel<T : BaseEvent>(

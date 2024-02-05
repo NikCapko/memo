@@ -5,8 +5,8 @@ package com.nikcapko.memo.ui.games.select_translate
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
-import com.nikcapko.memo.base.ui.BaseEventViewModel
-import com.nikcapko.memo.base.ui.EventFlowWrapper
+import com.nikcapko.memo.base.ui.flow.EventFlowWrapper
+import com.nikcapko.memo.base.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.data.WORD_GAME_PRICE
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.MAX_WORDS_COUNT_SELECT_TRANSLATE

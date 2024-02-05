@@ -1,7 +1,7 @@
 package com.nikcapko.memo.ui.games.list
 
 import com.nikcapko.domain.model.Game
-import com.nikcapko.memo.base.ui.BaseViewModel
+import com.nikcapko.memo.base.ui.viewmodel.BaseViewModel
 import com.nikcapko.memo.domain.GamesInteractor
 import com.nikcapko.memo.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel

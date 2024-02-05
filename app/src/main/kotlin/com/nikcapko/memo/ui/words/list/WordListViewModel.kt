@@ -3,8 +3,8 @@ package com.nikcapko.memo.ui.words.list
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
-import com.nikcapko.memo.base.ui.BaseEventViewModel
-import com.nikcapko.memo.base.ui.EventFlowWrapper
+import com.nikcapko.memo.base.ui.flow.EventFlowWrapper
+import com.nikcapko.memo.base.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordListInteractor
 import com.nikcapko.memo.navigation.Navigator
@@ -22,7 +22,7 @@ internal class WordListViewModel @Inject constructor(
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseEventViewModel<WordListEvent>(eventFlowWrapper, dispatcherProvider),
-    WordListViewController {
+    WordListCommandReceiver {
 
     val state = stateFlowWrapper.liveValue()
 

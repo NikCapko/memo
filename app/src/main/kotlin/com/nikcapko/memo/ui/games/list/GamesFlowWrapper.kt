@@ -1,7 +1,7 @@
 package com.nikcapko.memo.ui.games.list
 
 import com.nikcapko.domain.model.Game
-import com.nikcapko.memo.base.ui.StateFlowWrapper
+import com.nikcapko.memo.base.ui.flow.StateFlowWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged

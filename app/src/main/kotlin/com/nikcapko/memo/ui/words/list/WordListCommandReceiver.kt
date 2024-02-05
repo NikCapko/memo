@@ -1,6 +1,8 @@
 package com.nikcapko.memo.ui.words.list
 
-interface WordListViewController {
+import com.nikcapko.memo.base.ui.command.CommandReceiver
+
+internal interface WordListCommandReceiver : CommandReceiver {
     fun loadWords()
     fun onItemClick(position: Int)
     fun onEnableSound(position: Int)

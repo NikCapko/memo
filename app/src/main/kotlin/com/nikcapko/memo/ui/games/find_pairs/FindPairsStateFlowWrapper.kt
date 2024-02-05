@@ -1,6 +1,6 @@
 package com.nikcapko.memo.ui.games.find_pairs
 
-import com.nikcapko.memo.base.ui.StateFlowWrapper
+import com.nikcapko.memo.base.ui.flow.StateFlowWrapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull

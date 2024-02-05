@@ -49,16 +49,13 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
     private var tts: TextToSpeech? = null
 
     private val adapter: WordListAdapter by androidLazy {
-        WordListAdapter(
-            onItemClick = viewModel::onItemClick,
-            onEnableSound = viewModel::onEnableSound,
-        )
+        WordListAdapter(viewModel)
     }
 
     private val localBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == Constants.LOAD_WORDS_EVENT) {
-                viewModel.loadWords()
+                viewModel.processCommand(WordListCommand.UpdateItemsCommand)
             }
         }
     }
@@ -104,8 +101,8 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
 
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                     when (menuItem.itemId) {
-                        R.id.action_games -> viewModel.openGamesScreen()
-                        R.id.action_clear -> viewModel.onClearDatabaseClick()
+                        R.id.action_games -> viewModel.processCommand(WordListCommand.OpenGamesScreenCommand)
+                        R.id.action_clear -> viewModel.processCommand(WordListCommand.ClearDatabaseClickCommand)
                     }
                     return false
                 }
@@ -115,7 +112,7 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
     }
 
     private fun setListeners() = with(viewBinding) {
-        btnAddWord.setOnClickListener { viewModel.onAddWordClick() }
+        btnAddWord.setOnClickListener { viewModel.processCommand(WordListCommand.AddWordClickCommand) }
         pvLoad.onRetryClick = ::onRetry
     }
 
@@ -179,7 +176,7 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
             .setMessage(R.string.clear_database)
             .setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
-                viewModel.clearDatabase()
+                viewModel.processCommand(WordListCommand.ClearDatabaseConfirmCommand)
             }
             .setNegativeButton(R.string.no) { dialog, _ -> dialog.cancel() }
             .create()
@@ -212,7 +209,7 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
     }
 
     override fun onRetry() {
-        viewModel.loadWords()
+        viewModel.processCommand(WordListCommand.UpdateItemsCommand)
     }
 
     override fun onPause() {

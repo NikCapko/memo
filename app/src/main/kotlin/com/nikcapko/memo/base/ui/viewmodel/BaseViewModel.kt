@@ -1,4 +1,4 @@
-package com.nikcapko.memo.base.ui
+package com.nikcapko.memo.base.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 

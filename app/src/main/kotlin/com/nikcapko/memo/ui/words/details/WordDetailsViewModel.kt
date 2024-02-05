@@ -2,8 +2,8 @@ package com.nikcapko.memo.ui.words.details
 
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.base.coroutines.DispatcherProvider
-import com.nikcapko.memo.base.ui.BaseEventViewModel
-import com.nikcapko.memo.base.ui.EventFlowWrapper
+import com.nikcapko.memo.base.ui.flow.EventFlowWrapper
+import com.nikcapko.memo.base.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordDetailsInteractor
 import com.nikcapko.memo.navigation.Navigator

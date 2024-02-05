@@ -6,11 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nikcapko.memo.base.ui.BaseItemViewHolder
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.databinding.ItemWordListBinding
+import com.nikcapko.memo.ui.words.list.WordListCommand
+import com.nikcapko.memo.ui.words.list.WordListCommandReceiver
 import kotlin.properties.Delegates
 
 internal class WordListAdapter(
-    val onItemClick: (Int) -> Unit,
-    val onEnableSound: (Int) -> Unit,
+    val commandReceiver: WordListCommandReceiver,
 ) : RecyclerView.Adapter<BaseItemViewHolder<ItemWordListBinding, Word>>() {
 
     var words: List<Word>? by Delegates.observable(emptyList()) { _, _, _ -> notifyDataSetChanged() }
@@ -37,9 +38,15 @@ internal class WordListAdapter(
         BaseItemViewHolder<ItemWordListBinding, Word>(itemBinding) {
 
         init {
-            itemView.setOnClickListener { onItemClick.invoke(absoluteAdapterPosition) }
+            itemView.setOnClickListener {
+                commandReceiver.processCommand(
+                    command = WordListCommand.ItemClickCommand(absoluteAdapterPosition)
+                )
+            }
             itemBinding.ivSoundWaves.setOnClickListener {
-                onEnableSound(absoluteAdapterPosition)
+                commandReceiver.processCommand(
+                    command = WordListCommand.EnableSoundCommand(absoluteAdapterPosition)
+                )
             }
         }
 

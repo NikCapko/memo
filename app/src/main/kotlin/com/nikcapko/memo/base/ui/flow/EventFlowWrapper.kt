@@ -1,5 +1,6 @@
-package com.nikcapko.memo.base.ui
+package com.nikcapko.memo.base.ui.flow
 
+import com.nikcapko.memo.base.ui.BaseEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject

@@ -2,7 +2,7 @@ package com.nikcapko.memo.ui.words.details
 
 import com.nikcapko.memo.InstantExecutorExtension
 import com.nikcapko.memo.TestDispatcherProvider
-import com.nikcapko.memo.base.ui.EventFlowWrapper
+import com.nikcapko.memo.base.ui.flow.EventFlowWrapper
 import com.nikcapko.memo.data.Word
 import com.nikcapko.memo.domain.WordDetailsInteractor
 import com.nikcapko.memo.navigation.Navigator
