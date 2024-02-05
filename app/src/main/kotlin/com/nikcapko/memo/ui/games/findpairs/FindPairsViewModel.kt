@@ -23,7 +23,7 @@ internal class FindPairsViewModel @Inject constructor(
     eventFlowWrapper: EventFlowWrapper<FindPairsEvent>,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<FindPairsEvent>(eventFlowWrapper, dispatcherProvider), FindPairsViewController {
+) : BaseEventViewModel<FindPairsEvent>(eventFlowWrapper, dispatcherProvider), FindPairsCommandReceiver {
 
     val state = stateFlowWrapper.liveValue()
 

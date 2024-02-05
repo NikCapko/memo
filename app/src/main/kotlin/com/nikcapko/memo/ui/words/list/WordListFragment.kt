@@ -46,11 +46,9 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
     private val viewModel by viewModels<WordListViewModel>()
 
-    private var tts: TextToSpeech? = null
+    private val adapter by androidLazy { WordListAdapter(viewModel) }
 
-    private val adapter: WordListAdapter by androidLazy {
-        WordListAdapter(viewModel)
-    }
+    private var tts: TextToSpeech? = null
 
     private val localBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {

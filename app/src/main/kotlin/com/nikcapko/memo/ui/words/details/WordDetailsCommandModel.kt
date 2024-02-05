@@ -18,14 +18,14 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-internal class WordDetailsViewModel @Inject constructor(
+internal class WordDetailsCommandModel @Inject constructor(
     private val wordDetailsInteractor: WordDetailsInteractor,
     private val stateFlowWrapper: WordDetailsStateFlowWrapper,
     eventFlowWrapper: EventFlowWrapper<WordDetailsEvent>,
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseEventViewModel<WordDetailsEvent>(eventFlowWrapper, dispatcherProvider),
-    WordDetailsViewController {
+    WordDetailsCommandReceiver {
 
     private val fieldWordState = MutableStateFlow("")
     private val fieldTranslateState = MutableStateFlow("")

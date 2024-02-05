@@ -35,7 +35,8 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
         override fun onAnimationStart(animation: Animator) = Unit
         override fun onAnimationCancel(animation: Animator) = Unit
         override fun onAnimationRepeat(animation: Animator) = Unit
-        override fun onAnimationEnd(animation: Animator) = viewModel.onAnimationEnd()
+        override fun onAnimationEnd(animation: Animator) =
+            viewModel.processCommand(SelectTranslateCommand.AnimationEndCommand)
     }
 
     override fun onCreateView(
@@ -71,7 +72,7 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
             btnTranslate4.setOnClickListener { onClickTranslate(it as Button) }
             btnTranslate5.setOnClickListener { onClickTranslate(it as Button) }
 
-            btnExit.setOnClickListener { viewModel.onBackPressed() }
+            btnExit.setOnClickListener { viewModel.processCommand(SelectTranslateCommand.BackPressedCommand) }
             pvLoad.onRetryClick = ::onRetry
         }
     }
@@ -96,7 +97,7 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
     }
 
     private fun onClickTranslate(button: Button) {
-        viewModel.onTranslateClick(button.text.toString())
+        viewModel.processCommand(SelectTranslateCommand.TranslateClickCommand(button.text.toString()))
     }
 
     @Suppress("MagicNumber")
@@ -154,6 +155,6 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
     }
 
     private fun onRetry() {
-        viewModel.loadWords()
+        viewModel.processCommand(SelectTranslateCommand.LoadWordsCommand)
     }
 }

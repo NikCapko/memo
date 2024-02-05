@@ -80,9 +80,11 @@ internal class FindPairsFragment : BaseFragment(), FindPairsEventController {
             if (rgTranslate.checkedRadioButtonId != -1 && checkedId != -1) {
                 selectedTranslate = rgTranslate.findViewById(rgTranslate.checkedRadioButtonId)
                 selectedWord = group.findViewById(checkedId)
-                viewModel.onFindPair(
-                    selectedWord = selectedWord?.text.toString(),
-                    selectedTranslate = selectedTranslate?.text.toString(),
+                viewModel.processCommand(
+                    command = FindPairsCommand.FindPairCommand(
+                        selectedWord = selectedWord?.text.toString(),
+                        selectedTranslate = selectedTranslate?.text.toString(),
+                    )
                 )
                 rgTranslate.clearCheck()
                 rgWord.clearCheck()
@@ -101,7 +103,7 @@ internal class FindPairsFragment : BaseFragment(), FindPairsEventController {
             }
         }
         btnExit.setOnClickListener {
-            viewModel.onBackPressed()
+            viewModel.processCommand(FindPairsCommand.BackPressedCommand)
         }
         lavSuccess.setOnClickListener { }
         pvLoad.onRetryClick = ::onRetry
@@ -156,6 +158,6 @@ internal class FindPairsFragment : BaseFragment(), FindPairsEventController {
     }
 
     private fun onRetry() {
-        viewModel.loadWords()
+        viewModel.processCommand(FindPairsCommand.LoadWordsCommand)
     }
 }

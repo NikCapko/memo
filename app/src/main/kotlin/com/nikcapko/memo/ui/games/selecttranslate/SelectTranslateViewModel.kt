@@ -24,7 +24,7 @@ internal class SelectTranslateViewModel @Inject constructor(
     private val navigator: Navigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseEventViewModel<SelectTranslateEvent>(eventFlowWrapper, dispatcherProvider),
-    SelectTranslateViewController {
+    SelectTranslateCommandReceiver {
 
     val stateFlow = stateFlowWrapper.liveValue()
 

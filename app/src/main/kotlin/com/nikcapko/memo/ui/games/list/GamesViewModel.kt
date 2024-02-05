@@ -12,7 +12,7 @@ internal class GamesViewModel @Inject constructor(
     private var gamesInteractor: GamesInteractor,
     private var gamesFlowWrapper: GamesFlowWrapper,
     private var navigator: Navigator,
-) : BaseViewModel(), GamesViewController {
+) : BaseViewModel(), GamesCommandReceiver {
 
     val state = gamesFlowWrapper.liveValue()
 

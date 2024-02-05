@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
- * Test for [WordDetailsViewModel]
+ * Test for [WordDetailsCommandModel]
  */
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
@@ -30,7 +30,7 @@ internal class WordDetailsViewModelTest {
     private val eventFlowWrapper = mockk<EventFlowWrapper<WordDetailsEvent>>(relaxed = true)
     private val navigator = spyk<Navigator>()
 
-    private lateinit var viewModel: WordDetailsViewModel
+    private lateinit var viewModel: WordDetailsCommandModel
 
     private var word = Word(
         id = 3929,
@@ -117,7 +117,7 @@ internal class WordDetailsViewModelTest {
         )
     }
 
-    private fun createViewModel() = WordDetailsViewModel(
+    private fun createViewModel() = WordDetailsCommandModel(
         wordDetailsInteractor = wordDetailsInteractor,
         stateFlowWrapper = stateFlowWrapper,
         eventFlowWrapper = eventFlowWrapper,

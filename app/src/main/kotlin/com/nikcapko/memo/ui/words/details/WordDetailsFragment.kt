@@ -31,7 +31,7 @@ internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
 internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController {
 
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
-    private val viewModel by viewModels<WordDetailsViewModel>()
+    private val viewModel by viewModels<WordDetailsCommandModel>()
 
     private val word by argument<Word>(WORD_ARGUMENT)
 
@@ -98,28 +98,32 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
         with(viewBinding) {
             btnAdd.setOnClickListener {
                 hideKeyboard()
-                viewModel.onSaveWord(
-                    etWord.text.toString(),
-                    etTranslate.text.toString(),
+                viewModel.processCommand(
+                    command = WordDetailsCommand.SaveWordCommand(
+                        word = etWord.text.toString(),
+                        translate = etTranslate.text.toString(),
+                    )
                 )
             }
             btnSave.setOnClickListener {
                 hideKeyboard()
-                viewModel.onSaveWord(
-                    etWord.text.toString(),
-                    etTranslate.text.toString(),
+                viewModel.processCommand(
+                    command = WordDetailsCommand.SaveWordCommand(
+                        word = etWord.text.toString(),
+                        translate = etTranslate.text.toString(),
+                    )
                 )
             }
             btnDelete.setOnClickListener {
                 hideKeyboard()
-                viewModel.onDeleteWord()
+                viewModel.processCommand(WordDetailsCommand.DeleteWordCommand)
             }
 
             etWord.addTextChangedListener {
-                viewModel.changeWordField(it.toString())
+                viewModel.processCommand(WordDetailsCommand.ChangeWordFieldCommand(it.toString()))
             }
             etTranslate.addTextChangedListener {
-                viewModel.changeTranslateField(it.toString())
+                viewModel.processCommand(WordDetailsCommand.ChangeTranslateFieldCommand(it.toString()))
             }
         }
     }
