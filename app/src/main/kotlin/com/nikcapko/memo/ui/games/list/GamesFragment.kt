@@ -25,7 +25,7 @@ class GamesFragment : BaseFragment() {
     private val viewBinding by viewBinding(FragmentGamesBinding::bind)
     private val viewModel by viewModels<GamesViewModel>()
 
-    private val adapter by androidLazy { GamesAdapter(viewModel) }
+    private val adapter by androidLazy { GamesAdapter(viewModel::processCommand) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

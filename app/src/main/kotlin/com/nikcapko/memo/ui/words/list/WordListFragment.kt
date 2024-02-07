@@ -46,7 +46,7 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
     private val viewBinding by viewBinding(FragmentWordListBinding::bind)
     private val viewModel by viewModels<WordListViewModel>()
 
-    private val adapter by androidLazy { WordListAdapter(viewModel) }
+    private val adapter by androidLazy { WordListAdapter(viewModel::processCommand) }
 
     private var tts: TextToSpeech? = null
 

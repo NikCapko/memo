@@ -7,11 +7,10 @@ import com.nikcapko.domain.model.Game
 import com.nikcapko.memo.base.ui.BaseItemViewHolder
 import com.nikcapko.memo.databinding.ItemGameListBinding
 import com.nikcapko.memo.ui.games.list.GamesCommand
-import com.nikcapko.memo.ui.games.list.GamesCommandReceiver
 import kotlin.properties.Delegates
 
 internal class GamesAdapter(
-    val commandReceiver: GamesCommandReceiver,
+    private val commandProcessor: (GamesCommand) -> Unit,
 ) : RecyclerView.Adapter<BaseItemViewHolder<ItemGameListBinding, Game>>() {
 
     var games: List<Game> by Delegates.observable(emptyList()) { _, _, _ -> notifyDataSetChanged() }
@@ -39,9 +38,7 @@ internal class GamesAdapter(
 
         init {
             itemView.setOnClickListener {
-                commandReceiver.processCommand(
-                    GamesCommand.ItemClickCommand(absoluteAdapterPosition)
-                )
+                commandProcessor(GamesCommand.ItemClickCommand(absoluteAdapterPosition))
             }
         }
 
