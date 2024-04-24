@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
 internal class FieldConverter @Inject constructor(@ApplicationContext var context: Context) : ResourceManager {
 

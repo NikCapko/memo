@@ -9,7 +9,7 @@ plugins {
 android {
     compileSdk = libs.versions.compileSdkVersion.get().toInt()
     buildToolsVersion = libs.versions.buildToolsVersion.get()
-    namespace = "com.nikcapko.memo"
+    namespace = "com.nikcapko.memo.app"
 
     defaultConfig {
         applicationId = libs.versions.applicationId.get()
@@ -34,8 +34,11 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = false
+        compose = true
     }
-
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -60,9 +63,12 @@ hilt {
 
 dependencies {
 
-    implementation(project(":core"))
+    implementation(project(":core:common"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:ui"))
     implementation(project(":data"))
     implementation(project(":domain"))
+    implementation(project(":presentation"))
 
     implementation(libs.kotlin)
 
@@ -101,6 +107,13 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+
+    // compose
+    implementation(libs.androidx.material3)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
+    implementation(libs.compose.preview)
+    implementation(libs.compose.ui.tooling)
 
     // testing
     testImplementation(libs.test.assertj)

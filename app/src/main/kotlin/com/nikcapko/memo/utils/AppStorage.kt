@@ -11,7 +11,8 @@ import javax.inject.Singleton
 @Singleton
 class AppStorage @Inject constructor(@ApplicationContext var context: Context) {
 
-    val preferences: SharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
+    val preferences: SharedPreferences =
+        context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
 
     inline fun <reified T> get(key: String, defaultValue: T): T {
         return preferences.get(key, defaultValue)

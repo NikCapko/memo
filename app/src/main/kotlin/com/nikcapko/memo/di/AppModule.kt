@@ -2,7 +2,7 @@ package com.nikcapko.memo.di
 
 import android.content.Context
 import com.nikcapko.memo.base.coroutines.DefaultDispatcherProvider
-import com.nikcapko.memo.base.coroutines.DispatcherProvider
+import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.utils.resources.FieldConverter
 import com.nikcapko.memo.utils.resources.ResourceManager
 import dagger.Module

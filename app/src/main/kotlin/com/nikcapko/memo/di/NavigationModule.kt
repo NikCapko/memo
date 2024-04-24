@@ -4,8 +4,8 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Cicerone.Companion.create
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
-import com.nikcapko.memo.navigation.Navigator
-import com.nikcapko.memo.navigation.NavigatorImpl
+import com.nikcapko.memo.core.navigation.RootNavigator
+import com.nikcapko.memo.presentation.navigation.RootNavigatorImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,5 +32,5 @@ internal object NavigationModule {
 
     @Provides
     @Singleton
-    fun provideNavigator(router: Router): Navigator = NavigatorImpl(router)
+    fun provideNavigator(router: Router): RootNavigator = RootNavigatorImpl(router)
 }

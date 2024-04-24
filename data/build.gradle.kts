@@ -46,7 +46,7 @@ android {
 dependencies {
     implementation(kotlin("reflect"))
 
-    implementation(project(":core"))
+    implementation(project(":core:common"))
     implementation(project(":domain"))
 
     // Dagger - Hilt
