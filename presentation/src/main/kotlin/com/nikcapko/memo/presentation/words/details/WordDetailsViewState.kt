@@ -1,6 +1,6 @@
 package com.nikcapko.memo.presentation.words.details
 
-import com.nikcapko.memo.core.common.data.Word
+import com.nikcapko.memo.core.data.Word
 
 internal data class WordDetailsViewState(
     val word: Word?,

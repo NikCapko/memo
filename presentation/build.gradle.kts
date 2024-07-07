@@ -1,46 +1,23 @@
 plugins {
-    id("com.android.library")
-    id("dagger.hilt.android.plugin")
-    id("kotlin-android")
-    id("kotlin-parcelize")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.memo.android.library)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
-    compileSdk = libs.versions.compileSdkVersion.get().toInt()
-    buildToolsVersion = libs.versions.buildToolsVersion.get()
     namespace = "com.nikcapko.memo.presentation"
 
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     buildFeatures {
         viewBinding = true
-        dataBinding = false
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = listOf("-Xsam-conversions=class")
-    }
+
+    composeOptions { kotlinCompilerExtensionVersion = "2.0.0" }
 
     testOptions {
-        unitTests.all {
-            it.useJUnitPlatform()
-        }
+        unitTests.all { it.useJUnitPlatform() }
         unitTests.isReturnDefaultValues = true
     }
 }
@@ -51,10 +28,12 @@ hilt {
 }
 
 dependencies {
-    implementation(project(":core:common"))
-    implementation(project(":core:navigation"))
-    implementation(project(":core:ui"))
-    implementation(project(":domain"))
+    implementation(projects.coreCommon)
+    implementation(projects.coreData)
+    implementation(projects.coreUi)
+    implementation(projects.domain)
+
+    implementation(kotlin("reflect"))
 
     implementation(libs.kotlin)
 
@@ -95,17 +74,22 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
 
     // compose
-    implementation(libs.androidx.material3)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.ui)
+    implementation(libs.compose.ui.android)
+    implementation(libs.compose.ui.unit)
+    implementation(libs.compose.ui.util)
+    implementation(libs.compose.ui.text)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.foundation.layout)
     implementation(libs.compose.material)
-    implementation(libs.compose.preview)
-    implementation(libs.compose.ui.tooling)
+    implementation(libs.compose.material.icons.core)
+    implementation(libs.compose.material.icons.extended)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.tooling.preview.android)
 
     // testing
-    testImplementation(libs.test.assertj)
-    testImplementation(libs.test.mockk)
-    testImplementation(libs.test.junit)
-    testImplementation(libs.test.junit.jupiter)
-    testImplementation(libs.test.kotlinx.coroutines)
-    testImplementation(libs.test.androidx.testing)
+    testImplementation(projects.coreTest)
 }

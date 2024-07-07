@@ -1,40 +1,15 @@
 plugins {
-    id("com.android.library")
-    id("dagger.hilt.android.plugin")
-    id("kotlin-android")
-    id("kotlin-parcelize")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.memo.android.library)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
-    compileSdk = libs.versions.compileSdkVersion.get().toInt()
-    buildToolsVersion = libs.versions.buildToolsVersion.get()
     namespace = "com.nikcapko.memo.core.ui"
 
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     buildFeatures {
-        viewBinding = true
-        dataBinding = false
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-        freeCompilerArgs = listOf("-Xsam-conversions=class")
+        viewBinding = true
     }
 
     testOptions {
@@ -45,16 +20,9 @@ android {
     }
 }
 
-hilt {
-    enableAggregatingTask = false
-    enableExperimentalClasspathAggregation = true
-}
-
 dependencies {
 
-    implementation(project(":core:common"))
-    implementation(project(":data"))
-    implementation(project(":domain"))
+    implementation(projects.coreCommon)
 
     implementation(libs.kotlin)
 
@@ -65,13 +33,6 @@ dependencies {
 
     implementation(libs.androidx.fragment.ktx)
 
-    // Dagger - Hilt
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
-
-    // ViewBindingPropertyDelegate
-    implementation(libs.viewbindingpropertydelegate)
-
     // lottie animation
     implementation(libs.lottie)
 
@@ -81,16 +42,16 @@ dependencies {
     // navigation cicerone
     implementation(libs.cicerone)
 
-    // androidx.lifecycle
-    implementation(libs.lifecycle.extensions)
-    implementation(libs.lifecycle.viewmodel)
-    implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
-
     // compose
-    implementation(libs.androidx.material3)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.ui)
+    implementation(libs.compose.ui.unit)
+    implementation(libs.compose.ui.util)
+    implementation(libs.compose.ui.text)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.foundation.layout)
     implementation(libs.compose.material)
-    implementation(libs.compose.preview)
-    implementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.tooling)
 }

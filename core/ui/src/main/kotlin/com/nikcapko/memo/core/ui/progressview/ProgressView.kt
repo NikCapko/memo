@@ -12,7 +12,6 @@ import com.nikcapko.memo.core.ui.R
 import com.nikcapko.memo.core.ui.extensions.makeGone
 import com.nikcapko.memo.core.ui.extensions.makeVisible
 
-
 class ProgressView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

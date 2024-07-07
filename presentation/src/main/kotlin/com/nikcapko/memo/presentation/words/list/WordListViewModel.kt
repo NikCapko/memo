@@ -3,9 +3,8 @@ package com.nikcapko.memo.presentation.words.list
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.DispatcherProvider
-import com.nikcapko.memo.core.common.data.Word
-import com.nikcapko.memo.core.navigation.RootNavigator
-import com.nikcapko.memo.core.ui.flow.EventFlowWrapper
+import com.nikcapko.memo.core.data.Word
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.presentation.domain.WordListInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,10 +17,9 @@ private const val MIN_WORDS_COUNT = 5
 internal class WordListViewModel @Inject constructor(
     private val wordListInteractor: WordListInteractor,
     private val stateFlowWrapper: WordListStateFlowWrapper,
-    eventFlowWrapper: EventFlowWrapper<WordListEvent>,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<WordListEvent>(eventFlowWrapper, dispatcherProvider) {
+) : BaseEventViewModel<WordListEvent>(dispatcherProvider) {
 
     val state = stateFlowWrapper.liveValue()
 

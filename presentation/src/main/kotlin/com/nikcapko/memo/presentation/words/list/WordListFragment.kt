@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
@@ -59,13 +58,12 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): ComposeView = ComposeView(requireContext()).apply {
         setContent {
-            val state by viewModel.state.collectAsState(null)
             ComposeTheme {
                 WordListScreen(
-                    state = state,
+                    state = viewModel.state.collectAsState(null),
                     onItemClick = { viewModel.onItemClick(it) },
                     onSpeakClick = { viewModel.onEnableSound(it) },
                     addItemClick = { viewModel.onAddWordClick() },

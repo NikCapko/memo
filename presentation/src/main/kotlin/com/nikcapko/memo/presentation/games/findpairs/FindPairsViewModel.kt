@@ -1,13 +1,10 @@
-@file:Suppress("PackageName", "PackageNaming")
-
 package com.nikcapko.memo.presentation.games.findpairs
 
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.DispatcherProvider
-import com.nikcapko.memo.core.common.data.Word
-import com.nikcapko.memo.core.navigation.RootNavigator
-import com.nikcapko.memo.core.ui.flow.EventFlowWrapper
+import com.nikcapko.memo.core.data.Word
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.presentation.domain.FindPairsInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,13 +15,12 @@ private const val MAX_WORDS_COUNT_FIND_PAIRS = 5
 
 @HiltViewModel
 internal class FindPairsViewModel @Inject constructor(
-    eventFlowWrapper: EventFlowWrapper<FindPairsEvent>,
     private val findPairsInteractor: FindPairsInteractor,
     private val stateFlowWrapper: FindPairsStateFlowWrapper,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<FindPairsEvent>(eventFlowWrapper, dispatcherProvider),
-    com.nikcapko.memo.presentation.games.findpairs.FindPairsCommandReceiver {
+) : BaseEventViewModel<FindPairsEvent>(dispatcherProvider),
+    FindPairsCommandReceiver {
 
     val state = stateFlowWrapper.liveValue()
 

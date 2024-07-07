@@ -3,8 +3,9 @@ package com.nikcapko.memo.data.repository
 import com.nikcapko.domain.model.WordModel
 import com.nikcapko.domain.repository.WordRepository
 import com.nikcapko.memo.data.db.AppDatabase
+import com.nikcapko.memo.data.db.converter.WordDBEntityListConverter
+import com.nikcapko.memo.data.db.converter.WordModelToEntityConverter
 import com.nikcapko.memo.data.db.data.WordDBEntity
-import com.nikcapko.memo.data.db.mapper.WordDBEntityMapper
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -23,11 +24,13 @@ internal class WordRepositoryImplTest {
 
     private var appDatabase: AppDatabase = mockk(relaxed = true)
 
-    private var wordDBEntityMapper: WordDBEntityMapper = mockk()
+    private var wordDBEntityListConverter: WordDBEntityListConverter = mockk()
+    private var wordModelToEntityConverter: WordModelToEntityConverter = mockk()
 
     private var repository: WordRepository = WordRepositoryImpl(
         appDatabase = appDatabase,
-        wordDBEntityMapper = wordDBEntityMapper,
+        wordDBEntityListConverter = wordDBEntityListConverter,
+        wordModelToEntityConverter = wordModelToEntityConverter,
     )
 
     private var wordModel = WordModel(
@@ -47,7 +50,7 @@ internal class WordRepositoryImplTest {
     @Test
     fun `on saveWord() call wordDao-insert`() = runTest {
         coEvery { appDatabase.wordDao().insert(any()) } just runs
-        every { wordDBEntityMapper.mapToEntity(wordModel) } returns wordDBEntity
+        every { wordModelToEntityConverter.convert(wordModel) } returns wordDBEntity
 
         repository.saveWord(wordModel)
 
@@ -66,7 +69,7 @@ internal class WordRepositoryImplTest {
     @Test
     fun `on getWordsFromDB() call wordDao-getAllWords`() = runTest {
         coEvery { appDatabase.wordDao().getAllWords() } returns emptyList()
-        every { wordDBEntityMapper.mapFromEntityList(emptyList()) } returns emptyList()
+        every { wordDBEntityListConverter.convert(emptyList()) } returns emptyList()
 
         repository.getWordsFromDB()
 
@@ -76,7 +79,7 @@ internal class WordRepositoryImplTest {
     @Test
     fun `on getWordsForGameByLimit() call wordDao-getAllWords`() = runTest {
         coEvery { appDatabase.wordDao().getWordsForGameByLimit(1) } returns emptyList()
-        every { wordDBEntityMapper.mapFromEntityList(emptyList()) } returns emptyList()
+        every { wordDBEntityListConverter.convert(emptyList()) } returns emptyList()
 
         repository.getWordsForGameByLimit(1)
 

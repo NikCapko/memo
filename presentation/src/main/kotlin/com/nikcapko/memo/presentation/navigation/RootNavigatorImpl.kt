@@ -3,8 +3,7 @@ package com.nikcapko.memo.presentation.navigation
 import androidx.core.os.bundleOf
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.FragmentScreen
-import com.nikcapko.memo.core.common.data.Word
-import com.nikcapko.memo.core.navigation.RootNavigator
+import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.presentation.games.findpairs.FindPairsFragment
 import com.nikcapko.memo.presentation.games.list.GamesFragment
 import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateFragment

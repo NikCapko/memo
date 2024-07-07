@@ -1,9 +1,34 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = "memo"
+
+includeBuild("build-logic")
+
 include(":app")
-include(":core")
 include(":data")
 include(":domain")
 include(":presentation")
-include(":core:common")
-include(":core:navigation")
-include(":core:ui")
+folder(
+    folder = "core",
+    modules = listOf(
+        "common",
+        "data",
+        "test",
+        "ui",
+    )
+)
+
+fun Settings.folder(folder: String, modules: List<String>) {
+    modules.forEach { module ->
+        include(":$folder-$module")
+        project(":$folder-$module").projectDir = File("$folder/$module")
+    }
+}

@@ -2,8 +2,9 @@ package com.nikcapko.memo.presentation.domain
 
 import com.nikcapko.domain.usecases.DeleteWordUseCase
 import com.nikcapko.domain.usecases.SaveWordUseCase
-import com.nikcapko.memo.core.common.data.Word
-import com.nikcapko.memo.presentation.mapper.WordModelMapper
+import com.nikcapko.memo.core.common.converter.convert
+import com.nikcapko.memo.core.data.Word
+import com.nikcapko.memo.presentation.mapper.WordToWordModelConverter
 import javax.inject.Inject
 
 internal interface WordDetailsInteractor {
@@ -14,7 +15,7 @@ internal interface WordDetailsInteractor {
 internal class WordDetailsInteractorImpl @Inject constructor(
     private val saveWordUseCase: SaveWordUseCase,
     private val deleteWordUseCase: DeleteWordUseCase,
-    private val wordModelMapper: WordModelMapper,
+    private val wordToWordModelConverter: WordToWordModelConverter,
 ) : WordDetailsInteractor {
 
     override suspend fun deleteWord(wordId: String) {
@@ -22,6 +23,6 @@ internal class WordDetailsInteractorImpl @Inject constructor(
     }
 
     override suspend fun saveWord(word: Word) {
-        saveWordUseCase(wordModelMapper.mapToEntity(word))
+        saveWordUseCase(word.convert(wordToWordModelConverter))
     }
 }

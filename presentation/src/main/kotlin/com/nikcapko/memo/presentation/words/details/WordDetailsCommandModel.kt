@@ -2,9 +2,8 @@ package com.nikcapko.memo.presentation.words.details
 
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.core.common.DispatcherProvider
-import com.nikcapko.memo.core.common.data.Word
-import com.nikcapko.memo.core.navigation.RootNavigator
-import com.nikcapko.memo.core.ui.flow.EventFlowWrapper
+import com.nikcapko.memo.core.data.Word
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +20,9 @@ import javax.inject.Inject
 internal class WordDetailsCommandModel @Inject constructor(
     private val wordDetailsInteractor: WordDetailsInteractor,
     private val stateFlowWrapper: WordDetailsStateFlowWrapper,
-    eventFlowWrapper: EventFlowWrapper<WordDetailsEvent>,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<WordDetailsEvent>(eventFlowWrapper, dispatcherProvider),
+) : BaseEventViewModel<WordDetailsEvent>(dispatcherProvider),
     WordDetailsCommandReceiver {
 
     private val fieldWordState = MutableStateFlow("")

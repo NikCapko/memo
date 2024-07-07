@@ -15,7 +15,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.Constants
-import com.nikcapko.memo.core.common.data.Word
+import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.makeGone
 import com.nikcapko.memo.core.ui.extensions.makeVisible

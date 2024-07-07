@@ -5,9 +5,8 @@ package com.nikcapko.memo.presentation.games.selecttranslate
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.DispatcherProvider
-import com.nikcapko.memo.core.common.data.Word
-import com.nikcapko.memo.core.navigation.RootNavigator
-import com.nikcapko.memo.core.ui.flow.EventFlowWrapper
+import com.nikcapko.memo.core.data.Word
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.presentation.domain.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.presentation.domain.SelectTranslateInteractor
@@ -21,11 +20,9 @@ internal const val WORD_GAME_PRICE = 0.02f
 internal class SelectTranslateViewModel @Inject constructor(
     private val selectTranslateInteractor: SelectTranslateInteractor,
     private val stateFlowWrapper: SelectTranslateStateFlowWrapper,
-    eventFlowWrapper: EventFlowWrapper<SelectTranslateEvent>,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<SelectTranslateEvent>(eventFlowWrapper, dispatcherProvider),
-    SelectTranslateCommandReceiver {
+) : BaseEventViewModel<SelectTranslateEvent>(dispatcherProvider), SelectTranslateCommandReceiver {
 
     val stateFlow = stateFlowWrapper.liveValue()
 

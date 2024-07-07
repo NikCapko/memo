@@ -3,18 +3,20 @@ package com.nikcapko.memo.data.repository
 import com.nikcapko.domain.model.WordModel
 import com.nikcapko.domain.repository.WordRepository
 import com.nikcapko.memo.data.db.AppDatabase
-import com.nikcapko.memo.data.db.mapper.WordDBEntityMapper
+import com.nikcapko.memo.data.db.converter.WordDBEntityListConverter
+import com.nikcapko.memo.data.db.converter.WordModelToEntityConverter
 import javax.inject.Inject
 
 internal class WordRepositoryImpl @Inject constructor(
     appDatabase: AppDatabase,
-    private val wordDBEntityMapper: WordDBEntityMapper,
+    private val wordDBEntityListConverter: WordDBEntityListConverter,
+    private val wordModelToEntityConverter: WordModelToEntityConverter,
 ) : WordRepository {
 
     private val wordsDao = appDatabase.wordDao()
 
     override suspend fun saveWord(word: WordModel) {
-        wordsDao.insert(wordDBEntityMapper.mapToEntity(word))
+        wordsDao.insert(wordModelToEntityConverter.convert(word))
     }
 
     override suspend fun deleteWord(id: String) {
@@ -22,11 +24,11 @@ internal class WordRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getWordsFromDB(): List<WordModel> {
-        return wordDBEntityMapper.mapFromEntityList(wordsDao.getAllWords())
+        return wordDBEntityListConverter.convert(wordsDao.getAllWords())
     }
 
     override suspend fun getWordsForGameByLimit(limit: Int): List<WordModel> {
-        return wordDBEntityMapper.mapFromEntityList(wordsDao.getWordsForGameByLimit(limit))
+        return wordDBEntityListConverter.convert(wordsDao.getWordsForGameByLimit(limit))
     }
 
     override suspend fun clearDatabase() {

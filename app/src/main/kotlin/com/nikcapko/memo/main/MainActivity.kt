@@ -3,28 +3,23 @@ package com.nikcapko.memo.main
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.github.terrakok.cicerone.Command
 import com.github.terrakok.cicerone.Navigator
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.nikcapko.memo.app.R
-import com.nikcapko.memo.core.navigation.RootNavigator
-import com.nikcapko.memo.core.ui.ChainHolder
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), ChainHolder {
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
 
     @Inject
     lateinit var rootNavigator: RootNavigator
-
-    override val chain = ArrayList<WeakReference<Fragment>>()
 
     private val navigator: Navigator = object : AppNavigator(this, R.id.fcView) {
 
