@@ -19,13 +19,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.nikcapko.memo.core.common.Constants
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.observe
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.core.ui.view.ProgressView
+import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
 import com.nikcapko.memo.presentation.R
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -36,7 +36,7 @@ private const val SPEECH_RATE = 0.6f
 @AndroidEntryPoint
 internal class WordListFragment : BaseFragment(), ProgressView, WordListEventController {
 
-    private val viewModel by viewModels<WordListViewModel>()
+    private val viewModel by lazyViewModels<WordListViewModel>()
 
     private var tts: TextToSpeech? = null
 

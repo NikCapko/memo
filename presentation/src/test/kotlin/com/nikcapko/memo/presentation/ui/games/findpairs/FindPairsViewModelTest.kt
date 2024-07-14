@@ -57,6 +57,7 @@ internal class FindPairsViewModelTest {
         coEvery { findPairsInteractor.getWordsForGame() } returns listOf(word1, word2)
 
         viewModel = createViewModel()
+        viewModel.onViewFirstCreated()
 
         val noneState = FindPairsState(
             dataLoadingViewModelState = DataLoadingViewModelState.NoneState,

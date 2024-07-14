@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.memo.core.common.Constants
@@ -20,9 +19,11 @@ import com.nikcapko.memo.core.ui.extensions.hideKeyboard
 import com.nikcapko.memo.core.ui.extensions.makeGone
 import com.nikcapko.memo.core.ui.extensions.makeVisible
 import com.nikcapko.memo.core.ui.extensions.observe
+import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
 import com.nikcapko.memo.presentation.R
 import com.nikcapko.memo.presentation.databinding.FragmentWordDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 
 internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
 
@@ -31,9 +32,17 @@ internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
 internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController {
 
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
-    private val viewModel by viewModels<WordDetailsCommandModel>()
 
     private val word by argument<Word>(WORD_ARGUMENT)
+
+    private val viewModel by lazyViewModels<WordDetailsViewModel>(
+        extrasProducer = {
+            defaultViewModelCreationExtras
+                .withCreationCallback<WordDetailsViewModel.Factory> { factory ->
+                    factory.create(word)
+                }
+        }
+    )
 
     private val progressDialog: ProgressDialog by androidLazy {
         ProgressDialog(requireContext()).apply {
@@ -41,11 +50,6 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
             setCancelable(false)
             setCanceledOnTouchOutside(false)
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        getArgs()
     }
 
     private fun initObservers() {
@@ -61,10 +65,6 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
         observe(viewModel.eventFlow) { event ->
             event.apply(this)
         }
-    }
-
-    private fun getArgs() {
-        viewModel.setArguments(word)
     }
 
     override fun onCreateView(
@@ -128,19 +128,17 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
         }
     }
 
-    private fun initView(word: Word?) {
-        with(viewBinding) {
-            word?.let {
-                flAddWordContainer.makeGone()
-                llEditWordContainer.makeVisible()
-                etWord.setText(it.word)
-                etTranslate.setText(it.translation)
-                etFrequency.setText(it.frequency.toString())
-            } ?: run {
-                flAddWordContainer.makeVisible()
-                llEditWordContainer.makeGone()
-                tilFrequency.makeGone()
-            }
+    private fun initView(word: Word?) = with(viewBinding) {
+        word?.let {
+            flAddWordContainer.makeGone()
+            llEditWordContainer.makeVisible()
+            etWord.setText(it.word)
+            etTranslate.setText(it.translation)
+            etFrequency.setText(it.frequency.toString())
+        } ?: run {
+            flAddWordContainer.makeVisible()
+            llEditWordContainer.makeGone()
+            tilFrequency.makeGone()
         }
     }
 

@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
@@ -20,6 +19,7 @@ import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.makeGone
 import com.nikcapko.memo.core.ui.extensions.makeVisible
 import com.nikcapko.memo.core.ui.extensions.observe
+import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
 import com.nikcapko.memo.presentation.R
 import com.nikcapko.memo.presentation.databinding.FragmentSelectTranslateBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventController {
 
-    private val viewModel by viewModels<SelectTranslateViewModel>()
+    private val viewModel by lazyViewModels<SelectTranslateViewModel>()
     private val viewBinding by viewBinding(FragmentSelectTranslateBinding::bind)
 
     private val animationListener = object : Animator.AnimatorListener {

@@ -1,10 +1,10 @@
 package com.nikcapko.memo.presentation.ui.games.list
 
 import com.nikcapko.domain.model.Game
-import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.domain.GamesInteractor
 import com.nikcapko.memo.presentation.games.list.GamesFlowWrapper
 import com.nikcapko.memo.presentation.games.list.GamesViewModel
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.coEvery
 import io.mockk.every
@@ -34,6 +34,7 @@ internal class GamesViewModelTest : FunSpec({
         coEvery { gamesInteractor.getDefaultGamesList() } returns gameList
 
         val viewModel = createViewModel()
+        viewModel.onViewFirstCreated()
 
         verify { gamesFlowWrapper.update(gameList) }
     }

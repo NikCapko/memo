@@ -7,14 +7,14 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.nikcapko.memo.presentation.R
 import com.nikcapko.memo.core.common.androidLazy
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.observe
+import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
+import com.nikcapko.memo.presentation.R
 import com.nikcapko.memo.presentation.databinding.FragmentGamesBinding
 import com.nikcapko.memo.presentation.games.list.adapter.GamesAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class GamesFragment : BaseFragment() {
 
     private val viewBinding by viewBinding(FragmentGamesBinding::bind)
-    private val viewModel by viewModels<GamesViewModel>()
+    private val viewModel by lazyViewModels<GamesViewModel>()
 
     private val adapter by androidLazy { GamesAdapter(viewModel::processCommand) }
 

@@ -8,16 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.ui.BaseFragment
-import com.nikcapko.memo.core.ui.extensions.observe
-import com.nikcapko.memo.presentation.R
-import com.nikcapko.memo.presentation.databinding.FragmentFindPairsBinding
 import com.nikcapko.memo.core.ui.extensions.makeGone
 import com.nikcapko.memo.core.ui.extensions.makeInvisible
 import com.nikcapko.memo.core.ui.extensions.makeVisible
+import com.nikcapko.memo.core.ui.extensions.observe
+import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
+import com.nikcapko.memo.presentation.R
+import com.nikcapko.memo.presentation.databinding.FragmentFindPairsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("TooManyFunctions")
@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 internal class FindPairsFragment : BaseFragment(), FindPairsEventController {
 
     private val viewBinding by viewBinding(FragmentFindPairsBinding::bind)
-    private val viewModel by viewModels<FindPairsViewModel>()
+    private val viewModel by lazyViewModels<FindPairsViewModel>()
 
     private var selectedTranslate: RadioButton? = null
     private var selectedWord: RadioButton? = null

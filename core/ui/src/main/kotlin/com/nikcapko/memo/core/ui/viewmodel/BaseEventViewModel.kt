@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseEventViewModel<T : BaseEvent>(
     private val dispatcherProvider: DispatcherProvider,
-) : BaseViewModel() {
+) : LazyViewModel() {
 
     private val eventFlowWrapper: EventFlowWrapper<T> = EventFlowWrapper<T>()
 

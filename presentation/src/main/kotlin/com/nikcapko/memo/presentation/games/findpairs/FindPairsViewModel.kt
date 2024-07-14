@@ -4,9 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.data.Word
-import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.presentation.domain.FindPairsInteractor
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,7 +24,7 @@ internal class FindPairsViewModel @Inject constructor(
 
     val state = stateFlowWrapper.liveValue()
 
-    init {
+    override fun onViewFirstCreated() {
         stateFlowWrapper.update(createInitialState())
         loadWords()
     }

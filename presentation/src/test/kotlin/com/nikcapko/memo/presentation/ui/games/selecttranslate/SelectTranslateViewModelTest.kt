@@ -4,14 +4,11 @@ import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
-import com.nikcapko.memo.core.ui.flow.EventFlowWrapper
 import com.nikcapko.memo.presentation.domain.SelectTranslateInteractor
-import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateEvent
 import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateStateFlowWrapper
 import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateViewModel
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
@@ -54,6 +51,7 @@ internal class SelectTranslateViewModelTest {
         coEvery { selectTranslateInteractor.getWords() } returns listOf(word1)
 
         viewModel = createViewModel()
+        viewModel.onViewFirstCreated()
 
         verify { stateFlowWrapper.update(DataLoadingViewModelState.LoadingState) }
         verify {

@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.data.Word
-import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.presentation.domain.MAX_WORDS_COUNT_SELECT_TRANSLATE
 import com.nikcapko.memo.presentation.domain.SelectTranslateInteractor
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,7 +33,7 @@ internal class SelectTranslateViewModel @Inject constructor(
     private var errorCounter = 0
     private var successCounter = 0
 
-    init {
+    override fun onViewFirstCreated() {
         loadWords()
     }
 

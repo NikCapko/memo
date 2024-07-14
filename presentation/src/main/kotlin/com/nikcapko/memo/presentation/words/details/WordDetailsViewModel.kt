@@ -3,9 +3,12 @@ package com.nikcapko.memo.presentation.words.details
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.data.Word
-import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
+import com.nikcapko.memo.presentation.navigation.RootNavigator
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -14,16 +17,21 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
-import javax.inject.Inject
 
-@HiltViewModel
-internal class WordDetailsCommandModel @Inject constructor(
+@HiltViewModel(assistedFactory = WordDetailsViewModel.Factory::class)
+internal class WordDetailsViewModel @AssistedInject constructor(
+    @Assisted private val word: Word?,
     private val wordDetailsInteractor: WordDetailsInteractor,
     private val stateFlowWrapper: WordDetailsStateFlowWrapper,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseEventViewModel<WordDetailsEvent>(dispatcherProvider),
     WordDetailsCommandReceiver {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(word: Word?): WordDetailsViewModel
+    }
 
     private val fieldWordState = MutableStateFlow("")
     private val fieldTranslateState = MutableStateFlow("")
@@ -34,14 +42,8 @@ internal class WordDetailsCommandModel @Inject constructor(
         return@combine word.isNotEmpty() && translate.isNotEmpty()
     }.distinctUntilChanged()
 
-    init {
-        stateFlowWrapper.update(createInitialState())
-    }
-
-    override fun setArguments(vararg params: Any?) {
-        stateFlowWrapper.update {
-            it.copy(word = params[0] as? Word)
-        }
+    override fun onViewFirstCreated() {
+        stateFlowWrapper.update(createInitialState(word))
     }
 
     override fun onSaveWord(wordArg: String, translate: String) {
@@ -85,9 +87,9 @@ internal class WordDetailsCommandModel @Inject constructor(
         }
     }
 
-    private fun createInitialState(): WordDetailsViewState {
+    private fun createInitialState(word: Word?): WordDetailsViewState {
         return WordDetailsViewState(
-            word = null,
+            word = word,
             showProgressDialog = false,
             enableSaveButton = false,
         )

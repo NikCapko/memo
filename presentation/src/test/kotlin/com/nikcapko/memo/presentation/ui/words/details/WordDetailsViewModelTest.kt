@@ -3,12 +3,10 @@ package com.nikcapko.memo.presentation.ui.words.details
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
-import com.nikcapko.memo.core.ui.flow.EventFlowWrapper
 import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
-import com.nikcapko.memo.presentation.words.details.WordDetailsCommandModel
-import com.nikcapko.memo.presentation.words.details.WordDetailsEvent
 import com.nikcapko.memo.presentation.words.details.WordDetailsStateFlowWrapper
+import com.nikcapko.memo.presentation.words.details.WordDetailsViewModel
 import com.nikcapko.memo.presentation.words.details.WordDetailsViewState
 import io.mockk.coVerify
 import io.mockk.every
@@ -23,7 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 /**
- * Test for [WordDetailsCommandModel]
+ * Test for [WordDetailsViewModel]
  */
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
@@ -33,7 +31,7 @@ internal class WordDetailsViewModelTest {
     private val stateFlowWrapper = mockk<WordDetailsStateFlowWrapper>(relaxed = true)
     private val rootNavigator = spyk<RootNavigator>()
 
-    private lateinit var viewModel: WordDetailsCommandModel
+    private lateinit var viewModel: WordDetailsViewModel
 
     private var word = Word(
         id = 3929,
@@ -120,7 +118,8 @@ internal class WordDetailsViewModelTest {
         )
     }
 
-    private fun createViewModel() = WordDetailsCommandModel(
+    private fun createViewModel() = WordDetailsViewModel(
+        word = null,
         wordDetailsInteractor = wordDetailsInteractor,
         stateFlowWrapper = stateFlowWrapper,
         rootNavigator = rootNavigator,

@@ -1,9 +1,9 @@
 package com.nikcapko.memo.presentation.games.list
 
 import com.nikcapko.domain.model.Game
-import com.nikcapko.memo.presentation.navigation.RootNavigator
-import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
+import com.nikcapko.memo.core.ui.viewmodel.LazyViewModel
 import com.nikcapko.memo.presentation.domain.GamesInteractor
+import com.nikcapko.memo.presentation.navigation.RootNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -12,11 +12,11 @@ internal class GamesViewModel @Inject constructor(
     private var gamesInteractor: GamesInteractor,
     private var gamesFlowWrapper: GamesFlowWrapper,
     private var rootNavigator: RootNavigator,
-) : BaseViewModel(), GamesCommandReceiver {
+) : LazyViewModel(), GamesCommandReceiver {
 
     val state = gamesFlowWrapper.liveValue()
 
-    init {
+    override fun onViewFirstCreated() {
         loadGames()
     }
 
