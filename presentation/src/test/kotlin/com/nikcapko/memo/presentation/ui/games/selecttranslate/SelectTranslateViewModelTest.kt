@@ -1,6 +1,6 @@
 package com.nikcapko.memo.presentation.ui.games.selecttranslate
 
-import com.nikcapko.core.viewmodel.DataLoadingViewModelState
+import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider

@@ -3,7 +3,7 @@
 package com.nikcapko.memo.presentation.games.selecttranslate
 
 import androidx.lifecycle.viewModelScope
-import com.nikcapko.core.viewmodel.DataLoadingViewModelState
+import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel

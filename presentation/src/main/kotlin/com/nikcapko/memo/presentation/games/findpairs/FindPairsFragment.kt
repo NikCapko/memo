@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.nikcapko.core.viewmodel.DataLoadingViewModelState
+import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.makeGone
 import com.nikcapko.memo.core.ui.extensions.makeInvisible

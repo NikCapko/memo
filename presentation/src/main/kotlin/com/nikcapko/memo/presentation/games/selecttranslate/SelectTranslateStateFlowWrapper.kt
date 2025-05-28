@@ -1,6 +1,6 @@
 package com.nikcapko.memo.presentation.games.selecttranslate
 
-import com.nikcapko.core.viewmodel.DataLoadingViewModelState
+import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.ui.flow.StateFlowWrapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged

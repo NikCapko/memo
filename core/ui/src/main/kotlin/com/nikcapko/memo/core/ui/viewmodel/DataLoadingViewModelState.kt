@@ -1,4 +1,4 @@
-package com.nikcapko.core.viewmodel
+package com.nikcapko.memo.core.ui.viewmodel
 
 sealed class DataLoadingViewModelState {
     data object NoneState : DataLoadingViewModelState()

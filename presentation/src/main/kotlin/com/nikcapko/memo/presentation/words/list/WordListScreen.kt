@@ -31,9 +31,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
+import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.presentation.R
 
 @Suppress("NonSkippableComposable")
@@ -47,10 +47,10 @@ internal fun WordListScreen(
     when (state.value) {
         DataLoadingViewModelState.NoneState, DataLoadingViewModelState.LoadingState -> showLoading()
         DataLoadingViewModelState.NoItemsState -> ShowWords(
-            emptyList(),
-            onItemClick,
-            onSpeakClick,
-            addItemClick
+            words = emptyList(),
+            onItemClick = onItemClick,
+            onSpeakClick = onSpeakClick,
+            addItemClick = addItemClick,
         )
 
         is DataLoadingViewModelState.LoadedState<*> -> {
@@ -85,45 +85,47 @@ internal fun ShowWords(
             Icon(Icons.Filled.Add, "")
         }
     },
-    content = ({
-        LazyColumn {
-            itemsIndexed(words) { index, item ->
-                Row(
-                    modifier = Modifier
-                        .clickable { onItemClick(index) }
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Column {
-                        Text(
+    content = (
+        {
+            LazyColumn {
+                itemsIndexed(words) { index, item ->
+                    Row(
+                        modifier = Modifier
+                            .clickable { onItemClick(index) }
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column {
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, top = 8.dp),
+                                text = item.word,
+                                color = colors.primary,
+                                fontStyle = FontStyle.Normal,
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, bottom = 8.dp),
+                                text = item.translation,
+                                color = colors.secondary,
+                                fontStyle = FontStyle.Italic,
+                            )
+                        }
+                        Image(
                             modifier = Modifier
-                                .padding(start = 16.dp, top = 8.dp),
-                            text = item.word,
-                            color = colors.primary,
-                            fontStyle = FontStyle.Normal,
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(start = 16.dp, bottom = 8.dp),
-                            text = item.translation,
-                            color = colors.secondary,
-                            fontStyle = FontStyle.Italic,
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .size(48.dp)
+                                .clickable { onSpeakClick(index) },
+                            painter = painterResource(id = R.drawable.ic_sound_waves),
+                            contentDescription = "speak",
+                            colorFilter = ColorFilter.tint(colors.primary),
                         )
                     }
-                    Image(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                            .size(48.dp)
-                            .clickable { onSpeakClick(index) },
-                        painter = painterResource(id = R.drawable.ic_sound_waves),
-                        contentDescription = "speak",
-                        colorFilter = ColorFilter.tint(colors.primary),
-                    )
                 }
             }
         }
-    })
+        )
 )
 
 @Preview(showSystemUi = true, device = Devices.PIXEL, uiMode = Configuration.UI_MODE_NIGHT_NO)

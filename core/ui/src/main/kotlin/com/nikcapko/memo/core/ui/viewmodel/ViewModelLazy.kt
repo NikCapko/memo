@@ -94,9 +94,9 @@ inline fun <reified VM : LazyViewModel> ComponentActivity.lazyViewModels(
     }
 
     return ViewModelLazy(
-        VM::class,
-        { viewModelStore },
-        factoryPromise,
-        { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras }
+        viewModelClass = VM::class,
+        storeProducer = { viewModelStore },
+        factoryProducer = factoryPromise,
+        extrasProducer = { extrasProducer?.invoke() ?: this.defaultViewModelCreationExtras },
     )
 }
