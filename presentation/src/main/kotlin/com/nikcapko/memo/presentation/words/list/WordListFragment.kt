@@ -1,9 +1,5 @@
 package com.nikcapko.memo.presentation.words.list
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
@@ -19,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.MenuProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.nikcapko.memo.core.common.Constants
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.observe
@@ -40,19 +35,15 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
 
     private var tts: TextToSpeech? = null
 
-    private val localBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == Constants.LOAD_WORDS_EVENT) {
-                viewModel.loadWords()
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        LocalBroadcastManager
-            .getInstance(requireContext())
-            .registerReceiver(localBroadcastReceiver, IntentFilter(Constants.LOAD_WORDS_EVENT))
+        registerFragmentResult()
+    }
+
+    private fun registerFragmentResult() {
+        parentFragmentManager.setFragmentResultListener(Constants.LOAD_WORDS_EVENT, this) { _, _ ->
+            viewModel.loadWords()
+        }
     }
 
     override fun onCreateView(
@@ -174,8 +165,7 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
     }
 
     override fun onDestroy() {
-        LocalBroadcastManager.getInstance(requireContext())
-            .unregisterReceiver(localBroadcastReceiver)
+        parentFragmentManager.clearFragmentResult(Constants.LOAD_WORDS_EVENT)
         super.onDestroy()
     }
 }

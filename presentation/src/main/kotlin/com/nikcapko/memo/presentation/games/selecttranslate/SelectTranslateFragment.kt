@@ -3,14 +3,13 @@
 package com.nikcapko.memo.presentation.games.selecttranslate
 
 import android.animation.Animator
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.core.os.bundleOf
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.core.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.Constants
@@ -131,8 +130,7 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
     }
 
     override fun showEndGame(successCount: Int, errorCount: Int) = with(viewBinding) {
-        val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
-        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
+        parentFragmentManager.setFragmentResult(Constants.LOAD_WORDS_EVENT, bundleOf())
         llContentContainer.makeGone()
         rlEnGameContainer.makeVisible()
         tvGameLevelSuccess.text = successCount.toString()

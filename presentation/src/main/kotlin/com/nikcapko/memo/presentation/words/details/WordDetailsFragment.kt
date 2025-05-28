@@ -1,14 +1,13 @@
 package com.nikcapko.memo.presentation.words.details
 
 import android.app.ProgressDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.memo.core.common.Constants
 import com.nikcapko.memo.core.common.androidLazy
@@ -83,8 +82,7 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
     }
 
     override fun sendSuccessResult() {
-        val localIntent = Intent(Constants.LOAD_WORDS_EVENT)
-        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(localIntent)
+        parentFragmentManager.setFragmentResult(Constants.LOAD_WORDS_EVENT, bundleOf())
     }
 
     private fun initToolbar() {
