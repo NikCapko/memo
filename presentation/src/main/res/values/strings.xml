@@ -26,7 +26,7 @@
     <string name="game_level_success">Успешно</string>
     <string name="game_level_error">Ошибок</string>
     <string name="game_over">Игра успешно окончена</string>
-    <string name="game_your_results">Выши результаты:</string>
+    <string name="game_your_results">Ваши результаты:</string>
     <string name="game_finish">Закончить</string>
 
     <string name="loading">Загрузка...</string>
