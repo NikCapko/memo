@@ -1,13 +1,11 @@
 package com.nikcapko.memo.presentation.ui.games.findpairs
 
-import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
 import com.nikcapko.memo.presentation.domain.FindPairsInteractor
-import com.nikcapko.memo.presentation.games.findpairs.FindPairsState
-import com.nikcapko.memo.presentation.games.findpairs.FindPairsStateFlowWrapper
-import com.nikcapko.memo.presentation.games.findpairs.FindPairsViewModel
+import com.nikcapko.memo.presentation.screens.games.findpairs.state.FindPairsState
+import com.nikcapko.memo.presentation.screens.games.findpairs.FindPairsViewModel
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import io.mockk.coEvery
 import io.mockk.coVerify

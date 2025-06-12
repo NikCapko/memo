@@ -1,11 +1,10 @@
 package com.nikcapko.memo.presentation.ui.games.selecttranslate
 
-import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
 import com.nikcapko.memo.presentation.domain.SelectTranslateInteractor
-import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateViewModel
+import com.nikcapko.memo.presentation.screens.games.selecttranslate.SelectTranslateViewModel
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import io.mockk.coEvery
 import io.mockk.mockk

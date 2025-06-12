@@ -1,12 +1,11 @@
 package com.nikcapko.memo.presentation.ui.words.list
 
-import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
 import com.nikcapko.memo.presentation.domain.WordListInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
-import com.nikcapko.memo.presentation.words.list.WordListViewModel
+import com.nikcapko.memo.presentation.screens.words.list.WordListViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

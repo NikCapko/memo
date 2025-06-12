@@ -5,8 +5,8 @@ import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
 import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
-import com.nikcapko.memo.presentation.words.details.WordDetailsViewModel
-import com.nikcapko.memo.presentation.words.details.state.WordDetailsState
+import com.nikcapko.memo.presentation.screens.words.details.WordDetailsViewModel
+import com.nikcapko.memo.presentation.screens.words.details.state.WordDetailsState
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk

@@ -39,13 +39,13 @@ class AndroidLibraryPlugin : Plugin<Project> {
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
         }
 
         project.tasks.withType(KotlinCompile::class.java).configureEach {
             kotlinOptions {
-                jvmTarget = JavaVersion.VERSION_17.toString()
+                jvmTarget = JavaVersion.VERSION_21.toString()
                 freeCompilerArgs = listOf("-Xsam-conversions=class")
             }
         }

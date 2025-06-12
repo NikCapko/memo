@@ -4,11 +4,11 @@ import androidx.core.os.bundleOf
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.nikcapko.domain.model.WordModel
-import com.nikcapko.memo.presentation.games.findpairs.FindPairsFragment
-import com.nikcapko.memo.presentation.games.list.GamesFragment
-import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateFragment
-import com.nikcapko.memo.presentation.words.details.ui.WordDetailsFragment
-import com.nikcapko.memo.presentation.words.list.ui.WordListFragment
+import com.nikcapko.memo.presentation.screens.games.findpairs.ui.FindPairsFragment
+import com.nikcapko.memo.presentation.screens.games.list.ui.GamesFragment
+import com.nikcapko.memo.presentation.screens.games.selecttranslate.ui.SelectTranslateFragment
+import com.nikcapko.memo.presentation.screens.words.details.ui.WordDetailsFragment
+import com.nikcapko.memo.presentation.screens.words.list.ui.WordListFragment
 import javax.inject.Inject
 
 class RootNavigatorImpl @Inject constructor(

@@ -59,6 +59,7 @@ dependencies {
 
     // lottie animation
     implementation(libs.lottie)
+    implementation(libs.lottie.compose)
 
     // sdp-android
     implementation(libs.sdp)
