@@ -2,6 +2,7 @@ package com.nikcapko.memo.presentation.words.details
 
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.core.common.DispatcherProvider
+import com.nikcapko.memo.core.common.emptyExceptionHandler
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
 import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
@@ -25,8 +26,7 @@ internal class WordDetailsViewModel @AssistedInject constructor(
     private val stateFlowWrapper: WordDetailsStateFlowWrapper,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<WordDetailsEvent>(dispatcherProvider),
-    WordDetailsCommandReceiver {
+) : BaseEventViewModel<WordDetailsEvent>() {
 
     @AssistedFactory
     fun interface Factory {
@@ -46,41 +46,41 @@ internal class WordDetailsViewModel @AssistedInject constructor(
         stateFlowWrapper.update(createInitialState(word))
     }
 
-    override fun onSaveWord(wordArg: String, translate: String) {
-        viewModelScope.launch(dispatcherProvider.io) {
-            withContext(dispatcherProvider.main) {
+    fun onSaveWord(word: String, translate: String) {
+        viewModelScope.launch(emptyExceptionHandler) {
+            withContext(dispatcherProvider.io) {
                 stateFlowWrapper.update { it.copy(showProgressDialog = true) }
-            }
-            val word: Word = stateFlowWrapper.value().word?.let {
-                it.apply {
-                    word = wordArg
-                    translation = translate
-                }
-            } ?: run {
-                Word(
-                    id = Date().time,
-                    word = wordArg,
+                val word: Word = stateFlowWrapper.value().word?.copy(
+                    word = word,
                     translation = translate,
-                    frequency = 0f,
-                )
+                ) ?: run {
+                    Word(
+                        id = Date().time,
+                        word = word,
+                        translation = translate,
+                        frequency = 0f,
+                    )
+                }
+                wordDetailsInteractor.saveWord(word)
+                sendEvent(WordDetailsEvent.CloseScreenEvent)
+                stateFlowWrapper.update { it.copy(showProgressDialog = false) }
             }
-            wordDetailsInteractor.saveWord(word)
-            sendEvent(WordDetailsEvent.CloseScreenEvent)
-            stateFlowWrapper.update { it.copy(showProgressDialog = false) }
             withContext(dispatcherProvider.main) {
                 rootNavigator.back()
             }
         }
     }
 
-    override fun onDeleteWord() {
-        viewModelScope.launch(dispatcherProvider.io) {
-            stateFlowWrapper.update { it.copy(showProgressDialog = true) }
-            stateFlowWrapper.value().word?.let {
-                wordDetailsInteractor.deleteWord(it.id.toString())
+    fun onDeleteWord() {
+        viewModelScope.launch(emptyExceptionHandler) {
+            withContext(dispatcherProvider.io) {
+                stateFlowWrapper.update { it.copy(showProgressDialog = true) }
+                stateFlowWrapper.value().word?.let {
+                    wordDetailsInteractor.deleteWord(it.id.toString())
+                }
+                sendEvent(WordDetailsEvent.CloseScreenEvent)
+                stateFlowWrapper.update { it.copy(showProgressDialog = false) }
             }
-            sendEvent(WordDetailsEvent.CloseScreenEvent)
-            stateFlowWrapper.update { it.copy(showProgressDialog = false) }
             withContext(dispatcherProvider.main) {
                 rootNavigator.back()
             }
@@ -95,11 +95,11 @@ internal class WordDetailsViewModel @AssistedInject constructor(
         )
     }
 
-    override fun changeWordField(word: String) {
+    fun changeWordField(word: String) {
         fieldWordState.value = word
     }
 
-    override fun changeTranslateField(translate: String) {
+    fun changeTranslateField(translate: String) {
         fieldTranslateState.value = translate
     }
 }

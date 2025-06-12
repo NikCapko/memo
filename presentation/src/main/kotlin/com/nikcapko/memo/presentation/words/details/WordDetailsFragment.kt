@@ -1,16 +1,13 @@
 package com.nikcapko.memo.presentation.words.details
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikcapko.memo.core.common.Constants
-import com.nikcapko.memo.core.common.androidLazy
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.argument
@@ -26,9 +23,8 @@ import dagger.hilt.android.lifecycle.withCreationCallback
 
 internal const val WORD_ARGUMENT = "WordDetailFragment.WORD"
 
-@Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController {
+internal class WordDetailsFragment : BaseFragment() {
 
     private val viewBinding by viewBinding(FragmentWordDetailBinding::bind)
 
@@ -42,29 +38,6 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
                 }
         }
     )
-
-    private val progressDialog: ProgressDialog by androidLazy {
-        ProgressDialog(requireContext()).apply {
-            setTitle(getString(R.string.loading))
-            setCancelable(false)
-            setCanceledOnTouchOutside(false)
-        }
-    }
-
-    private fun initObservers() {
-        observe(viewModel.wordState) { initView(it) }
-        observe(viewModel.progressLoadingState) { showProgressDialog ->
-            if (showProgressDialog) {
-                startProgressDialog()
-            } else {
-                completeProgressDialog()
-            }
-        }
-        observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
-        observe(viewModel.eventFlow) { event ->
-            event.apply(this)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,40 +53,43 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
         initObservers()
     }
 
-    override fun sendSuccessResult() {
-        parentFragmentManager.setFragmentResult(Constants.LOAD_WORDS_EVENT, bundleOf())
+    private fun initObservers() {
+        observe(viewModel.wordState) { initView(it) }
+        observe(viewModel.progressLoadingState) { showProgressDialog -> }
+        observe(viewModel.enableSaveButtonState) { enableSaveButton(it) }
+        observe(viewModel.eventFlow, ::observeEvents)
+    }
+
+    private fun observeEvents(event: WordDetailsEvent) = when (event) {
+        is WordDetailsEvent.CloseScreenEvent -> sendSuccessResult()
     }
 
     private fun setListeners() {
         with(viewBinding) {
             btnAdd.setOnClickListener {
                 hideKeyboard()
-                viewModel.processCommand(
-                    command = WordDetailsCommand.SaveWordCommand(
-                        word = etWord.text.toString(),
-                        translate = etTranslate.text.toString(),
-                    )
+                viewModel.onSaveWord(
+                    word = etWord.text.toString(),
+                    translate = etTranslate.text.toString(),
                 )
             }
             btnSave.setOnClickListener {
                 hideKeyboard()
-                viewModel.processCommand(
-                    command = WordDetailsCommand.SaveWordCommand(
-                        word = etWord.text.toString(),
-                        translate = etTranslate.text.toString(),
-                    )
+                viewModel.onSaveWord(
+                    word = etWord.text.toString(),
+                    translate = etTranslate.text.toString(),
                 )
             }
             btnDelete.setOnClickListener {
                 hideKeyboard()
-                viewModel.processCommand(WordDetailsCommand.DeleteWordCommand)
+                viewModel.onDeleteWord()
             }
 
             etWord.addTextChangedListener {
-                viewModel.processCommand(WordDetailsCommand.ChangeWordFieldCommand(it.toString()))
+                viewModel.changeWordField(it.toString())
             }
             etTranslate.addTextChangedListener {
-                viewModel.processCommand(WordDetailsCommand.ChangeTranslateFieldCommand(it.toString()))
+                viewModel.changeTranslateField(it.toString())
             }
         }
     }
@@ -137,11 +113,7 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
         btnSave.isEnabled = enable
     }
 
-    private fun startProgressDialog() {
-        progressDialog.show()
-    }
-
-    private fun completeProgressDialog() {
-        progressDialog.dismiss()
+    private fun sendSuccessResult() {
+        parentFragmentManager.setFragmentResult(Constants.LOAD_WORDS_EVENT, bundleOf())
     }
 }

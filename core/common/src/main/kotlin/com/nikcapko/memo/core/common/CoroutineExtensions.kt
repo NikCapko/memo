@@ -7,4 +7,4 @@ inline fun exceptionHandler(crossinline errorBlock: (Throwable) -> Unit) =
         errorBlock(exception)
     }
 
-fun emptyExceptionHandler() = CoroutineExceptionHandler { _, exception -> }
+val emptyExceptionHandler = CoroutineExceptionHandler { _, exception -> }

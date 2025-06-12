@@ -1,21 +1,18 @@
 package com.nikcapko.memo.core.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
-import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.ui.BaseEvent
 import com.nikcapko.memo.core.ui.flow.EventFlowWrapper
 import kotlinx.coroutines.launch
 
-abstract class BaseEventViewModel<T : BaseEvent>(
-    private val dispatcherProvider: DispatcherProvider,
-) : LazyViewModel() {
+abstract class BaseEventViewModel<T : BaseEvent> : LazyViewModel() {
 
-    private val eventFlowWrapper: EventFlowWrapper<T> = EventFlowWrapper<T>()
+    private val eventFlowWrapper: EventFlowWrapper<T> = EventFlowWrapper()
 
     val eventFlow = eventFlowWrapper.liveValue()
 
     fun sendEvent(event: T) {
-        viewModelScope.launch(dispatcherProvider.main) {
+        viewModelScope.launch {
             eventFlowWrapper.update(event)
         }
     }

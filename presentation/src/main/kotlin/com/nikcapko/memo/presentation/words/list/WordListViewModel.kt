@@ -23,7 +23,7 @@ internal class WordListViewModel @Inject constructor(
     private val stateFlowWrapper: WordListStateFlowWrapper,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<WordListEvent>(dispatcherProvider) {
+) : BaseEventViewModel<WordListEvent>() {
 
     val state = stateFlowWrapper.liveValue()
 
@@ -61,7 +61,7 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun clearDatabase() {
-        viewModelScope.launch(emptyExceptionHandler()) {
+        viewModelScope.launch(emptyExceptionHandler) {
             withContext(dispatcherProvider.io) {
                 stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
                 wordListInteractor.clearDataBase()

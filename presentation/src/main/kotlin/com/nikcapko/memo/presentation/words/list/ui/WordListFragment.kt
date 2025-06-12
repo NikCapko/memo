@@ -16,7 +16,7 @@ import com.nikcapko.memo.core.ui.extensions.observe
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
 import com.nikcapko.memo.presentation.R
-import com.nikcapko.memo.presentation.words.list.WordListEventController
+import com.nikcapko.memo.presentation.words.list.WordListEvent
 import com.nikcapko.memo.presentation.words.list.WordListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -25,7 +25,7 @@ private const val SPEECH_RATE = 0.6f
 private const val PITCH = 1.0f
 
 @AndroidEntryPoint
-internal class WordListFragment : BaseFragment(), WordListEventController {
+internal class WordListFragment : BaseFragment() {
 
     private val viewModel by lazyViewModels<WordListViewModel>()
 
@@ -65,7 +65,13 @@ internal class WordListFragment : BaseFragment(), WordListEventController {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initTextToSpeech()
-        observe()
+        observe(viewModel.eventFlow, ::observeEvents)
+    }
+
+    private fun observeEvents(event: WordListEvent) = when (event) {
+        is WordListEvent.ShowClearDatabaseEvent -> showClearDatabaseDialog()
+        is WordListEvent.ShowNeedMoreWordsEvent -> showNeedMoreWordsDialog()
+        is WordListEvent.SpeakOutEvent -> speakOut(event.word)
     }
 
     private fun initTextToSpeech() {
@@ -83,11 +89,7 @@ internal class WordListFragment : BaseFragment(), WordListEventController {
         tts?.setSpeechRate(SPEECH_RATE)
     }
 
-    private fun observe() {
-        observe(viewModel.eventFlow) { it.apply(this) }
-    }
-
-    override fun showNeedMoreWordsDialog() {
+    private fun showNeedMoreWordsDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.attention)
             .setMessage(R.string.need_add_words)
@@ -98,7 +100,7 @@ internal class WordListFragment : BaseFragment(), WordListEventController {
             .show()
     }
 
-    override fun showClearDatabaseDialog() {
+    private fun showClearDatabaseDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.attention)
             .setMessage(R.string.clear_database)
@@ -111,7 +113,7 @@ internal class WordListFragment : BaseFragment(), WordListEventController {
             .show()
     }
 
-    override fun speakOut(word: String?) {
+    private fun speakOut(word: String?) {
         if (!word.isNullOrEmpty()) {
             tts?.speak(word, TextToSpeech.QUEUE_FLUSH, null, null)
             Toast.makeText(context, word, Toast.LENGTH_SHORT).show()
