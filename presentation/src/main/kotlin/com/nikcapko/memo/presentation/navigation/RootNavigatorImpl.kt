@@ -9,7 +9,7 @@ import com.nikcapko.memo.presentation.games.list.GamesFragment
 import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateFragment
 import com.nikcapko.memo.presentation.words.details.WORD_ARGUMENT
 import com.nikcapko.memo.presentation.words.details.WordDetailsFragment
-import com.nikcapko.memo.presentation.words.list.WordListFragment
+import com.nikcapko.memo.presentation.words.list.ui.WordListFragment
 import javax.inject.Inject
 
 class RootNavigatorImpl @Inject constructor(

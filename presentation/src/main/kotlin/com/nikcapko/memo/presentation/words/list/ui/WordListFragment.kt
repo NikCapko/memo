@@ -1,35 +1,31 @@
-package com.nikcapko.memo.presentation.words.list
+package com.nikcapko.memo.presentation.words.list.ui
 
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.view.MenuProvider
 import com.nikcapko.memo.core.common.Constants
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.observe
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
-import com.nikcapko.memo.core.ui.view.ProgressView
 import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
 import com.nikcapko.memo.presentation.R
+import com.nikcapko.memo.presentation.words.list.WordListEventController
+import com.nikcapko.memo.presentation.words.list.WordListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
 private const val SPEECH_RATE = 0.6f
+private const val PITCH = 1.0f
 
-@Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class WordListFragment : BaseFragment(), ProgressView, WordListEventController {
+internal class WordListFragment : BaseFragment(), WordListEventController {
 
     private val viewModel by lazyViewModels<WordListViewModel>()
 
@@ -58,6 +54,9 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
                     onItemClick = { viewModel.onItemClick(it) },
                     onSpeakClick = { viewModel.onEnableSound(it) },
                     addItemClick = { viewModel.onAddWordClick() },
+                    onGamesClick = { viewModel.openGamesScreen() },
+                    onClearDatabaseClick = { viewModel.onClearDatabaseClick() },
+                    onRetryClick = { viewModel.onRetryClick() },
                 )
             }
         }
@@ -65,36 +64,8 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initToolbar()
         initTextToSpeech()
         observe()
-    }
-
-    private fun initToolbar() {
-        (activity as? AppCompatActivity)?.supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(false)
-            setHomeButtonEnabled(false)
-        }
-        requireActivity().addMenuProvider(
-            /* provider = */
-            object : MenuProvider {
-                override fun onPrepareMenu(menu: Menu) = Unit
-                override fun onMenuClosed(menu: Menu) = Unit
-
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    menuInflater.inflate(R.menu.menu_action, menu)
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    when (menuItem.itemId) {
-                        R.id.action_games -> viewModel.openGamesScreen()
-                        R.id.action_clear -> viewModel.onClearDatabaseClick()
-                    }
-                    return false
-                }
-            },
-            /* owner = */ viewLifecycleOwner,
-        )
     }
 
     private fun initTextToSpeech() {
@@ -108,6 +79,7 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
                 Log.e("TTS", "Initialization Failed!")
             }
         }
+        tts?.setPitch(PITCH)
         tts?.setSpeechRate(SPEECH_RATE)
     }
 
@@ -146,22 +118,15 @@ internal class WordListFragment : BaseFragment(), ProgressView, WordListEventCon
         }
     }
 
-    override fun startLoading() {
-    }
-
-    override fun errorLoading(errorMessage: String?) {
-    }
-
-    override fun completeLoading() {
-    }
-
-    override fun onRetry() {
-        viewModel.loadWords()
-    }
-
     override fun onPause() {
         tts?.stop()
         super.onPause()
+    }
+
+    override fun onDestroyView() {
+        tts?.shutdown()
+        tts = null
+        super.onDestroyView()
     }
 
     override fun onDestroy() {

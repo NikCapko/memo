@@ -1,14 +1,18 @@
 package com.nikcapko.memo.presentation.words.list
 
 import androidx.lifecycle.viewModelScope
-import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.common.DispatcherProvider
+import com.nikcapko.memo.core.common.emptyExceptionHandler
+import com.nikcapko.memo.core.common.exceptionHandler
 import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
+import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.presentation.domain.WordListInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 private const val MIN_WORDS_COUNT = 5
@@ -28,10 +32,19 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun loadWords() {
-        viewModelScope.launch(dispatcherProvider.io) {
-            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
-            val wordsList = wordListInteractor.getWords()
-            stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(wordsList))
+        viewModelScope.launch(
+            exceptionHandler { exception ->
+                stateFlowWrapper.update(
+                    DataLoadingViewModelState.ErrorState(errorMessage = "Произошла ошибка")
+                )
+            }
+        ) {
+            withContext(dispatcherProvider.io) {
+                stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
+                delay(5000L) // TODO for test loading animation
+                val wordsList = wordListInteractor.getWords()
+                stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(wordsList))
+            }
         }
     }
 
@@ -48,15 +61,21 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun clearDatabase() {
-        viewModelScope.launch(dispatcherProvider.io) {
-            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
-            wordListInteractor.clearDataBase()
-            stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(emptyList<Word>()))
+        viewModelScope.launch(emptyExceptionHandler()) {
+            withContext(dispatcherProvider.io) {
+                stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
+                wordListInteractor.clearDataBase()
+                stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(emptyList<Word>()))
+            }
         }
     }
 
     fun onAddWordClick() {
         rootNavigator.pushWordDetailScreen()
+    }
+
+    fun onRetryClick() {
+        loadWords()
     }
 
     fun openGamesScreen() {

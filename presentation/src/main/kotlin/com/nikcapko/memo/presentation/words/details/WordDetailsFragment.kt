@@ -76,20 +76,12 @@ internal class WordDetailsFragment : BaseFragment(), WordDetailsEventController 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initToolbar()
         setListeners()
         initObservers()
     }
 
     override fun sendSuccessResult() {
         parentFragmentManager.setFragmentResult(Constants.LOAD_WORDS_EVENT, bundleOf())
-    }
-
-    private fun initToolbar() {
-        (activity as? AppCompatActivity)?.supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeButtonEnabled(true)
-        }
     }
 
     private fun setListeners() {
