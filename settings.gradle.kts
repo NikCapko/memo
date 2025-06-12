@@ -20,7 +20,6 @@ folder(
     folder = "core",
     modules = listOf(
         "common",
-        "data",
         "test",
         "ui",
     )

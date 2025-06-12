@@ -2,72 +2,32 @@ package com.nikcapko.memo.presentation.games.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
-import com.nikcapko.memo.core.common.androidLazy
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.ComposeView
 import com.nikcapko.memo.core.ui.BaseFragment
-import com.nikcapko.memo.core.ui.extensions.observe
+import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
-import com.nikcapko.memo.presentation.R
-import com.nikcapko.memo.presentation.databinding.FragmentGamesBinding
-import com.nikcapko.memo.presentation.games.list.adapter.GamesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class GamesFragment : BaseFragment() {
 
-    private val viewBinding by viewBinding(FragmentGamesBinding::bind)
     private val viewModel by lazyViewModels<GamesViewModel>()
-
-    private val adapter by androidLazy { GamesAdapter(viewModel::processCommand) }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu.clear()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_games, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initToolbar()
-        initAdapters()
-        observe()
-    }
-
-    private fun initToolbar() {
-        (activity as? AppCompatActivity)?.supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeButtonEnabled(true)
+    ): ComposeView = ComposeView(requireContext()).apply {
+        setContent {
+            ComposeTheme {
+                GamesScreen(
+                    state = viewModel.state.collectAsState(),
+                    onItemClicked = { viewModel.onItemClick(it) },
+                    onBackPressed = { viewModel.onBackPressed() },
+                )
+            }
         }
-    }
-
-    private fun initAdapters() {
-        viewBinding.rvGames.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = this@GamesFragment.adapter
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        }
-    }
-
-    private fun observe() {
-        observe(viewModel.state) { adapter.games = it }
     }
 }

@@ -3,6 +3,7 @@ package com.nikcapko.memo.core.ui.extensions
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
+import java.io.Serializable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -48,6 +49,7 @@ fun <T> Bundle.put(key: String, value: T) {
         is CharSequence -> putCharSequence(key, value)
         is Float -> putFloat(key, value)
         is Bundle -> putBundle(key, value)
+        is Serializable -> putSerializable(key, value)
         is Parcelable -> putParcelable(key, value)
         else -> throw IllegalStateException("Type of property $key is not supported")
     }

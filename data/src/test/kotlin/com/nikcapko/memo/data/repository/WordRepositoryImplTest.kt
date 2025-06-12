@@ -36,7 +36,7 @@ internal class WordRepositoryImplTest {
     private var wordModel = WordModel(
         id = 1468,
         word = "vituperatoribus",
-        translation = "constituto",
+        translate = "constituto",
         frequency = 2.3f
     )
 

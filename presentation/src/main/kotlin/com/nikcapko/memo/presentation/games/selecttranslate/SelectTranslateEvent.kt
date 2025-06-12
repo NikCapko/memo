@@ -2,28 +2,11 @@ package com.nikcapko.memo.presentation.games.selecttranslate
 
 import com.nikcapko.memo.core.ui.BaseEvent
 
-internal interface SelectTranslateEvent : BaseEvent {
-
-    fun apply(eventController: SelectTranslateEventController)
-
-    data object SuccessAnimationEvent : SelectTranslateEvent {
-        override fun apply(eventController: SelectTranslateEventController) {
-            eventController.showSuccessAnimation()
-        }
-    }
-
-    data object ErrorAnimationEvent : SelectTranslateEvent {
-        override fun apply(eventController: SelectTranslateEventController) {
-            eventController.showErrorAnimation()
-        }
-    }
-
+internal sealed interface SelectTranslateEvent : BaseEvent {
+    data object SuccessAnimationEvent : SelectTranslateEvent
+    data object ErrorAnimationEvent : SelectTranslateEvent
     data class EndGameEvent(
-        private val successCount: Int,
-        private val errorCount: Int,
-    ) : SelectTranslateEvent {
-        override fun apply(eventController: SelectTranslateEventController) {
-            eventController.showEndGame(successCount, errorCount)
-        }
-    }
+        val successCount: Int,
+        val errorCount: Int,
+    ) : SelectTranslateEvent
 }

@@ -10,7 +10,7 @@ internal class WordModelToEntityConverter @Inject constructor() : BaseConverter<
         WordDBEntity(
             id = id,
             word = word,
-            translation = translation,
+            translation = translate,
             frequency = frequency,
         )
     }

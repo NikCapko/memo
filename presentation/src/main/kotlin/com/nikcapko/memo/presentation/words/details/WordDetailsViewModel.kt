@@ -1,69 +1,57 @@
 package com.nikcapko.memo.presentation.words.details
 
 import androidx.lifecycle.viewModelScope
+import com.nikcapko.domain.model.WordModel
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.emptyExceptionHandler
-import com.nikcapko.memo.core.data.Word
-import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
+import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
 import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
+import com.nikcapko.memo.presentation.words.details.event.WordDetailsEvent
+import com.nikcapko.memo.presentation.words.details.state.WordDetailsState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
 
 @HiltViewModel(assistedFactory = WordDetailsViewModel.Factory::class)
 internal class WordDetailsViewModel @AssistedInject constructor(
-    @Assisted private val word: Word?,
+    @Assisted private val word: WordModel?,
     private val wordDetailsInteractor: WordDetailsInteractor,
-    private val stateFlowWrapper: WordDetailsStateFlowWrapper,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<WordDetailsEvent>() {
+) : BaseViewModel<WordDetailsState, WordDetailsEvent>() {
 
     @AssistedFactory
     fun interface Factory {
-        fun create(word: Word?): WordDetailsViewModel
+        fun create(word: WordModel?): WordDetailsViewModel
     }
 
-    private val fieldWordState = MutableStateFlow("")
-    private val fieldTranslateState = MutableStateFlow("")
-
-    val wordState = stateFlowWrapper.liveValue().mapNotNull { it.word }
-    val progressLoadingState = stateFlowWrapper.liveValue().mapNotNull { it.showProgressDialog }
-    val enableSaveButtonState = combine(fieldWordState, fieldTranslateState) { word, translate ->
-        return@combine word.isNotEmpty() && translate.isNotEmpty()
-    }.distinctUntilChanged()
-
-    override fun onViewFirstCreated() {
-        stateFlowWrapper.update(createInitialState(word))
+    override fun createInitialState(): WordDetailsState {
+        return WordDetailsState(
+            word = word ?: WordModel(
+                id = Date().time,
+                word = "",
+                translate = "",
+                frequency = 0f,
+            ),
+            isAddNewWord = word == null,
+            isEnableAddButton = word != null,
+            showProgressDialog = false,
+            enableSaveButton = false,
+        )
     }
 
-    fun onSaveWord(word: String, translate: String) {
+    fun onSaveWord() {
         viewModelScope.launch(emptyExceptionHandler) {
             withContext(dispatcherProvider.io) {
-                stateFlowWrapper.update { it.copy(showProgressDialog = true) }
-                val word: Word = stateFlowWrapper.value().word?.copy(
-                    word = word,
-                    translation = translate,
-                ) ?: run {
-                    Word(
-                        id = Date().time,
-                        word = word,
-                        translation = translate,
-                        frequency = 0f,
-                    )
-                }
-                wordDetailsInteractor.saveWord(word)
+                updateState { it.copy(showProgressDialog = true) }
+                wordDetailsInteractor.saveWord(state.value.word)
                 sendEvent(WordDetailsEvent.CloseScreenEvent)
-                stateFlowWrapper.update { it.copy(showProgressDialog = false) }
+                updateState { it.copy(showProgressDialog = false) }
             }
             withContext(dispatcherProvider.main) {
                 rootNavigator.back()
@@ -74,12 +62,10 @@ internal class WordDetailsViewModel @AssistedInject constructor(
     fun onDeleteWord() {
         viewModelScope.launch(emptyExceptionHandler) {
             withContext(dispatcherProvider.io) {
-                stateFlowWrapper.update { it.copy(showProgressDialog = true) }
-                stateFlowWrapper.value().word?.let {
-                    wordDetailsInteractor.deleteWord(it.id.toString())
-                }
+                updateState { it.copy(showProgressDialog = true) }
+                wordDetailsInteractor.deleteWord(state.value.word.id.toString())
                 sendEvent(WordDetailsEvent.CloseScreenEvent)
-                stateFlowWrapper.update { it.copy(showProgressDialog = false) }
+                updateState { it.copy(showProgressDialog = false) }
             }
             withContext(dispatcherProvider.main) {
                 rootNavigator.back()
@@ -87,19 +73,27 @@ internal class WordDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    private fun createInitialState(word: Word?): WordDetailsViewState {
-        return WordDetailsViewState(
-            word = word,
-            showProgressDialog = false,
-            enableSaveButton = false,
-        )
-    }
-
     fun changeWordField(word: String) {
-        fieldWordState.value = word
+        updateState {
+            val word = it.word.copy(word = word)
+            it.copy(
+                word = word,
+                isEnableAddButton = word.word.isNotBlank() && word.translate.isNotBlank(),
+            )
+        }
     }
 
     fun changeTranslateField(translate: String) {
-        fieldTranslateState.value = translate
+        updateState {
+            val word = it.word.copy(translate = translate)
+            it.copy(
+                word = word,
+                isEnableAddButton = word.word.isNotBlank() && word.translate.isNotBlank(),
+            )
+        }
+    }
+
+    fun onBackPressed() {
+        rootNavigator.back()
     }
 }

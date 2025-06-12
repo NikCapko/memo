@@ -11,9 +11,8 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
+import com.nikcapko.domain.model.WordModel
 import com.nikcapko.memo.core.common.Constants
-import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.makeGone
 import com.nikcapko.memo.core.ui.extensions.makeVisible
@@ -25,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @Suppress("TooManyFunctions")
 @AndroidEntryPoint
-internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventController {
+internal class SelectTranslateFragment : BaseFragment() {
 
     private val viewModel by lazyViewModels<SelectTranslateViewModel>()
     private val viewBinding by viewBinding(FragmentSelectTranslateBinding::bind)
@@ -34,8 +33,7 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
         override fun onAnimationStart(animation: Animator) = Unit
         override fun onAnimationCancel(animation: Animator) = Unit
         override fun onAnimationRepeat(animation: Animator) = Unit
-        override fun onAnimationEnd(animation: Animator) =
-            viewModel.processCommand(SelectTranslateCommand.AnimationEndCommand)
+        override fun onAnimationEnd(animation: Animator) = viewModel.onAnimationEnd()
     }
 
     override fun onCreateView(
@@ -71,36 +69,40 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
             btnTranslate4.setOnClickListener { onClickTranslate(it as Button) }
             btnTranslate5.setOnClickListener { onClickTranslate(it as Button) }
 
-            btnExit.setOnClickListener { viewModel.processCommand(SelectTranslateCommand.BackPressedCommand) }
+            btnExit.setOnClickListener { viewModel.onBackPressed() }
             pvLoad.onRetryClick = ::onRetry
         }
     }
 
     private fun observe() {
-        observe(viewModel.stateFlow) { state ->
+        observe(viewModel.state) { state ->
             when (state) {
-                DataLoadingViewModelState.NoneState, DataLoadingViewModelState.LoadingState -> startLoading()
-                DataLoadingViewModelState.NoItemsState -> showWord(null, emptyList())
-                is DataLoadingViewModelState.LoadedState<*> -> {
-                    val data = state.data as? Pair<Word, List<String>>
-                    showWord(data?.first, data?.second.orEmpty())
+                is SelectTranslateState.None, is SelectTranslateState.Loading -> startLoading()
+                is SelectTranslateState.Success -> {
+                    showWord(state.word, state.translate)
                     completeLoading()
                 }
 
-                is DataLoadingViewModelState.ErrorState -> {
+                is SelectTranslateState.Error -> {
                     errorLoading(requireContext().getString(R.string.error_default_message))
                 }
             }
         }
-        observe(viewModel.eventFlow) { it.apply(this) }
+        observe(viewModel.eventFlow) {
+            when (it) {
+                is SelectTranslateEvent.EndGameEvent -> showEndGame(it.successCount, it.errorCount)
+                is SelectTranslateEvent.ErrorAnimationEvent -> showErrorAnimation()
+                is SelectTranslateEvent.SuccessAnimationEvent -> showSuccessAnimation()
+            }
+        }
     }
 
     private fun onClickTranslate(button: Button) {
-        viewModel.processCommand(SelectTranslateCommand.TranslateClickCommand(button.text.toString()))
+        viewModel.onTranslateClick(button.text.toString())
     }
 
     @Suppress("MagicNumber")
-    private fun showWord(word: Word?, translates: List<String>) = with(viewBinding) {
+    private fun showWord(word: WordModel?, translates: List<String>) = with(viewBinding) {
         lavSuccess.makeGone()
         lavError.makeGone()
         tvWord.makeVisible()
@@ -113,7 +115,7 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
         btnTranslate5.text = translates[4]
     }
 
-    override fun showSuccessAnimation() = with(viewBinding) {
+    private fun showSuccessAnimation() = with(viewBinding) {
         tvWord.makeGone()
         llTranslateContainer.makeGone()
         lavSuccess.makeVisible()
@@ -121,7 +123,7 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
         lavError.speed = 2f
     }
 
-    override fun showErrorAnimation() = with(viewBinding) {
+    private fun showErrorAnimation() = with(viewBinding) {
         tvWord.makeGone()
         llTranslateContainer.makeGone()
         lavError.makeVisible()
@@ -129,7 +131,7 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
         lavError.speed = 2f
     }
 
-    override fun showEndGame(successCount: Int, errorCount: Int) = with(viewBinding) {
+    private fun showEndGame(successCount: Int, errorCount: Int) = with(viewBinding) {
         parentFragmentManager.setFragmentResult(Constants.LOAD_WORDS_EVENT, bundleOf())
         llContentContainer.makeGone()
         rlEnGameContainer.makeVisible()
@@ -153,6 +155,6 @@ internal class SelectTranslateFragment : BaseFragment(), SelectTranslateEventCon
     }
 
     private fun onRetry() {
-        viewModel.processCommand(SelectTranslateCommand.LoadWordsCommand)
+        viewModel.loadWords()
     }
 }

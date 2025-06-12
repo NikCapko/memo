@@ -39,14 +39,14 @@ internal class FindPairsViewModelTest {
     private var word1 = Word(
         id = 3928,
         word = "word",
-        translation = "слово",
+        translate = "слово",
         frequency = 2.3f,
     )
 
     private var word2 = Word(
         id = 3929,
         word = "hallo",
-        translation = "привет",
+        translate = "привет",
         frequency = 2.3f,
     )
 
@@ -79,7 +79,7 @@ internal class FindPairsViewModelTest {
                 ),
             ),
             wordList = listOf(word1.word, word2.word),
-            translateList = listOf(word1.translation, word2.translation),
+            translateList = listOf(word1.translate, word2.translate),
             wordsCount = 0,
         )
 
@@ -105,12 +105,12 @@ internal class FindPairsViewModelTest {
                 FindPairsState(
                     DataLoadingViewModelState.LoadedState(listOf(word1, word2)),
                     wordList = listOf(word1.word),
-                    translateList = listOf(word1.translation),
+                    translateList = listOf(word1.translate),
                     wordsCount = 0,
                 )
 
         viewModel = createViewModel()
-        viewModel.onFindPair(word1.word, word2.translation)
+        viewModel.onFindPair(word1.word, word2.translate)
 
         // coVerify { eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(false)) }
     }
@@ -127,7 +127,7 @@ internal class FindPairsViewModelTest {
         )
 
         viewModel = createViewModel()
-        viewModel.onFindPair(word2.word, word1.translation)
+        viewModel.onFindPair(word2.word, word1.translate)
 
         // coVerify { eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(false)) }
     }
@@ -144,7 +144,7 @@ internal class FindPairsViewModelTest {
         )
 
         viewModel = createViewModel()
-        viewModel.onFindPair(word1.word, word1.translation)
+        viewModel.onFindPair(word1.word, word1.translate)
 
         stateFlowWrapper.update { it.copy(wordsCount = 1) }
 //        coVerify { eventFlowWrapper.update(FindPairsEvent.FindPairResultEvent(true)) }

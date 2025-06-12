@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.appcompat.app.AppCompatActivity
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.makeGone
 import com.nikcapko.memo.core.ui.extensions.makeInvisible
 import com.nikcapko.memo.core.ui.extensions.makeVisible
 import com.nikcapko.memo.core.ui.extensions.observe
+import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
 import com.nikcapko.memo.presentation.R
 import com.nikcapko.memo.presentation.databinding.FragmentFindPairsBinding
@@ -50,7 +50,7 @@ internal class FindPairsFragment : BaseFragment(), FindPairsEventController {
             when (state.dataLoadingViewModelState) {
                 DataLoadingViewModelState.NoneState,
                 DataLoadingViewModelState.LoadingState,
-                -> startLoading()
+                    -> startLoading()
 
                 DataLoadingViewModelState.NoItemsState -> showWords(emptyList(), emptyList())
                 is DataLoadingViewModelState.LoadedState<*> -> {

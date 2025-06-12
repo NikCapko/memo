@@ -2,8 +2,6 @@ package com.nikcapko.memo.presentation.di
 
 import com.nikcapko.memo.presentation.domain.FindPairsInteractor
 import com.nikcapko.memo.presentation.domain.FindPairsInteractorImpl
-import com.nikcapko.memo.presentation.domain.GamesInteractor
-import com.nikcapko.memo.presentation.domain.GamesInteractorImpl
 import com.nikcapko.memo.presentation.domain.SelectTranslateInteractor
 import com.nikcapko.memo.presentation.domain.SelectTranslateInteractorImpl
 import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
@@ -24,9 +22,6 @@ internal abstract class DomainModule {
 
     @Binds
     abstract fun bindWordDetailsInteractor(impl: WordDetailsInteractorImpl): WordDetailsInteractor
-
-    @Binds
-    abstract fun bindGamesInteractor(impl: GamesInteractorImpl): GamesInteractor
 
     @Binds
     abstract fun bindSelectTranslateInteractor(impl: SelectTranslateInteractorImpl): SelectTranslateInteractor

@@ -5,7 +5,6 @@ import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
 import com.nikcapko.memo.presentation.domain.SelectTranslateInteractor
-import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateStateFlowWrapper
 import com.nikcapko.memo.presentation.games.selecttranslate.SelectTranslateViewModel
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import io.mockk.coEvery
@@ -35,14 +34,14 @@ internal class SelectTranslateViewModelTest {
     private var word1 = Word(
         id = 3928,
         word = "word",
-        translation = "слово",
+        translate = "слово",
         frequency = 2.3f,
     )
 
     private var word2 = Word(
         id = 3929,
         word = "hallo",
-        translation = "привет",
+        translate = "привет",
         frequency = 2.3f,
     )
 
@@ -58,7 +57,7 @@ internal class SelectTranslateViewModelTest {
             stateFlowWrapper.update(
                 DataLoadingViewModelState.LoadedState(
                     word1 to listOf(
-                        word1.translation,
+                        word1.translate,
                     ),
                 ),
             )
@@ -70,7 +69,7 @@ internal class SelectTranslateViewModelTest {
         coEvery { selectTranslateInteractor.getWords() } returns listOf(word1, word2)
 
         viewModel = createViewModel()
-        viewModel.onTranslateClick(word1.translation)
+        viewModel.onTranslateClick(word1.translate)
 
 //        coVerify { eventFlowWrapper.update(SelectTranslateEvent.SuccessAnimationEvent) }
     }
@@ -80,7 +79,7 @@ internal class SelectTranslateViewModelTest {
         coEvery { selectTranslateInteractor.getWords() } returns listOf(word1, word2)
 
         viewModel = createViewModel()
-        viewModel.onTranslateClick(word2.translation)
+        viewModel.onTranslateClick(word2.translate)
 
 //        coVerify { eventFlowWrapper.update(SelectTranslateEvent.ErrorAnimationEvent) }
     }

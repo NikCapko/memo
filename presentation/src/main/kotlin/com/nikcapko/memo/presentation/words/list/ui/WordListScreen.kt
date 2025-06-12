@@ -40,15 +40,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nikcapko.memo.core.data.Word
+import com.nikcapko.domain.model.WordModel
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
-import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
 import com.nikcapko.memo.presentation.R
+import com.nikcapko.memo.presentation.words.list.state.WordListState
 
 @Suppress("NonSkippableComposable")
 @Composable
 internal fun WordListScreen(
-    state: State<DataLoadingViewModelState?>,
+    state: State<WordListState>,
     onItemClick: (Int) -> Unit,
     onSpeakClick: (Int) -> Unit,
     addItemClick: () -> Unit,
@@ -56,40 +56,28 @@ internal fun WordListScreen(
     onGamesClick: () -> Unit,
     onClearDatabaseClick: () -> Unit,
 ) {
-    when (val state = state.value) {
-        DataLoadingViewModelState.NoneState,
-        DataLoadingViewModelState.LoadingState,
+    when (state.value) {
+        is WordListState.None,
+        is WordListState.Loading,
             -> showLoading()
 
-        DataLoadingViewModelState.NoItemsState -> ShowContent(
-            words = emptyList(),
-            onItemClick = onItemClick,
-            onSpeakClick = onSpeakClick,
-            addItemClick = addItemClick,
-            onGamesClick = onGamesClick,
-            onClearDatabaseClick = onClearDatabaseClick,
-        )
-
-        is DataLoadingViewModelState.LoadedState<*> -> {
-            (state.data as? List<*>)?.filterIsInstance<Word>()
-                ?.let {
-                    ShowContent(
-                        words = it,
-                        onItemClick = onItemClick,
-                        onSpeakClick = onSpeakClick,
-                        addItemClick = addItemClick,
-                        onGamesClick = onGamesClick,
-                        onClearDatabaseClick = onClearDatabaseClick,
-                    )
-                }
+        is WordListState.Success -> {
+            ShowContent(
+                words = (state.value as WordListState.Success).words,
+                onItemClick = onItemClick,
+                onSpeakClick = onSpeakClick,
+                addItemClick = addItemClick,
+                onGamesClick = onGamesClick,
+                onClearDatabaseClick = onClearDatabaseClick,
+            )
         }
 
-        is DataLoadingViewModelState.ErrorState -> ShowError(
-            error = state.errorMessage,
-            onRetry = onRetryClick,
-        )
-
-        null -> Unit
+        is WordListState.Error -> {
+            ShowError(
+                error = (state.value as WordListState.Error).errorMessage,
+                onRetry = onRetryClick,
+            )
+        }
     }
 }
 
@@ -119,7 +107,6 @@ fun ShowError(error: String, onRetry: () -> Unit) = Box(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             text = error,
             style = MaterialTheme.typography.body1,
@@ -135,7 +122,7 @@ fun ShowError(error: String, onRetry: () -> Unit) = Box(
             Icon(
                 imageVector = Icons.Default.Refresh,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text("Попробовать еще раз")
@@ -143,11 +130,10 @@ fun ShowError(error: String, onRetry: () -> Unit) = Box(
     }
 }
 
-
 @Suppress("NonSkippableComposable")
 @Composable
 internal fun ShowContent(
-    words: List<Word>,
+    words: List<WordModel>,
     onItemClick: (Int) -> Unit,
     onSpeakClick: (Int) -> Unit,
     addItemClick: () -> Unit,
@@ -158,9 +144,14 @@ internal fun ShowContent(
     floatingActionButton = {
         FloatingActionButton(
             modifier = Modifier,
-            onClick = addItemClick
+            onClick = addItemClick,
+            backgroundColor = MaterialTheme.colors.primary,
         ) {
-            Icon(Icons.Filled.Add, "")
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "",
+                modifier = Modifier,
+            )
         }
     },
     topBar = {
@@ -200,7 +191,7 @@ internal fun ShowContent(
                             imageVector = Icons.Default.InsertEmoticon,
                             contentDescription = null,
                             modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colors.secondary
+                            tint = MaterialTheme.colors.primary
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -208,7 +199,7 @@ internal fun ShowContent(
                         Text(
                             text = "Добавьте свое первое слово",
                             style = MaterialTheme.typography.body1,
-                            color = MaterialTheme.colors.secondary,
+                            color = MaterialTheme.colors.primary,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -234,7 +225,7 @@ internal fun ShowContent(
                                 Text(
                                     modifier = Modifier
                                         .padding(start = 16.dp, bottom = 8.dp),
-                                    text = item.translation,
+                                    text = item.translate,
                                     color = MaterialTheme.colors.secondary,
                                     fontStyle = FontStyle.Italic,
                                 )
@@ -261,12 +252,12 @@ internal fun ShowContent(
 private fun WordListScreenPreviewContent() = ComposeTheme {
     val state = remember {
         mutableStateOf(
-            DataLoadingViewModelState.LoadedState(
+            WordListState.Success(
                 listOf(
-                    Word(
+                    WordModel(
                         id = 5537,
                         word = "reprehendunt",
-                        translation = "euripidis",
+                        translate = "euripidis",
                         frequency = 2.3f
                     )
                 )
@@ -289,7 +280,7 @@ private fun WordListScreenPreviewContent() = ComposeTheme {
 private fun WordListScreenPreviewEmpty() = ComposeTheme {
     val state = remember {
         mutableStateOf(
-            DataLoadingViewModelState.LoadedState(listOf<Word>())
+            WordListState.Success(listOf<WordModel>())
         )
     }
     WordListScreen(
@@ -307,7 +298,7 @@ private fun WordListScreenPreviewEmpty() = ComposeTheme {
 @Composable
 private fun WordListScreenPreviewLoading() = ComposeTheme {
     val state = remember {
-        mutableStateOf(DataLoadingViewModelState.LoadingState)
+        mutableStateOf(WordListState.Loading)
     }
     WordListScreen(
         state = state,
@@ -325,7 +316,7 @@ private fun WordListScreenPreviewLoading() = ComposeTheme {
 private fun WordListScreenPreviewError() = ComposeTheme {
     val state = remember {
         mutableStateOf(
-            DataLoadingViewModelState.ErrorState("Ошибка"),
+            WordListState.Error("Ошибка"),
         )
     }
     WordListScreen(

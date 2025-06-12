@@ -1,4 +1,4 @@
-package com.nikcapko.memo.presentation.words.details
+package com.nikcapko.memo.presentation.words.details.event
 
 import com.nikcapko.memo.core.ui.BaseEvent
 

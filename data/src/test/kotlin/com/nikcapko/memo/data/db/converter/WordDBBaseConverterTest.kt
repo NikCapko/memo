@@ -26,7 +26,7 @@ class WordDBBaseConverterTest {
     private var wordModel = WordModel(
         id = 3929,
         word = "expetenda",
-        translation = "vituperatoribus",
+        translate = "vituperatoribus",
         frequency = 2.3f
     )
 

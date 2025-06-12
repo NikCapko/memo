@@ -4,11 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.emptyExceptionHandler
 import com.nikcapko.memo.core.common.exceptionHandler
-import com.nikcapko.memo.core.data.Word
-import com.nikcapko.memo.core.ui.viewmodel.BaseEventViewModel
-import com.nikcapko.memo.core.ui.viewmodel.DataLoadingViewModelState
+import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
 import com.nikcapko.memo.presentation.domain.WordListInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
+import com.nikcapko.memo.presentation.words.list.event.WordListEvent
+import com.nikcapko.memo.presentation.words.list.state.WordListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,12 +20,11 @@ private const val MIN_WORDS_COUNT = 5
 @HiltViewModel
 internal class WordListViewModel @Inject constructor(
     private val wordListInteractor: WordListInteractor,
-    private val stateFlowWrapper: WordListStateFlowWrapper,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
-) : BaseEventViewModel<WordListEvent>() {
+) : BaseViewModel<WordListState, WordListEvent>() {
 
-    val state = stateFlowWrapper.liveValue()
+    override fun createInitialState(): WordListState = WordListState.None
 
     override fun onViewFirstCreated() {
         loadWords()
@@ -34,38 +33,34 @@ internal class WordListViewModel @Inject constructor(
     fun loadWords() {
         viewModelScope.launch(
             exceptionHandler { exception ->
-                stateFlowWrapper.update(
-                    DataLoadingViewModelState.ErrorState(errorMessage = "Произошла ошибка")
-                )
+                updateState { WordListState.Error("Произошла ошибка") }
             }
         ) {
             withContext(dispatcherProvider.io) {
-                stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
+                updateState { WordListState.Loading }
                 delay(5000L) // TODO for test loading animation
                 val wordsList = wordListInteractor.getWords()
-                stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(wordsList))
+                updateState { WordListState.Success(wordsList) }
             }
         }
     }
 
     fun onItemClick(position: Int) {
-        val wordList =
-            (stateFlowWrapper.value() as? DataLoadingViewModelState.LoadedState<List<Word>>)?.data
+        val wordList = (state.value as? WordListState.Success)?.words
         rootNavigator.pushWordDetailScreen(wordList?.getOrNull(position))
     }
 
     fun onEnableSound(position: Int) {
-        val wordList =
-            (stateFlowWrapper.value() as? DataLoadingViewModelState.LoadedState<List<Word>>)?.data
+        val wordList = (state.value as? WordListState.Success)?.words
         sendEvent(WordListEvent.SpeakOutEvent(wordList?.getOrNull(position)?.word.orEmpty()))
     }
 
     fun clearDatabase() {
         viewModelScope.launch(emptyExceptionHandler) {
             withContext(dispatcherProvider.io) {
-                stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
+                updateState { WordListState.Loading }
                 wordListInteractor.clearDataBase()
-                stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(emptyList<Word>()))
+                updateState { WordListState.Success(emptyList()) }
             }
         }
     }
@@ -79,9 +74,8 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun openGamesScreen() {
-        val wordsList =
-            (stateFlowWrapper.value() as? DataLoadingViewModelState.LoadedState<List<Word>>)?.data
-        if ((wordsList?.size ?: 0) < MIN_WORDS_COUNT) {
+        val wordList = (state.value as? WordListState.Success)?.words.orEmpty()
+        if (wordList.size < MIN_WORDS_COUNT) {
             sendEvent(WordListEvent.ShowNeedMoreWordsEvent)
         } else {
             rootNavigator.pushGamesScreen()

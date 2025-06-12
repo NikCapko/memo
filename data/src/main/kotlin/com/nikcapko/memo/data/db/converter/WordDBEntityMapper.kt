@@ -12,12 +12,12 @@ internal class WordDBEntityListConverter @Inject constructor(
     override val itemConverter: BaseConverter<WordDBEntity, WordModel> = wordDBEntityItemConverter
 }
 
-internal class WordDBEntityItemConverter @Inject() constructor() : BaseConverter<WordDBEntity, WordModel> {
+internal class WordDBEntityItemConverter @Inject constructor() : BaseConverter<WordDBEntity, WordModel> {
     override fun convert(from: WordDBEntity): WordModel = with(from) {
         WordModel(
             id = id,
             word = word.orEmpty(),
-            translation = translation.orEmpty(),
+            translate = translation.orEmpty(),
             frequency = frequency ?: 0.0f,
         )
     }

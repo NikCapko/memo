@@ -5,9 +5,8 @@ import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
 import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
-import com.nikcapko.memo.presentation.words.details.WordDetailsStateFlowWrapper
 import com.nikcapko.memo.presentation.words.details.WordDetailsViewModel
-import com.nikcapko.memo.presentation.words.details.WordDetailsViewState
+import com.nikcapko.memo.presentation.words.details.state.WordDetailsState
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -36,7 +35,7 @@ internal class WordDetailsViewModelTest {
     private var word = Word(
         id = 3929,
         word = "expetenda",
-        translation = "vituperatoribus",
+        translate = "vituperatoribus",
         frequency = 2.3f,
     )
 
@@ -54,7 +53,7 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check delete word`() = runTest {
-        every { stateFlowWrapper.value() } returns WordDetailsViewState(
+        every { stateFlowWrapper.value() } returns WordDetailsState(
             word = word,
             showProgressDialog = false,
             enableSaveButton = false,

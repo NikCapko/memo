@@ -16,7 +16,7 @@ import com.nikcapko.memo.core.ui.extensions.observe
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
 import com.nikcapko.memo.presentation.R
-import com.nikcapko.memo.presentation.words.list.WordListEvent
+import com.nikcapko.memo.presentation.words.list.event.WordListEvent
 import com.nikcapko.memo.presentation.words.list.WordListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -50,7 +50,7 @@ internal class WordListFragment : BaseFragment() {
         setContent {
             ComposeTheme {
                 WordListScreen(
-                    state = viewModel.state.collectAsState(null),
+                    state = viewModel.state.collectAsState(),
                     onItemClick = { viewModel.onItemClick(it) },
                     onSpeakClick = { viewModel.onEnableSound(it) },
                     addItemClick = { viewModel.onAddWordClick() },

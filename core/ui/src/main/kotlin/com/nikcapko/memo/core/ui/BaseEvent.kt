@@ -1,3 +1,5 @@
 package com.nikcapko.memo.core.ui
 
-interface BaseEvent
+interface BaseEvent {
+    data object Stub : BaseEvent
+}

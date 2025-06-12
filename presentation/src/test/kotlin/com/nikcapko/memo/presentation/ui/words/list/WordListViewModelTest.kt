@@ -6,7 +6,6 @@ import com.nikcapko.memo.core.test.InstantExecutorExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
 import com.nikcapko.memo.presentation.domain.WordListInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
-import com.nikcapko.memo.presentation.words.list.WordListStateFlowWrapper
 import com.nikcapko.memo.presentation.words.list.WordListViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,7 +37,7 @@ internal class WordListViewModelTest {
     private val word = Word(
         id = 3929,
         word = "expetenda",
-        translation = "vituperatoribus",
+        translate = "vituperatoribus",
         frequency = 2.3f,
     )
 

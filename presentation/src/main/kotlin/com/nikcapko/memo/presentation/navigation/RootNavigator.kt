@@ -1,10 +1,10 @@
 package com.nikcapko.memo.presentation.navigation
 
-import com.nikcapko.memo.core.data.Word
+import com.nikcapko.domain.model.WordModel
 
 interface RootNavigator {
     fun pushWordListScreen()
-    fun pushWordDetailScreen(word: Word? = null)
+    fun pushWordDetailScreen(word: WordModel? = null)
     fun pushGamesScreen()
     fun pushSelectTranslateScreen()
     fun pushFindPairsScreen()
