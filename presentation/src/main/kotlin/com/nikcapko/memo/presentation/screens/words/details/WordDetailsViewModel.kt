@@ -2,10 +2,11 @@ package com.nikcapko.memo.presentation.screens.words.details
 
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.domain.model.WordModel
+import com.nikcapko.domain.usecases.DeleteWordUseCase
+import com.nikcapko.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.emptyExceptionHandler
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
-import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.words.details.event.WordDetailsEvent
 import com.nikcapko.memo.presentation.screens.words.details.state.WordDetailsState
@@ -20,7 +21,8 @@ import java.util.Date
 @HiltViewModel(assistedFactory = WordDetailsViewModel.Factory::class)
 internal class WordDetailsViewModel @AssistedInject constructor(
     @Assisted private val word: WordModel?,
-    private val wordDetailsInteractor: WordDetailsInteractor,
+    private val saveWordUseCase: SaveWordUseCase,
+    private val deleteWordUseCase: DeleteWordUseCase,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<WordDetailsState, WordDetailsEvent>() {
@@ -48,7 +50,7 @@ internal class WordDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch(emptyExceptionHandler) {
             withContext(dispatcherProvider.io) {
                 updateState { it.copy(showProgressDialog = true) }
-                wordDetailsInteractor.saveWord(state.value.word)
+                saveWordUseCase(state.value.word)
                 sendEvent(WordDetailsEvent.CloseScreenEvent)
                 updateState { it.copy(showProgressDialog = false) }
             }
@@ -62,7 +64,7 @@ internal class WordDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch(emptyExceptionHandler) {
             withContext(dispatcherProvider.io) {
                 updateState { it.copy(showProgressDialog = true) }
-                wordDetailsInteractor.deleteWord(state.value.word.id.toString())
+                deleteWordUseCase(state.value.word.id.toString())
                 sendEvent(WordDetailsEvent.CloseScreenEvent)
                 updateState { it.copy(showProgressDialog = false) }
             }

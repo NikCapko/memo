@@ -1,10 +1,10 @@
-package com.nikcapko.memo.data.db
+package com.nikcapko.memo.data.database
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.nikcapko.memo.data.db.base.BaseDao
-import com.nikcapko.memo.data.db.data.WordDBEntity
+import com.nikcapko.memo.data.database.base.BaseDao
+import com.nikcapko.memo.data.database.data.WordDBEntity
 
 @Dao
 internal interface WordDao : BaseDao<WordDBEntity> {

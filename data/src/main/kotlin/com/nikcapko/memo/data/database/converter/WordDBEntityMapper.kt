@@ -1,13 +1,13 @@
-package com.nikcapko.memo.data.db.converter
+package com.nikcapko.memo.data.database.converter
 
 import com.nikcapko.domain.model.WordModel
 import com.nikcapko.memo.core.common.converter.BaseConverter
 import com.nikcapko.memo.core.common.converter.BaseListConverter
-import com.nikcapko.memo.data.db.data.WordDBEntity
+import com.nikcapko.memo.data.database.data.WordDBEntity
 import javax.inject.Inject
 
 internal class WordDBEntityListConverter @Inject constructor(
-    private val wordDBEntityItemConverter: WordDBEntityItemConverter,
+    wordDBEntityItemConverter: WordDBEntityItemConverter,
 ) : BaseListConverter<WordDBEntity, WordModel> {
     override val itemConverter: BaseConverter<WordDBEntity, WordModel> = wordDBEntityItemConverter
 }

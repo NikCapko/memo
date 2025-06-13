@@ -2,7 +2,7 @@ package com.nikcapko.memo.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.nikcapko.memo.data.db.AppDatabase
+import com.nikcapko.memo.data.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
