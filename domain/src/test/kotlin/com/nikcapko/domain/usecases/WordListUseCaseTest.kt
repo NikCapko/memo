@@ -21,7 +21,7 @@ class WordListUseCaseTest {
     private var wordRepository: WordRepository = spyk()
 
     private var useCase = WordListUseCase(
-        wordRepository = wordRepository
+        wordRepository = wordRepository,
     )
 
     @Test

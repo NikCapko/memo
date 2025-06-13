@@ -1,17 +1,10 @@
 plugins {
-    id("kotlin")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    alias(libs.plugins.memo.kotlin.jvm.library)
 }
 
 dependencies {
 
     implementation(kotlin("reflect"))
-
-    implementation(project(":core"))
 
     implementation(libs.javax.inject)
 

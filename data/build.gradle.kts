@@ -1,39 +1,11 @@
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    id("dagger.hilt.android.plugin")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.memo.android.library)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    compileSdk = libs.versions.compileSdkVersion.get().toInt()
-    buildToolsVersion = libs.versions.buildToolsVersion.get()
     namespace = "com.nikcapko.memo.data"
-
-    defaultConfig {
-        minSdk = libs.versions.minSdkVersion.get().toInt()
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
 
     testOptions {
         unitTests.all {
@@ -44,22 +16,12 @@ android {
 }
 
 dependencies {
-    implementation(kotlin("reflect"))
-
-    implementation(project(":core"))
-    implementation(project(":domain"))
+    implementation(projects.coreCommon)
+    implementation(projects.domain)
 
     // Dagger - Hilt
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
-
-    // retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.gson)
-
-    // okhttp
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging)
 
     // room
     implementation(libs.room)

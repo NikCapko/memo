@@ -1,31 +1,33 @@
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
-    id("com.google.dagger.hilt.android") version "2.48" apply false
-    id("com.google.devtools.ksp") version "1.9.0-1.0.13" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.detekt)
 }
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-
     repositories {
-        mavenCentral()
         google()
-    }
-    dependencies {
-        classpath(libs.plugin.gradle)
-        classpath(libs.plugin.kotlin)
-        classpath(libs.plugin.hilt)
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = uri("https://maven.google.com/") }
     }
 }
 
 allprojects {
     repositories {
+        maven { url = uri("https://dl.google.com/dl/android/maven2/") }
+        maven { url = uri("https://plugins.gradle.org/m2/") }
+        gradlePluginPortal()
+        maven { url = uri("https://maven.google.com") }
+        maven { url = uri("https://jitpack.io") }
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-        maven { url = uri("https://maven.google.com") }
-        maven { url = uri("https://plugins.gradle.org/m2/") }
-        maven { url = uri("https://dl.google.com/dl/android/maven2/") }
         maven { url = uri("https://dl.bintray.com/terrakok/terramaven/") }
     }
 }
