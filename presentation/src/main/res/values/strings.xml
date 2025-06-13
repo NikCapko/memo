@@ -7,8 +7,4 @@
     <string name="no">Нет</string>
     <string name="ok">Ок</string>
 
-    <string name="loading">Загрузка...</string>
-    <string name="retry">Повторить</string>
-    <string name="error_default_message">Упс, что-то пошло не так…</string>
-
 </resources>

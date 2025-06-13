@@ -1,4 +1,4 @@
-package com.nikcapko.memo.data.db.base
+package com.nikcapko.memo.data.database.base
 
 import androidx.room.Delete
 import androidx.room.Insert

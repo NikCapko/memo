@@ -2,10 +2,10 @@ package com.nikcapko.memo.data.repository
 
 import com.nikcapko.domain.model.WordModel
 import com.nikcapko.domain.repository.WordRepository
-import com.nikcapko.memo.data.db.AppDatabase
-import com.nikcapko.memo.data.db.converter.WordDBEntityListConverter
-import com.nikcapko.memo.data.db.converter.WordModelToEntityConverter
-import com.nikcapko.memo.data.db.data.WordDBEntity
+import com.nikcapko.memo.data.database.AppDatabase
+import com.nikcapko.memo.data.database.converter.WordDBEntityListConverter
+import com.nikcapko.memo.data.database.converter.WordModelToEntityConverter
+import com.nikcapko.memo.data.database.data.WordDBEntity
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

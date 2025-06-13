@@ -3,12 +3,12 @@
 package com.nikcapko.memo.presentation.screens.games.selecttranslate
 
 import androidx.lifecycle.viewModelScope
+import com.nikcapko.domain.usecases.GameWordsLimitUseCase
+import com.nikcapko.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.exceptionHandler
 import com.nikcapko.memo.core.ui.BaseEvent
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
-import com.nikcapko.memo.presentation.domain.MAX_WORDS_COUNT_SELECT_TRANSLATE
-import com.nikcapko.memo.presentation.domain.SelectTranslateInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.games.selecttranslate.state.SelectTranslateScreenState
 import com.nikcapko.memo.presentation.screens.games.selecttranslate.state.SelectTranslateState
@@ -22,10 +22,12 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal const val WORD_GAME_PRICE = 0.02f
+private const val MAX_WORDS_COUNT_SELECT_TRANSLATE = 5
 
 @HiltViewModel
 internal class SelectTranslateViewModel @Inject constructor(
-    private val selectTranslateInteractor: SelectTranslateInteractor,
+    private val gameWordsLimitUseCase: GameWordsLimitUseCase,
+    private val saveWordUseCase: SaveWordUseCase,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<SelectTranslateState, BaseEvent.Stub>() {
@@ -44,7 +46,7 @@ internal class SelectTranslateViewModel @Inject constructor(
         ) {
             withContext(dispatcherProvider.io) {
                 updateState { SelectTranslateState.Loading }
-                val words = selectTranslateInteractor.getWords()
+                val words = gameWordsLimitUseCase(MAX_WORDS_COUNT_SELECT_TRANSLATE)
                 updateState {
                     SelectTranslateState.Success(
                         words = words,
@@ -137,7 +139,7 @@ internal class SelectTranslateViewModel @Inject constructor(
             withContext(dispatcherProvider.io + NonCancellable) {
                 supervisorScope {
                     val tasks = stateValue.words.map { word ->
-                        async { selectTranslateInteractor.saveWord(word) }
+                        async { saveWordUseCase(word) }
                     }
                     tasks.forEach { it.await() }
                 }

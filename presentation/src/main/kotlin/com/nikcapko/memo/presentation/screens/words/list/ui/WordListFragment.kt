@@ -16,14 +16,15 @@ import com.nikcapko.memo.core.ui.extensions.observe
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
 import com.nikcapko.memo.presentation.R
-import com.nikcapko.memo.presentation.screens.words.list.event.WordListEvent
 import com.nikcapko.memo.presentation.screens.words.list.WordListViewModel
+import com.nikcapko.memo.presentation.screens.words.list.event.WordListEvent
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
 private const val SPEECH_RATE = 0.6f
 private const val PITCH = 1.0f
 
+@Suppress("TooManyFunctions")
 @AndroidEntryPoint
 internal class WordListFragment : BaseFragment() {
 

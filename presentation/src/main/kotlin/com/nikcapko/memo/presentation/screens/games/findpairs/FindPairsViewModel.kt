@@ -1,10 +1,10 @@
 package com.nikcapko.memo.presentation.screens.games.findpairs
 
 import androidx.lifecycle.viewModelScope
+import com.nikcapko.domain.usecases.GameWordsLimitUseCase
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.exceptionHandler
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
-import com.nikcapko.memo.presentation.domain.FindPairsInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.games.findpairs.event.FindPairsEvent
 import com.nikcapko.memo.presentation.screens.games.findpairs.state.FindPairsState
@@ -18,7 +18,7 @@ private const val MAX_WORDS_COUNT_FIND_PAIRS = 5
 
 @HiltViewModel
 internal class FindPairsViewModel @Inject constructor(
-    private val findPairsInteractor: FindPairsInteractor,
+    private val gameWordsLimitUseCase: GameWordsLimitUseCase,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<FindPairsState, FindPairsEvent>() {
@@ -39,7 +39,7 @@ internal class FindPairsViewModel @Inject constructor(
         ) {
             withContext(dispatcherProvider.io) {
                 updateState { FindPairsState.Loading }
-                val words = findPairsInteractor.getWordsForGame()
+                val words = gameWordsLimitUseCase(MAX_WORDS_COUNT_FIND_PAIRS)
                 val wordList = words
                     .map {
                         FindPairsState.Item(

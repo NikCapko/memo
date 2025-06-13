@@ -1,11 +1,12 @@
 package com.nikcapko.memo.presentation.screens.words.list
 
 import androidx.lifecycle.viewModelScope
+import com.nikcapko.domain.usecases.ClearDatabaseUseCase
+import com.nikcapko.domain.usecases.WordListUseCase
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.emptyExceptionHandler
 import com.nikcapko.memo.core.common.exceptionHandler
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
-import com.nikcapko.memo.presentation.domain.WordListInteractor
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.words.list.event.WordListEvent
 import com.nikcapko.memo.presentation.screens.words.list.state.WordListState
@@ -19,7 +20,8 @@ private const val MIN_WORDS_COUNT = 5
 
 @HiltViewModel
 internal class WordListViewModel @Inject constructor(
-    private val wordListInteractor: WordListInteractor,
+    private val clearDatabaseUseCase: ClearDatabaseUseCase,
+    private val wordListUseCase: WordListUseCase,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<WordListState, WordListEvent>() {
@@ -39,7 +41,7 @@ internal class WordListViewModel @Inject constructor(
             withContext(dispatcherProvider.io) {
                 updateState { WordListState.Loading }
                 delay(5000L) // TODO for test loading animation
-                val wordsList = wordListInteractor.getWords()
+                val wordsList = wordListUseCase()
                 updateState { WordListState.Success(wordsList) }
             }
         }
@@ -59,7 +61,7 @@ internal class WordListViewModel @Inject constructor(
         viewModelScope.launch(emptyExceptionHandler) {
             withContext(dispatcherProvider.io) {
                 updateState { WordListState.Loading }
-                wordListInteractor.clearDataBase()
+                clearDatabaseUseCase()
                 updateState { WordListState.Success(emptyList()) }
             }
         }
