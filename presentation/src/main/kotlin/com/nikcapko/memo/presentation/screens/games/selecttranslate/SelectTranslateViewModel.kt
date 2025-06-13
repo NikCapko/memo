@@ -37,16 +37,22 @@ internal class SelectTranslateViewModel @Inject constructor(
     }
 
     fun loadWords() {
-        viewModelScope.launch(dispatcherProvider.io) {
-            updateState { SelectTranslateState.Loading }
-            val words = selectTranslateInteractor.getWords()
-            updateState {
-                SelectTranslateState.Success(
-                    words = words,
-                    screenState = SelectTranslateScreenState.None,
-                )
+        viewModelScope.launch(
+            exceptionHandler {
+                updateState { SelectTranslateState.Error("Произошла ошибка") }
             }
-            updateWord()
+        ) {
+            withContext(dispatcherProvider.io) {
+                updateState { SelectTranslateState.Loading }
+                val words = selectTranslateInteractor.getWords()
+                updateState {
+                    SelectTranslateState.Success(
+                        words = words,
+                        screenState = SelectTranslateScreenState.None,
+                    )
+                }
+                updateWord()
+            }
         }
     }
 

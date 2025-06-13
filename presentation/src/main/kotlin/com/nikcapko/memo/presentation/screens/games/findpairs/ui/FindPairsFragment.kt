@@ -4,11 +4,12 @@ package com.nikcapko.memo.presentation.screens.games.findpairs.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.ComposeView
 import com.nikcapko.memo.core.ui.BaseFragment
+import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.core.ui.viewmodel.lazyViewModels
-import com.nikcapko.memo.presentation.R
 import com.nikcapko.memo.presentation.screens.games.findpairs.FindPairsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,7 +23,17 @@ internal class FindPairsFragment : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_find_pairs, container, false)
+    ): ComposeView = ComposeView(requireContext()).apply {
+        setContent {
+            ComposeTheme {
+                FindPairsScreen(
+                    state = viewModel.state.collectAsState(),
+                    onRetry = { viewModel.loadWords() },
+                    onWordClick = { viewModel.onWordClick(it) },
+                    onTranslateClick = { viewModel.onTranslateClick(it) },
+                    endGameClick = { viewModel.onBackPressed() },
+                )
+            }
+        }
     }
 }

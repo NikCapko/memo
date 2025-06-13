@@ -50,7 +50,6 @@ internal fun SelectTranslateScreen(
     state: State<SelectTranslateState>,
     onRetry: () -> Unit,
     onTranslateClick: (String) -> Unit,
-    onBackPressed: () -> Unit,
     animationEnd: () -> Unit,
     endGameClick: () -> Unit,
 ) {
@@ -120,7 +119,7 @@ internal fun SelectTranslateScreen(
 }
 
 @Composable
-internal fun ShowLoading() = Box(
+private fun ShowLoading() = Box(
     modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colors.background),
@@ -133,7 +132,7 @@ internal fun ShowLoading() = Box(
 }
 
 @Composable
-fun ShowError(error: String, onRetry: () -> Unit) = Box(
+private fun ShowError(error: String, onRetry: () -> Unit) = Box(
     modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colors.background),
@@ -181,6 +180,7 @@ private fun SelectTranslateAnimation(
             animatable.animate(
                 composition = composition,
                 iterations = 1,
+                initialProgress = 0.1f,
                 speed = 2f,
             )
             onAnimationFinished()
@@ -265,7 +265,7 @@ private fun SelectTranslateEndGame(
     }
 }
 
-//@Preview(device = Devices.NEXUS_5)
+@Preview(device = Devices.NEXUS_5)
 @Composable
 private fun SelectTranslateScreenSelectWordPreview() = ComposeTheme {
     val state = remember {
@@ -288,14 +288,12 @@ private fun SelectTranslateScreenSelectWordPreview() = ComposeTheme {
         state = state,
         onRetry = {},
         onTranslateClick = {},
-        onBackPressed = {},
         animationEnd = {},
         endGameClick = {},
     )
 }
 
-
-//@Preview(device = Devices.NEXUS_5)
+@Preview(device = Devices.NEXUS_5)
 @Composable
 private fun SelectTranslateScreenSuccessAnimationPreview() = ComposeTheme {
     val state = remember {
@@ -310,7 +308,6 @@ private fun SelectTranslateScreenSuccessAnimationPreview() = ComposeTheme {
         state = state,
         onRetry = {},
         onTranslateClick = {},
-        onBackPressed = {},
         animationEnd = {},
         endGameClick = {},
     )
@@ -332,7 +329,6 @@ private fun SelectTranslateScreenEndGamePreview() = ComposeTheme {
         state = state,
         onRetry = {},
         onTranslateClick = {},
-        onBackPressed = {},
         animationEnd = {},
         endGameClick = {},
     )

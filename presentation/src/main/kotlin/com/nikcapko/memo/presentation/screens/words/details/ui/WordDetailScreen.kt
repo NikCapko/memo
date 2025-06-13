@@ -59,7 +59,7 @@ internal fun WordDetailScreen(
         backgroundColor = MaterialTheme.colors.background,
         topBar = {
             TopAppBar(
-                title = { Text("Memo") },
+                title = { },
                 navigationIcon = {
                     IconButton(onClick = { onBackPressed() }) {
                         Icon(

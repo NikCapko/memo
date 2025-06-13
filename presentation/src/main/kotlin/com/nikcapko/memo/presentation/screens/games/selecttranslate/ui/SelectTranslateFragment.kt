@@ -27,7 +27,6 @@ internal class SelectTranslateFragment : BaseFragment() {
                     state = viewModel.state.collectAsState(),
                     onRetry = { viewModel.loadWords() },
                     onTranslateClick = { viewModel.onTranslateClick(it) },
-                    onBackPressed = { viewModel.onBackPressed() },
                     animationEnd = { viewModel.onAnimationEnd() },
                     endGameClick = { viewModel.onBackPressed() },
                 )
