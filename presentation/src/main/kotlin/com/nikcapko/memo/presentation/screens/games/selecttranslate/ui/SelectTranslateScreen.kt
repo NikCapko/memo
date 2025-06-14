@@ -39,7 +39,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.nikcapko.domain.model.WordModel
+import com.nikcapko.memo.domain.model.WordModel
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.presentation.R
 import com.nikcapko.memo.presentation.screens.games.selecttranslate.state.SelectTranslateScreenState

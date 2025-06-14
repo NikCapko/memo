@@ -1,6 +1,6 @@
 package com.nikcapko.memo.data.di
 
-import com.nikcapko.domain.repository.WordRepository
+import com.nikcapko.memo.domain.repository.WordRepository
 import com.nikcapko.memo.data.database.AppDatabase
 import com.nikcapko.memo.data.database.converter.WordDBEntityListConverter
 import com.nikcapko.memo.data.database.converter.WordModelToEntityConverter

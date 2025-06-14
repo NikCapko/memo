@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nikcapko.domain.model.WordModel
+import com.nikcapko.memo.domain.model.WordModel
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.presentation.R
 import com.nikcapko.memo.presentation.screens.words.list.state.WordListState

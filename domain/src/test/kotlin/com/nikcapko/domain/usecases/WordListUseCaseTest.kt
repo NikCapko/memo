@@ -1,19 +1,19 @@
 package com.nikcapko.domain.usecases
 
-import com.nikcapko.domain.model.WordModel
-import com.nikcapko.domain.repository.WordRepository
+import com.nikcapko.memo.domain.model.WordModel
+import com.nikcapko.memo.domain.repository.WordRepository
+import com.nikcapko.memo.domain.usecases.WordListUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.spyk
-import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 /**
- * Test for [WordListUseCase]
+ * Test for [com.nikcapko.memo.domain.usecases.WordListUseCase]
  */
 @ExperimentalCoroutinesApi
 class WordListUseCaseTest {

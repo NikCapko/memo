@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
-import com.nikcapko.domain.model.WordModel
+import com.nikcapko.memo.domain.model.WordModel
 import com.nikcapko.memo.core.common.Constants
 import com.nikcapko.memo.core.ui.BaseFragment
 import com.nikcapko.memo.core.ui.extensions.argument

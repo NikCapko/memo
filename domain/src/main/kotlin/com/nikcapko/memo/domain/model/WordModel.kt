@@ -1,4 +1,4 @@
-package com.nikcapko.domain.model
+package com.nikcapko.memo.domain.model
 
 import java.io.Serializable
 

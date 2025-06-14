@@ -1,6 +1,7 @@
 package com.nikcapko.domain.usecases
 
-import com.nikcapko.domain.repository.WordRepository
+import com.nikcapko.memo.domain.repository.WordRepository
+import com.nikcapko.memo.domain.usecases.GameWordsLimitUseCase
 import io.mockk.coVerify
 import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -8,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 
 /**
- * Test for [GameWordsLimitUseCase]
+ * Test for [com.nikcapko.memo.domain.usecases.GameWordsLimitUseCase]
  */
 @ExperimentalCoroutinesApi
 class GameWordsLimitUseCaseTest {

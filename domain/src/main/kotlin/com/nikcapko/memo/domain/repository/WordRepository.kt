@@ -1,6 +1,6 @@
-package com.nikcapko.domain.repository
+package com.nikcapko.memo.domain.repository
 
-import com.nikcapko.domain.model.WordModel
+import com.nikcapko.memo.domain.model.WordModel
 
 interface WordRepository {
     suspend fun saveWord(word: WordModel)

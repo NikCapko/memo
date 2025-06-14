@@ -1,6 +1,6 @@
 package com.nikcapko.memo.data.database.converter
 
-import com.nikcapko.domain.model.WordModel
+import com.nikcapko.memo.domain.model.WordModel
 import com.nikcapko.memo.core.common.converter.convert
 import com.nikcapko.memo.data.database.data.WordDBEntity
 import org.junit.jupiter.api.Assertions
