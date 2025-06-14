@@ -1,14 +1,12 @@
-@file:Suppress("PackageName", "PackageNaming")
-
 package com.nikcapko.memo.presentation.screens.games.selecttranslate
 
 import androidx.lifecycle.viewModelScope
-import com.nikcapko.memo.domain.usecases.GameWordsLimitUseCase
-import com.nikcapko.memo.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.exceptionHandler
 import com.nikcapko.memo.core.ui.BaseEvent
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
+import com.nikcapko.memo.domain.usecases.GameWordsLimitUseCase
+import com.nikcapko.memo.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.games.selecttranslate.state.SelectTranslateScreenState
 import com.nikcapko.memo.presentation.screens.games.selecttranslate.state.SelectTranslateState
