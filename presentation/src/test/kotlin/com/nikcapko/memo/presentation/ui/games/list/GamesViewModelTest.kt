@@ -1,6 +1,6 @@
 package com.nikcapko.memo.presentation.ui.games.list
 
-import com.nikcapko.domain.model.Game
+import com.nikcapko.memo.domain.model.Game
 import com.nikcapko.memo.presentation.domain.GamesInteractor
 import com.nikcapko.memo.presentation.screens.games.list.GamesViewModel
 import com.nikcapko.memo.presentation.navigation.RootNavigator

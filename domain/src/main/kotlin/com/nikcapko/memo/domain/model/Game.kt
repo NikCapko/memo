@@ -1,4 +1,4 @@
-package com.nikcapko.domain.model
+package com.nikcapko.memo.domain.model
 
 enum class Game(val title: String) {
     SELECT_TRANSLATE("Выбери перевод"),

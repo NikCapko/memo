@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.nikcapko.domain.model.Game
+import com.nikcapko.memo.domain.model.Game
 import com.nikcapko.memo.core.ui.theme.ComposeTheme
 import com.nikcapko.memo.presentation.screens.games.list.state.GamesState
 

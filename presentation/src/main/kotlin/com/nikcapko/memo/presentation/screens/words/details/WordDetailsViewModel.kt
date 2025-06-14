@@ -1,9 +1,9 @@
 package com.nikcapko.memo.presentation.screens.words.details
 
 import androidx.lifecycle.viewModelScope
-import com.nikcapko.domain.model.WordModel
-import com.nikcapko.domain.usecases.DeleteWordUseCase
-import com.nikcapko.domain.usecases.SaveWordUseCase
+import com.nikcapko.memo.domain.model.WordModel
+import com.nikcapko.memo.domain.usecases.DeleteWordUseCase
+import com.nikcapko.memo.domain.usecases.SaveWordUseCase
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.emptyExceptionHandler
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel

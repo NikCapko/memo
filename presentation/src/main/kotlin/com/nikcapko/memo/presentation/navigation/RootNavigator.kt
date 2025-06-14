@@ -1,6 +1,6 @@
 package com.nikcapko.memo.presentation.navigation
 
-import com.nikcapko.domain.model.WordModel
+import com.nikcapko.memo.domain.model.WordModel
 
 interface RootNavigator {
     fun pushWordListScreen()

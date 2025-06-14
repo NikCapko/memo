@@ -1,7 +1,7 @@
 package com.nikcapko.memo.presentation.screens.games.findpairs
 
 import androidx.lifecycle.viewModelScope
-import com.nikcapko.domain.usecases.GameWordsLimitUseCase
+import com.nikcapko.memo.domain.usecases.GameWordsLimitUseCase
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.exceptionHandler
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel

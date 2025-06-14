@@ -1,6 +1,6 @@
-package com.nikcapko.domain.usecases
+package com.nikcapko.memo.domain.usecases
 
-import com.nikcapko.domain.repository.WordRepository
+import com.nikcapko.memo.domain.repository.WordRepository
 import javax.inject.Inject
 
 class ClearDatabaseUseCase @Inject constructor(
