@@ -10,7 +10,6 @@ android {
     namespace = "com.nikcapko.memo.presentation"
 
     buildFeatures {
-        viewBinding = true
         compose = true
     }
 
@@ -47,22 +46,13 @@ dependencies {
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
 
-    // ViewBindingPropertyDelegate
-    implementation(libs.viewbindingpropertydelegate)
-
     // coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
 
-    // rx binding
-    implementation(libs.rxbinding)
-
     // lottie animation
     implementation(libs.lottie)
     implementation(libs.lottie.compose)
-
-    // sdp-android
-    implementation(libs.sdp)
 
     // navigation cicerone
     implementation(libs.cicerone)

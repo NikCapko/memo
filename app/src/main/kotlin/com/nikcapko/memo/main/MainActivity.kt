@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var rootNavigator: RootNavigator
 
     private val navigator: Navigator = object : AppNavigator(this, R.id.fcView) {
-
         override fun applyCommands(commands: Array<out Command>) {
             super.applyCommands(commands)
             supportFragmentManager.executePendingTransactions()

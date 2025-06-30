@@ -1,12 +1,12 @@
 package com.nikcapko.memo.presentation.screens.words.list
 
 import androidx.lifecycle.viewModelScope
-import com.nikcapko.memo.domain.usecases.ClearDatabaseUseCase
-import com.nikcapko.memo.domain.usecases.WordListUseCase
 import com.nikcapko.memo.core.common.DispatcherProvider
 import com.nikcapko.memo.core.common.emptyExceptionHandler
 import com.nikcapko.memo.core.common.exceptionHandler
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
+import com.nikcapko.memo.domain.usecases.ClearDatabaseUseCase
+import com.nikcapko.memo.domain.usecases.WordListUseCase
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.words.list.event.WordListEvent
 import com.nikcapko.memo.presentation.screens.words.list.state.WordListState

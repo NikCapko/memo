@@ -7,15 +7,6 @@ plugins {
 
 android {
     namespace = "com.nikcapko.memo.app"
-
-    buildFeatures { viewBinding = true }
-
-    testOptions {
-        unitTests.all {
-            it.useJUnitPlatform()
-        }
-        unitTests.isReturnDefaultValues = true
-    }
 }
 
 hilt {
@@ -44,12 +35,4 @@ dependencies {
 
     // navigation cicerone
     implementation(libs.cicerone)
-
-    // testing
-    testImplementation(libs.test.assertj)
-    testImplementation(libs.test.mockk)
-    testImplementation(libs.test.junit)
-    testImplementation(libs.test.junit.jupiter)
-    testImplementation(libs.test.kotlinx.coroutines)
-    testImplementation(libs.test.androidx.testing)
 }

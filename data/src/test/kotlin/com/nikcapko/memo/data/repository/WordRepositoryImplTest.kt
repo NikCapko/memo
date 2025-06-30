@@ -37,14 +37,14 @@ internal class WordRepositoryImplTest {
         id = 1468,
         word = "vituperatoribus",
         translate = "constituto",
-        frequency = 2.3f
+        frequency = 2.3f,
     )
 
     private var wordDBEntity = WordDBEntity(
         id = 1468,
         word = "vituperatoribus",
         translation = "constituto",
-        frequency = 2.3f
+        frequency = 2.3f,
     )
 
     @Test

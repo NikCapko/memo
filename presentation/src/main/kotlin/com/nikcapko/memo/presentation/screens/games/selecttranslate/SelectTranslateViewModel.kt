@@ -19,7 +19,7 @@ import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal const val WORD_GAME_PRICE = 0.02f
+private const val WORD_GAME_PRICE = 0.02f
 private const val MAX_WORDS_COUNT_SELECT_TRANSLATE = 5
 
 @HiltViewModel

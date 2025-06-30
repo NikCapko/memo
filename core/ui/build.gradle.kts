@@ -9,14 +9,6 @@ android {
 
     buildFeatures {
         compose = true
-        viewBinding = true
-    }
-
-    testOptions {
-        unitTests.all {
-            it.useJUnitPlatform()
-        }
-        unitTests.isReturnDefaultValues = true
     }
 }
 
@@ -32,12 +24,6 @@ dependencies {
     implementation(libs.androidx.material)
 
     implementation(libs.androidx.fragment.ktx)
-
-    // lottie animation
-    implementation(libs.lottie)
-
-    // sdp-android
-    implementation(libs.sdp)
 
     // navigation cicerone
     implementation(libs.cicerone)
