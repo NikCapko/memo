@@ -2,7 +2,6 @@ package com.nikcapko.memo.presentation.screens.words.list
 
 import androidx.lifecycle.viewModelScope
 import com.nikcapko.memo.core.common.DispatcherProvider
-import com.nikcapko.memo.core.common.emptyExceptionHandler
 import com.nikcapko.memo.core.common.exceptionHandler
 import com.nikcapko.memo.core.ui.viewmodel.BaseViewModel
 import com.nikcapko.memo.domain.usecases.ClearDatabaseUseCase
@@ -11,7 +10,6 @@ import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.words.list.event.WordListEvent
 import com.nikcapko.memo.presentation.screens.words.list.state.WordListState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -20,8 +18,8 @@ private const val MIN_WORDS_COUNT = 5
 
 @HiltViewModel
 internal class WordListViewModel @Inject constructor(
-    private val clearDatabaseUseCase: ClearDatabaseUseCase,
     private val wordListUseCase: WordListUseCase,
+    private val clearDatabaseUseCase: ClearDatabaseUseCase,
     private val rootNavigator: RootNavigator,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<WordListState, WordListEvent>() {
@@ -33,14 +31,13 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun loadWords() {
+        updateState { WordListState.Loading }
         viewModelScope.launch(
             exceptionHandler { exception ->
                 updateState { WordListState.Error("Произошла ошибка") }
             }
         ) {
             withContext(dispatcherProvider.io) {
-                updateState { WordListState.Loading }
-                delay(5000L) // TODO for test loading animation
                 val wordsList = wordListUseCase()
                 updateState { WordListState.Success(wordsList) }
             }
@@ -58,9 +55,11 @@ internal class WordListViewModel @Inject constructor(
     }
 
     fun clearDatabase() {
-        viewModelScope.launch(emptyExceptionHandler) {
+        updateState { WordListState.Loading }
+        viewModelScope.launch(
+            exceptionHandler { loadWords() },
+        ) {
             withContext(dispatcherProvider.io) {
-                updateState { WordListState.Loading }
                 clearDatabaseUseCase()
                 updateState { WordListState.Success(emptyList()) }
             }

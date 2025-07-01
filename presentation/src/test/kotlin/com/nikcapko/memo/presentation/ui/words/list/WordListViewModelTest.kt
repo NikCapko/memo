@@ -1,39 +1,51 @@
 package com.nikcapko.memo.presentation.ui.words.list
 
-import com.nikcapko.memo.core.data.Word
+import app.cash.turbine.test
 import com.nikcapko.memo.core.test.InstantExecutorExtension
+import com.nikcapko.memo.core.test.MainCoroutineDispatcherExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
-import com.nikcapko.memo.presentation.domain.WordListInteractor
+import com.nikcapko.memo.domain.model.WordModel
+import com.nikcapko.memo.domain.repository.WordRepository
+import com.nikcapko.memo.domain.usecases.ClearDatabaseUseCase
+import com.nikcapko.memo.domain.usecases.WordListUseCase
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.words.list.WordListViewModel
+import com.nikcapko.memo.presentation.screens.words.list.event.WordListEvent
+import com.nikcapko.memo.presentation.screens.words.list.state.WordListState
+import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import io.mockk.verifyOrder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-
-private const val MIN_WORDS_COUNT = 5
 
 /**
  * Test for [WordListViewModel]
  */
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantExecutorExtension::class, MainCoroutineDispatcherExtension::class)
 internal class WordListViewModelTest {
 
-    private var wordListInteractor = mockk<WordListInteractor>(relaxed = true)
-    private val stateFlowWrapper = mockk<WordListStateFlowWrapper>(relaxed = true)
+    private val wordRepository = mockk<WordRepository>(relaxed = true)
+
+    private val wordListUseCase = WordListUseCase(wordRepository)
+    private var clearDatabaseUseCase = ClearDatabaseUseCase(wordRepository)
+
     private var rootNavigator = spyk<RootNavigator>()
 
     private lateinit var viewModel: WordListViewModel
 
-    private val word = Word(
+    @BeforeEach
+    fun beforeEach() {
+        viewModel = createViewModel()
+    }
+
+    private val word = WordModel(
         id = 3929,
         word = "expetenda",
         translate = "vituperatoribus",
@@ -42,22 +54,26 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check transfer data from wordListUseCase on call loadWords`() = runTest {
-        coEvery { wordListInteractor.getWords() } returns listOf(word)
+        coEvery { wordRepository.getWordsFromDB() } returns listOf(word)
 
-        viewModel = createViewModel()
-        viewModel.loadWords()
+        viewModel.state.test {
+            viewModel.loadWords()
 
-        verify {
-            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
-            stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(listOf(word)))
+            coVerify { wordListUseCase() }
+
+            awaitItem() shouldBe WordListState.None
+            awaitItem() shouldBe WordListState.Loading
+            awaitItem() shouldBe WordListState.Success(listOf(word))
+            ensureAllEventsConsumed()
         }
     }
 
     @Test
     fun `check open screen word detail on call onItemClick`() = runTest {
-        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(listOf(word))
+        coEvery { wordRepository.getWordsFromDB() } returns listOf(word)
 
-        viewModel = createViewModel()
+        viewModel.loadWords()
+
         viewModel.onItemClick(0)
 
         verify { rootNavigator.pushWordDetailScreen(word) }
@@ -65,30 +81,26 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check send speakOutChannel on call onEnableSound`() = runTest {
-        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(listOf(word))
+        coEvery { wordRepository.getWordsFromDB() } returns listOf(word)
 
-        viewModel = createViewModel()
-        viewModel.onEnableSound(0)
+        viewModel.loadWords()
 
-//        coVerify { eventFlowWrapper.update(WordListEvent.SpeakOutEvent(word.word)) }
-    }
+        viewModel.eventFlow.test {
+            viewModel.onEnableSound(0)
 
-    @Test
-    fun `check clear database on call clearDatabase`() = runTest {
-        viewModel = createViewModel()
-        viewModel.clearDatabase()
-
-        coVerify { wordListInteractor.clearDataBase() }
-
-        verifyOrder {
-            stateFlowWrapper.update(DataLoadingViewModelState.LoadingState)
-            stateFlowWrapper.update(DataLoadingViewModelState.LoadedState(emptyList<Word>()))
+            awaitItem() shouldBe WordListEvent.SpeakOutEvent(word.word)
         }
     }
 
     @Test
+    fun `check clear database on call clearDatabase`() = runTest {
+        viewModel.clearDatabase()
+
+        coVerify { clearDatabaseUseCase.invoke() }
+    }
+
+    @Test
     fun `check open screen word detail with null on call onAddWordClick`() {
-        viewModel = createViewModel()
         viewModel.onAddWordClick()
 
         verify { rootNavigator.pushWordDetailScreen() }
@@ -96,22 +108,23 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check show need more words dialog on call openGamesScreen`() = runTest {
-        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(listOf(word))
+        coEvery { wordRepository.getWordsFromDB() } returns listOf()
 
-        viewModel = createViewModel()
-        viewModel.openGamesScreen()
+        viewModel.loadWords()
 
-//        coVerify { eventFlowWrapper.update(WordListEvent.ShowNeedMoreWordsEvent) }
+        viewModel.eventFlow.test {
+            viewModel.openGamesScreen()
+
+            awaitItem() shouldBe WordListEvent.ShowNeedMoreWordsEvent
+        }
     }
 
     @Test
     fun `check open screen games on call openGamesScreen`() {
-        every { stateFlowWrapper.value() } returns DataLoadingViewModelState.LoadedState(
-            List(
-                MIN_WORDS_COUNT
-            ) { word })
+        coEvery { wordRepository.getWordsFromDB() } returns List(10) { word }
 
-        viewModel = createViewModel()
+        viewModel.loadWords()
+
         viewModel.openGamesScreen()
 
         verify { rootNavigator.pushGamesScreen() }
@@ -119,15 +132,16 @@ internal class WordListViewModelTest {
 
     @Test
     fun `check send showClearDatabaseDialog on call onClearDatabaseClick`() = runTest {
-        viewModel = createViewModel()
-        viewModel.onClearDatabaseClick()
+        viewModel.eventFlow.test {
+            viewModel.onClearDatabaseClick()
 
-//        coVerify { eventFlowWrapper.update(WordListEvent.ShowClearDatabaseEvent) }
+            awaitItem() shouldBe WordListEvent.ShowClearDatabaseEvent
+        }
     }
 
     private fun createViewModel() = WordListViewModel(
-        wordListInteractor = wordListInteractor,
-        stateFlowWrapper = stateFlowWrapper,
+        clearDatabaseUseCase = clearDatabaseUseCase,
+        wordListUseCase = wordListUseCase,
         rootNavigator = rootNavigator,
         dispatcherProvider = TestDispatcherProvider(),
     )

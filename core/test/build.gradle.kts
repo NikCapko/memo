@@ -32,4 +32,5 @@ dependencies {
     api(libs.test.androidx.testing)
     api(libs.test.kotest.runner)
     api(libs.test.kotest.assertions)
+    api(libs.test.turbine)
 }
