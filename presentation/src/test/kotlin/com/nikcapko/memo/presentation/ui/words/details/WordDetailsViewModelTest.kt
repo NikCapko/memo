@@ -1,9 +1,14 @@
 package com.nikcapko.memo.presentation.ui.words.details
 
-import com.nikcapko.memo.core.data.Word
 import com.nikcapko.memo.core.test.InstantExecutorExtension
+import com.nikcapko.memo.core.test.MainCoroutineDispatcherExtension
 import com.nikcapko.memo.core.test.TestDispatcherProvider
-import com.nikcapko.memo.presentation.domain.WordDetailsInteractor
+import com.nikcapko.memo.domain.model.WordModel
+import com.nikcapko.memo.domain.repository.WordRepository
+import com.nikcapko.memo.domain.usecases.ClearDatabaseUseCase
+import com.nikcapko.memo.domain.usecases.DeleteWordUseCase
+import com.nikcapko.memo.domain.usecases.SaveWordUseCase
+import com.nikcapko.memo.domain.usecases.WordListUseCase
 import com.nikcapko.memo.presentation.navigation.RootNavigator
 import com.nikcapko.memo.presentation.screens.words.details.WordDetailsViewModel
 import com.nikcapko.memo.presentation.screens.words.details.state.WordDetailsState
@@ -16,6 +21,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -23,30 +29,38 @@ import org.junit.jupiter.api.extension.ExtendWith
  * Test for [WordDetailsViewModel]
  */
 @ExperimentalCoroutinesApi
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantExecutorExtension::class, MainCoroutineDispatcherExtension::class)
 internal class WordDetailsViewModelTest {
 
-    private val wordDetailsInteractor = mockk<WordDetailsInteractor>(relaxed = true)
-    private val stateFlowWrapper = mockk<WordDetailsStateFlowWrapper>(relaxed = true)
     private val rootNavigator = spyk<RootNavigator>()
+
+    private val wordRepository = mockk<WordRepository>(relaxed = true)
+
+    private val saveWordUseCase = SaveWordUseCase(wordRepository)
+    private var deleteWordUseCase = DeleteWordUseCase(wordRepository)
 
     private lateinit var viewModel: WordDetailsViewModel
 
-    private var word = Word(
+    private var word = WordModel(
         id = 3929,
         word = "expetenda",
         translate = "vituperatoribus",
         frequency = 2.3f,
     )
 
+    @BeforeEach
+    fun beforeEach() {
+        viewModel = createViewModel()
+    }
+
     @Test
     fun `check save word with correct params`() = runTest {
-        viewModel = createViewModel()
-        viewModel.onSaveWord("word", "слово")
+        viewModel.changeWordField("word")
+        viewModel.changeTranslateField("слово")
+        viewModel.onSaveWord()
 
         coVerify {
-            wordDetailsInteractor.saveWord(any())
-//            eventFlowWrapper.update(WordDetailsEvent.CloseScreenEvent)
+            saveWordUseCase.invoke(WordModel())
         }
         verify { rootNavigator.back() }
     }
@@ -71,7 +85,6 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check not enable save button on empty word and empty translate`() = runTest {
-        viewModel = createViewModel()
         viewModel.changeWordField("")
         viewModel.changeTranslateField("")
 
@@ -83,7 +96,6 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check not enable save button on empty word and non empty translate`() = runTest {
-        viewModel = createViewModel()
         viewModel.changeWordField("")
         viewModel.changeTranslateField("translate")
 
@@ -95,7 +107,6 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check not enable save button on non empty word and empty translate`() = runTest {
-        viewModel = createViewModel()
         viewModel.changeWordField("word")
         viewModel.changeTranslateField("")
 
@@ -107,7 +118,6 @@ internal class WordDetailsViewModelTest {
 
     @Test
     fun `check enable save button on non empty word and non empty translate`() = runTest {
-        viewModel = createViewModel()
         viewModel.changeWordField("word")
         viewModel.changeTranslateField("translate")
 
@@ -119,8 +129,8 @@ internal class WordDetailsViewModelTest {
 
     private fun createViewModel() = WordDetailsViewModel(
         word = null,
-        wordDetailsInteractor = wordDetailsInteractor,
-        stateFlowWrapper = stateFlowWrapper,
+        saveWordUseCase = saveWordUseCase,
+        deleteWordUseCase = deleteWordUseCase,
         rootNavigator = rootNavigator,
         dispatcherProvider = TestDispatcherProvider(),
     )
